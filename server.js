@@ -19,10 +19,9 @@ server.listen(8333);
 var my_timer;
 var allClients = 0;
 var tab_client = new Array();
+var arrayMasters = new Array();
 var slide_currently;
 var TempoPPT;
-var master = false;
-
 
 // On definie le fichier client
 app.get('/', function (req, res) {
@@ -32,30 +31,23 @@ app.get('/', function (req, res) {
 
 // Connection d'un client
 socket.on('connection', function (client) {
-	allClients ++;
-	var TempoPseudo;
-	var TempoMaster;
-	
-	// Apres avoir saisie son speudo on ouvre la session
+    var TempoPseudo;
+    
+	// Apres avoir saisie son pseudo on ouvre la session
 	client.on('ouvertureSession', function (connect) {
-	
-		console.log("Ouverture Session");
-
 		var obj_connect = JSON.parse(connect);
-		console.log("LE ppt : " + obj_connect.ppt);
+        allClients ++;
+
         
         // On verifie si un master existe deja sinon, comme il n'existe pas, on lui attribue le droit
-		if (obj_connect.master && master == false) {
-			master = true;
-			TempoMaster = obj_connect.master;
-			TempoPseudo = obj_connect.identifant + " [master]";
+		if (arrayMasters.length == 0 || obj_connect.master) {
+            arrayMasters.push(obj_connect.identifant);
 			if (obj_connect.ppt) { 
 				TempoPPT = obj_connect.ppt;
             }
-		} else {
-			TempoPseudo = obj_connect.identifant;
-        }
-			
+		}
+        
+		TempoPseudo = obj_connect.identifant;	
 		tab_client.push(TempoPseudo); 
 		
         // On envoi la nouvelle tab de client a l'utilisateur qui demande la connection
@@ -63,9 +55,9 @@ socket.on('connection', function (client) {
             "clients": allClients,
             "tab_client": tab_client,
             "connexion":TempoPseudo,
+            "arrayMasters": arrayMasters,
             le_slide : slide_currently,
             ppt: TempoPPT,
-            master: TempoMaster
 		}));
         
 		// On envoi la nouvelle tab de client a tous les clients connectes
@@ -78,7 +70,7 @@ socket.on('connection', function (client) {
     });
 
 	
-	// Reception d'un message pour la gestion des slide et l'envoi au poste esclave
+	// Reception d'un message pour la gestion des slides et l'envoi au poste esclave
 	client.on('message', function (data) {
 		var obj_client = JSON.parse(data);
 		slide_currently = obj_client.slide;
@@ -117,8 +109,12 @@ socket.on('connection', function (client) {
 		
 		if (TempoPseudo) {
 			tab_client.splice(tab_client.indexOf(TempoPseudo), 1);
-			if (TempoPseudo.indexOf("[master]") != -1) {
-				master = false;
+            
+            if (arrayMasters.indexOf(TempoPseudo) != -1) {
+                arrayMasters.splice(arrayMasters.indexOf(TempoPseudo), 1);
+                if (arrayMasters.length == 0 && tab_client.length > 0) {
+                    arrayMasters.push(tab_client[0]);
+                }
             }
 		}
         
@@ -126,9 +122,10 @@ socket.on('connection', function (client) {
         
         // On renvoi la nouvelle table de client a tous les clients
 		client.broadcast.send(JSON.stringify({
-		  "clients": allClients,
-		  "tab_client": tab_client,
-		  "deconnexion": TempoPseudo
+            "clients": allClients,
+            "tab_client": tab_client,
+            "deconnexion": TempoPseudo,
+            "arrayMasters": arrayMasters
 		}));
 		
 	});

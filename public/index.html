@@ -20,9 +20,9 @@
         <!-- Variable global -->
 		var mon_identifiant = "";
 		var socket;
-		var master = false;
 		var slideControlContainer;
-		var TempoMaster;
+		var TempoMaster = false;
+        var master = false;
 		
         $(document).ready(function () {
 
@@ -37,6 +37,7 @@
 				
 				if ($("#master").is(':checked') == true) {
 					TempoMaster = true;
+                    $("#menu-control").removeClass('isHidden');
                 }
 				
                 // On verifie s'il y a une demande d'animateur
@@ -47,14 +48,14 @@
 				socket.emit('ouvertureSession', JSON.stringify({
 					identifant: mon_identifiant,
 					ppt: Newppt,
-					master: TempoMaster
+                    master: TempoMaster
 				}));
 			  
 				$("#menu-pseudo").html("Bonjour " + mon_identifiant);
 			}
         });
 		
-		<!-- On Verifie si on charge bien un une presentation html -->
+		<!-- On Verifie si on charge bien une presentation html -->
 		$("#img-select").click(function () {
 			$("#hiddenfile").click();
 			
@@ -63,8 +64,7 @@
 					$("#selected-Slide").val($("#hiddenfile").val());
                 }
 			});
-		});
-		
+		});	
 
 		<!-- Reception des messages du serveur et traitement des messages en fonction des donnees recues -->  	
         socket.on('message', function (data) {
@@ -85,7 +85,7 @@
 				$("#message").scrollTop(100000) ;
 				
 				<!-- Notification du pannel (rouge clignotant) -->
-				if($("#cadre-menu").css("margin-Left") == "0px") {
+				if ($("#cadre-menu").css("margin-Left") == "0px") {
 					if($('#bouton-menu').html()) {
 						var nbNewMessage = parseInt($('#bouton-menu b').html()) + 1;
                     } else {
@@ -126,8 +126,16 @@
 					}, timeLoad);
 				}
                 
-				if (obj.master) { // on lui donne les droits de master
-					master = true;
+				if (obj.arrayMasters) {                    
+                    if (obj.arrayMasters.indexOf(mon_identifiant) == -1) {
+                        master = false;
+                        $("#menu-control").addClass("isHidden");
+                        $("#cadre-video").id = "cadre-video-disable";
+                    } else {
+                        master = true;
+                        $("#menu-control").removeClass("isHidden");
+                        $("#cadre-video-disable").attr("id", "cadre-video");
+                    }
                 }
 					
 				if (obj.pseudo) {
@@ -139,17 +147,14 @@
                 }
 			}
         });
-        
-        $("#cadre-video").hide();
-      
+                    
         <!-- Les esclaves recois l id du slide ou de l element clique du poste master et on simule le click -->    
 		socket.on('recupObjetHtml', function (idtempo) {
 			if(idtempo) {
 				$($('#notre_frame').contents()).find("#" + idtempo).click();
 			}
-		});
-        
-        
+		});  
+            
 		<!-- Permet de recuperer les evenements de la gestion des slides et de les envoyer au poste esclave -->
         $("#next1").click(function () {
 			if (master == true) {
@@ -213,8 +218,7 @@
                 }
             }
         }); 
-    }; 
-	  
+    };  
 
 	<!-- Permet de ne pas autocratiser les caracteres speciaux pour le pseudo -->
 	function special_caract(evt) {
@@ -226,7 +230,7 @@
 		if (interdit.indexOf(String.fromCharCode(keyCode)) >= 0) { 
 		  return false;
         }
-	}	
+	}	    
 	   
     </script>
   </head>
@@ -253,7 +257,7 @@
         <div style="position:absolute;top:0px;left:0px;">
             <img src="images/titre1.png" />
         </div>
-        <div style="position:relative;width:105px;margin:auto;padding-top:6px;">
+        <div id="menu-control" class="isHidden" style="position:relative; width:105px; margin:auto; padding-top:6px;">
             <img src="images/fond-player.png" />
             <ul id="liste_player">
                 <li>
@@ -302,7 +306,7 @@
 
 
 	<!-- Control video -->
-	<div id="cadre-video">
+	<div id="cadre-video-disable" class="isHidden">
 		<button id="lectureVideo">play</button>		
 		<div id="cadre-video-droit">
 			<div style="width:250px; " id="barre"></div>

@@ -7,11 +7,11 @@ function initVideo() {
     
     /* On affiche la barre de controle video lors du passage de la souris sur la video  */
     $($('#notre_frame').contents()).find("video").hover(function () {        
-        $("#cadre-video").show(300);            
+        $("#cadre-video").removeClass("isHidden");            
     });
     
     $('#fermeture_controle_video').click(function () {
-        $("#cadre-video").hide(200);
+        $("#cadre-video").addClass("isHidden");
     });
     
     if (myVideo) {
@@ -77,7 +77,6 @@ function initVideo() {
             }		
         });
     }
-    
     
     /* Lors de la reception du controle video envoye par le serveur on l'execute */
     socket.on('emettreControlVideo', function (video) {
