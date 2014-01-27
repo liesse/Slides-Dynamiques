@@ -26,7 +26,7 @@ var root = false;
 
 // On definie le fichier client
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/public/index.html');
+  res.sendfile(__dirname + '/public/video.html');
 });
 
 
