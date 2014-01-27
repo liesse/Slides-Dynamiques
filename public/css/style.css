@@ -166,9 +166,9 @@ html,body,div,span,ul,li{margin:0;padding:0;border:0;outline:0;font-size:100%;ve
 }
 
 .img-connect{
-    float : right;
-    width:143px;
-    height:22px;
+    width: 80%;
+    height: 22px;
+    padding-left: 50px;
     background: url('../images/btn-connect.png') center no-repeat;
 }
 

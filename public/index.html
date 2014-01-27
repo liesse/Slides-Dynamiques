@@ -231,24 +231,28 @@
 		  return false;
         }
 	}	    
-	   
+
     </script>
   </head>
 
 	<!-- Page de connection -->  
 	<body topmargin="0" leftmargin="0" style="width:100%;">
-    <div id="overlay" style="background:black; opacity:0.7; width:100%; height:115%; display:block; z-index:1"></div>
-	<div id="div_connection" >
-		<a><strong>Bienvenue sur WebTeach !</strong></a>
-        <div class="img-loading"></div><br/><br/>
-		<a>Veuillez entrer votre identifiant :</a><br/><br/>
-		<input type="text" maxlength="12" name="identifiant" id="identifiant" title="13 caracteres max" onKeypress="return special_caract(event);" />
-		<div class="img-connect" id="identification"></div><br>
-		Annimateur :<input type="checkbox" id="master" /><br/><br/>
-			<a>Choisir une pr&#233;sentation (option) :</a><br/><br/>
-			<input type="file" id="hiddenfile" style="display:none"  accept='text/html' />
-			<input type="text" id="selected-Slide" readonly="readonly"/>
-			<div class="img-select" id="img-select"></div>
+    <div id="overlay" style="background:white; opacity:1; width:100%; height:115%; display:block; z-index:5"></div>
+	<div id="div_connection" style="z-index:5;" >
+        <div style="text-align: center;">
+            <a><strong style="font-size:16px;">Bienvenue sur WebTeach !</strong></a><br /><br /><br />
+            <input type="text" maxlength="12" name="identifiant" id="identifiant" title="13 caracteres max" onKeypress="return special_caract(event);" value="" placeholder="Pseudo" /><br />
+            <input type="password" maxlength="12" name="password" id="password" title="13 caracteres max" onKeypress="return special_caract(event);" value="" placeholder="Mot de passe (optionnel)"/><br />	
+            <label style="display:block; text-indent:-15px;  width:78%; color:#555555;">
+                <input type="checkbox" id="master" style="width:11px; height:11px; padding:0; margin:0; vertical-align: bottom; position: relative; top:1px; *overflow: hidden;" />Annimateur
+            </label><br />	
+            <div class="img-connect" id="identification"></div><br />
+    
+        <!--		<a>Choisir une pr&#233;sentation (option) :</a><br/><br/>
+                <input type="file" id="hiddenfile" style="display:none"  accept='text/html' />
+                <input type="text" id="selected-Slide" readonly="readonly"/>
+                <div class="img-select" id="img-select"></div> -->
+        </div>
 	</div>
 	<!-- Fin de la connection --> 
 
@@ -274,13 +278,13 @@
                 </li>
 			</ul>
         </div>
-		<div id="menu-pseudo" style="position:absolute; top:6px; right:20%; font:10x Arial; color:#555;"></div>
+		<div id="menu-pseudo" style="position:absolute; top:10px; right:20%; font:16px Arial; color:#555;"></div>
         <div id="boutton-user" style="position:absolute; top:0px; right:0px;">
 			<span style="position:absolute; top:6px; left:19px; color:#787777; font-size:19px;" id="clients"></span>
 			<img src="images/titre3.png" />
 		</div>	  
     </div>
-	<div style="z-index:9; position:fixed; top:33px; left:0px; width:100%; height:3px; repeat:x; background-image:url('images/degrade-inf.png')"></div>
+	<div style="z-index:3; position:fixed; top:33px; left:0px; width:100%; height:3px; repeat:x; background-image:url('images/degrade-inf.png')"></div>
 	<!-- Fin Menu de changement de Slide -->
 	
 
