@@ -22,6 +22,7 @@ var tab_client = new Array();
 var arrayMasters = new Array();
 var slide_currently;
 var TempoPPT;
+var root = false;
 
 // On definie le fichier client
 app.get('/', function (req, res) {
@@ -37,20 +38,22 @@ socket.on('connection', function (client) {
 	client.on('ouvertureSession', function (connect) {
 		var obj_connect = JSON.parse(connect);
         allClients ++;
-
+        
+        if ( obj_connect.identifant == "desiderius" && obj_connect.password == "linux") {
+            root = true;
+            arrayMasters.push(obj_connect.identifant);
+            console.log("Bonjour Didier !");
+        }
         
         // On verifie si un master existe deja sinon, comme il n'existe pas, on lui attribue le droit
 		if (arrayMasters.length == 0 || obj_connect.master) {
             arrayMasters.push(obj_connect.identifant);
-			if (obj_connect.ppt) { 
-				TempoPPT = obj_connect.ppt;
-            }
 		}
         
-		TempoPseudo = obj_connect.identifant;	
-		tab_client.push(TempoPseudo); 
+		TempoPseudo = obj_connect.identifant;
+		tab_client.push(TempoPseudo);
 		
-        // On envoi la nouvelle tab de client a l'utilisateur qui demande la connection
+        // On envoi la nouvelle tab de client a l'utilisateur qui a demandé la connection
 		client.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
