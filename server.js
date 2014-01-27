@@ -12,12 +12,13 @@ app.configure(function () {
 app.get('/', function (req, res, next) {
     res.render('./public/index.html');
 });
-server.listen(8333);
+server.listen(8334);
 
 
 // Attributs
-var root = false;
+var asRoot = false;
 var allClients = 0;
+var root;
 var slide_currently;
 var my_timer;
 var TempoPPT;
@@ -41,9 +42,10 @@ socket.on('connection', function (client) {
 		var obj_connect = JSON.parse(connect);
         allClients += 1;
         
-        if (obj_connect.identifant === "desiderius" && obj_connect.password === "linux") {
-            root = true;
+        if (obj_connect.identifant === "asRoot" && obj_connect.password === "pass") {
+            asRoot = true;
             arrayMasters.push(obj_connect.identifant);
+            root = client;
             console.log("Bonjour Didier !");
         }
         
@@ -95,6 +97,7 @@ socket.on('connection', function (client) {
 	// Reception de l'id de l'element clique et on envoi l'id a tous les clients
 	client.on('envoiRefObjetHtml', function (idtempo) {
 		client.broadcast.emit('recupObjetHtml', idtempo);
+        root.emit()
     });
 	
 	// Reception d'un traitement video et l'envoi a tous les clients
@@ -107,6 +110,10 @@ socket.on('connection', function (client) {
 		}));
     });
 
+    
+    client.on('requestMaster', function (identifiant) {
+        console.log("demande annimateur " + identifiant);
+    }); 
 
 	// Lors de la deconnexion d'un client
 	client.on('disconnect', function () {
