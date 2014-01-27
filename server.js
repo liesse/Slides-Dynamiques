@@ -6,47 +6,49 @@ var server = require('http').createServer(app);
 var socket = io.listen(server);
 
  // Chargement du serveur et definition du dossier static a inclure dans le serveur
-app.configure(function() {
-  app.use(express.static(__dirname + '/public'));
+app.configure(function () {
+    app.use(express.static(__dirname + '/public'));
 });
-app.get('/', function(req, res, next) {
-  res.render('./public/index.html');
+app.get('/', function (req, res, next) {
+    res.render('./public/index.html');
 });
 server.listen(8333);
- 
- 
+
+
 // Attributs
-var my_timer;
-var allClients = 0;
-var tab_client = new Array();
-var arrayMasters = new Array();
-var slide_currently;
-var TempoPPT;
 var root = false;
+var allClients = 0;
+var slide_currently;
+var my_timer;
+var TempoPPT;
+var tab_client = [];
+var arrayMasters = [];
+
 
 // On definie le fichier client
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/public/video.html');
+    res.sendfile(__dirname + '/public/video.html');
 });
 
 
 // Connection d'un client
 socket.on('connection', function (client) {
+    "use strict";
     var TempoPseudo;
     
 	// Apres avoir saisie son pseudo on ouvre la session
 	client.on('ouvertureSession', function (connect) {
 		var obj_connect = JSON.parse(connect);
-        allClients ++;
+        allClients += 1;
         
-        if ( obj_connect.identifant == "desiderius" && obj_connect.password == "linux") {
+        if (obj_connect.identifant === "desiderius" && obj_connect.password === "linux") {
             root = true;
             arrayMasters.push(obj_connect.identifant);
             console.log("Bonjour Didier !");
         }
         
         // On verifie si un master existe deja sinon, comme il n'existe pas, on lui attribue le droit
-		if (arrayMasters.length == 0 || obj_connect.master) {
+		if (arrayMasters.length === 0 || obj_connect.master) {
             arrayMasters.push(obj_connect.identifant);
 		}
         
@@ -57,10 +59,10 @@ socket.on('connection', function (client) {
 		client.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
-            "connexion":TempoPseudo,
+            "connexion": TempoPseudo,
             "arrayMasters": arrayMasters,
             le_slide : slide_currently,
-            ppt: TempoPPT,
+            ppt: TempoPPT
 		}));
         
 		// On envoi la nouvelle tab de client a tous les clients connectes
@@ -87,7 +89,7 @@ socket.on('connection', function (client) {
 			le_pseudo: obj_client.pseudo,    // pseudo
 			le_slide: obj_client.slide,      // id du SLide
 			url: obj_client.url
-		}));  
+		}));
 	});
 	
 	// Reception de l'id de l'element clique et on envoi l'id a tous les clients
@@ -100,7 +102,7 @@ socket.on('connection', function (client) {
 		var obj_video = JSON.parse(video);
 		client.broadcast.emit('emettreControlVideo', JSON.stringify({
 			pause: obj_video.pause,
-			play: obj_video.play, 
+			play: obj_video.play,
 			toPlay: obj_video.toPlay     // jouer la video sur position de lecture saisie
 		}));
     });
@@ -113,9 +115,9 @@ socket.on('connection', function (client) {
 		if (TempoPseudo) {
 			tab_client.splice(tab_client.indexOf(TempoPseudo), 1);
             
-            if (arrayMasters.indexOf(TempoPseudo) != -1) {
+            if (arrayMasters.indexOf(TempoPseudo) !== -1) {
                 arrayMasters.splice(arrayMasters.indexOf(TempoPseudo), 1);
-                if (arrayMasters.length == 0 && tab_client.length > 0) {
+                if (arrayMasters.length === 0 && tab_client.length > 0) {
                     arrayMasters.push(tab_client[0]);
                 }
             }
