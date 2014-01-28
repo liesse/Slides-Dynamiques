@@ -12,7 +12,7 @@ app.configure(function () {
 app.get('/', function (req, res, next) {
     res.render('./public/index.html');
 });
-server.listen(8334);
+server.listen(8333);
 
 
 // Attributs
@@ -42,7 +42,7 @@ socket.on('connection', function (client) {
 		var obj_connect = JSON.parse(connect);
         allClients += 1;
         
-        if (obj_connect.identifant === "asRoot" && obj_connect.password === "pass") {
+        if (obj_connect.identifant === "root" && obj_connect.password === "pass") {
             asRoot = true;
             arrayMasters.push(obj_connect.identifant);
             root = client;
@@ -97,7 +97,6 @@ socket.on('connection', function (client) {
 	// Reception de l'id de l'element clique et on envoi l'id a tous les clients
 	client.on('envoiRefObjetHtml', function (idtempo) {
 		client.broadcast.emit('recupObjetHtml', idtempo);
-        root.emit()
     });
 	
 	// Reception d'un traitement video et l'envoi a tous les clients
