@@ -116,13 +116,9 @@ $(document).ready(function () {
                 
             if (obj.arrayMasters) {
                 if (obj.arrayMasters.indexOf(mon_identifiant) === -1) {
-                    master = false;
-                    $("#menu-control").addClass("isHidden");
-                    $("#cadre-video").id = "cadre-video-disable";
+                    setMaster(false);
                 } else {
-                    master = true;
-                    $("#menu-control").removeClass("isHidden");
-                    $("#cadre-video-disable").attr("id", "cadre-video");
+                    setMaster(true);
                 }
             }
                     
@@ -218,5 +214,19 @@ function special_caract(evt) {
     var interdit = 'ààâäãçéèêëìîïòôöõµùûüñ &\?!:\.;,\t#~"^¨@%\$£?²¤§%\*()[]{}-_=+<>|\\/`\'';
     if (interdit.indexOf(String.fromCharCode(keyCode)) >= 0) {
         return false;
+    }
+}
+
+function setMaster(isMaster) {
+    if (isMaster) {
+        master = true;
+        $("#menu-control").removeClass("isHidden");
+        $("#bouton-selectPPT").removeClass("isHidden");
+        $("#cadre-video-disable").attr("id", "cadre-video");
+    } else {
+        master = false;
+        $("#menu-control").addClass("isHidden");
+        $("#bouton-selectPPT").addClass("isHidden");
+        $("#cadre-video").id = "cadre-video-disable";
     }
 }
