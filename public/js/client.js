@@ -33,6 +33,8 @@ $(document).ready(function () {
             $("#menu-pseudo").html("Bonjour " + mon_identifiant);
         }
     });
+
+
     
     // On Verifie si on charge bien une presentation html
     $("#img-select").click(function () {
@@ -43,6 +45,12 @@ $(document).ready(function () {
                 $("#selected-Slide").val($("#hiddenfile").val());
             }
         });
+    });
+
+    // Permet de selectionner une nouvelle presentation
+    $("#bouton-selectPPT").click(function (){
+        var w = window.open('upload.html','popUpWindow','height=200,width=400,left=10,top=10,resizable=no,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no,status=yes');
+        w.focus();
     });
 
     // Reception des messages du serveur et traitement des messages en fonction des donnees recues
@@ -177,6 +185,7 @@ $(document).ready(function () {
   
 // Permet de charger les slides et de creer des evenements sur la presentation
 function chargementSlide() {
+    console.log("chargementSlide");
     var containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
     slideControlContainer = containers[containers.length - 1];
 

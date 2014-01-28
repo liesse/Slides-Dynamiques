@@ -224,6 +224,12 @@ html {
 	left: 0;
 }
 
+#bouton-selectPPT {
+	margin-top:6px; 
+	position:absolute; 
+	width:201px;
+}
+
 #menu-control {
 	position: relative;
 	width: 105px;

@@ -12,8 +12,11 @@ app.configure(function () {
 app.get('/', function (req, res, next) {
     res.render('./public/index.html');
 });
+app.post('/public/ppt', function(req, res){
+	fs.renameSync(req.files.a.path,"./public/ppt/Presentation.html");
+	console.log("New presentation uploaded");
+});
 server.listen(8333);
-
 
 // Attributs
 var asRoot = false;

@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Upload new presentation</title>
+    <style type='text/css'>
+        body {
+            font-family: sans-serif;
+        }
+    </style>
+    <script type='text/javascript'>
+        window.onunload = function() {
+            if (window.opener && !window.opener.closed) {
+                window.opener.chargementSlide();
+             }
+        };
+    </script>
+</head>
+<body>
+    <form id="newPPT" action="./public/ppt" method="post" enctype="multipart/form-data">
+        <input type="file" name="a" id="hiddenfile" style=""  accept='text/html' />
+        <input type="submit" value="Submit" onclick="self.close();">
+    </form>
+</body>
+</html>
