@@ -1,28 +1,14 @@
 Slides-Dynamiques 
 =================
 
-Projet R&amp;D et DLL de Aurelien GEANT et Julian DEMAREST
+Projet R&amp;D de Liesse NADJI, Philippe BENOIT et Abdoul karim CISSE
+Ce projet est la suite de ce qui a été fait par Aurelien GEANT et Julian DEMAREST l'an dernier
 
 Ce projet consiste à diffuser des slides utilisant la technologie SMIL/EAST sur des postes client.
 Les changements de slides, les animations sont synchronisés entre tous les utilisateurs grâce aux Websocket.
 
-Aujourd'hui, les animations sont d'ors et déjà fonctionnelles et le visionnage des slides se fait sans connexion à internet.
-
-Pour la suite du projet DLL, nous comptons ajouter plusieurs fonctionnalités à celles ci, comme :
-
-    - Ajout d'un système de sécurité (authentification, définition du master avec un mot de passe) ;
-    - Correction du nombre d'utilisateurs connectés ;
-    - Diffusion de vidéos dans EAST sur tous les postes connectés ;
-    - Correction sur la diffusion des animations itératives ;
-    - Initialisation du slide de l'utilisateur avec celui du master lors de sa connexion.
+Aujourd'hui, les animations sont fonctionnelles et le visionnage des slides se fait sans connexion à internet.
     
-Merci de prendre en compte le fait que l'on a perdu du temps, du fait de l'abandon de l'autre projet
-pour la version 1.0 du projet DLL :
-
-    Voice Memos -> https://github.com/aurelien/Voice-Memos-OWA
-
-Ceci est dû au fait que l'enregistrement de l'audio avec mediaStreamRecorder n'est pas encore possible
-sous Firefox pour l'instant.
 
 VERSION 2.0
 ---------------------------
@@ -42,7 +28,8 @@ Ajout des fonctionalités suivantes :
     - Ajout d'une liste des utilisateurs connectés qui s'affiche au passage de la souris sur le nombre d'utilisateurs connectés
     - Amélioration du channel retractable fonctionnant sous tout environnment (Linux, Windows, etc.)
     - Notification d'un nouveau message lorsque le Channel est fermé.
-    - Intégration video synchronisée. Fonctionne avec les contrôles par défaut ou avec le nouveau contrôleur video situé en haut du menu qui apparait lorsque la video est détectée dans le slide. Synchronisation video à la seconde près entre le poste maître et les postes esclaves.
+    - Intégration video synchronisée. Fonctionne avec les contrôles par défaut ou avec le nouveau contrôleur video situé en haut du menu qui apparait    
+      lorsque la video est détectée dans le slide. Synchronisation video à la seconde près entre le poste maître et les postes esclaves.
     - Compatible avec la nouvelle version de Express 3 
     - Optimisation de la gestion des utilisateurs (plus aucune socket n'est envoyée inutilement)
     - Lorsqu'un nouvel utilisateur se connecte, le slide se positionne à la slide courante du poste maître
@@ -57,7 +44,34 @@ Ajout des fonctionalités suivantes :
     - Nouvelle fonctionnalité : interface permettant de charger une présentation autre que celle par défaut et de la diffusée sur les postes esclaves.
     - Correction du bug sur la fermeture du contrôleur vidéo.
     
+VERSION 4.5
+----------------------------  
 
+Ajout des fonctionalités suivantes :
+
+    - mise à jours de Node.js
+    - mise à jour d'Express
+    - éclaircir/nettoyer le code
+    - éviter les chemins en dur (recherche des diapos, etc)
+    - correction du bug vidéo
+    
+VERSION 5.0
+----------------------------  
+
+Ajout des fonctionalités suivantes :
+ 
+    - émetteur / proxy -> client
+    - émetteur -> proxy / client
+    - émetteur / proxy -> proxy / client
+
+VERSION 6.0
+----------------------------  
+
+Ajout des fonctionalités suivantes :
+
+    - possibilité d'échanger les rôles (maître / esclave)
+    
+    
 HOW TO
 -----------------------------
 
@@ -65,9 +79,12 @@ Pour faire fonctionner le Projet Slides-Dynamiques :
 
     https://github.com/aurelien/Slides-Dynamiques/wiki
 
+    
 ESSENTIAL FILES
 -----------------------------
     - server.js  // Gestion serveur
-    - public/index.html  // Gestion client (slide, annimation, utilisateur)
+    - public/index.html  // Interface graphique manipulée par le client (slide, annimation, utilisateur)
     - public/js/video.js // Gestion vidéo
-    - public/js/pannel.js // gestion channel de discussion
+    - public/js/pannel.js // Gestion channel de discussion
+    - public/js/client.js // Gestion des évenements du client
+ 
