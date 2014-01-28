@@ -260,7 +260,11 @@ html {
 }
 
 #barre {
-	width: 250px;	
+	width: 280px;	
+}
+
+#lectureVideo {
+    font-size: 14px;
 }
 
 .base {
