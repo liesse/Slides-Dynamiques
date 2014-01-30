@@ -39,7 +39,6 @@ $(document).ready(function () {
     // On Verifie si on charge bien une presentation html
     $("#img-select").click(function () {
         $("#hiddenfile").click();
-        
         $("#hiddenfile").change(function () {
             if ($("#hiddenfile").val().split('.').reverse()[0] === "html") {
                 $("#selected-Slide").val($("#hiddenfile").val());
@@ -48,8 +47,8 @@ $(document).ready(function () {
     });
 
     // Permet de selectionner une nouvelle presentation
-    $("#bouton-selectPPT").click(function (){
-        var w = window.open('upload.html','popUpWindow','height=200,width=400,left=10,top=10,resizable=no,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no,status=yes');
+    $("#bouton-selectPPT").click(function () {
+        var w = window.open('upload.html', 'popUpWindow', 'height=200, width=400, left=10, top=10, resizable=no, scrollbars=yes, toolbar=no, menubar=no, location=no, directories=no, status=yes');
         w.focus();
     });
 
@@ -113,7 +112,8 @@ $(document).ready(function () {
                     $("#overlay").hide();
                 }, timeLoad);
             }
-                
+            
+            // Devenir annimateur si le serveur nous l'indique
             if (obj.arrayMasters) {
                 if (obj.arrayMasters.indexOf(mon_identifiant) === -1) {
                     setMaster(false);
@@ -141,7 +141,7 @@ $(document).ready(function () {
     
     // Permet de recuperer les evenements de la gestion des slides et de les envoyer au poste esclave
     $("#next1").click(function () {
-        if (master === true) {
+        if (master) {
             $($('#notre_frame').contents()).find("#next").click();
             socket.send(JSON.stringify({
                 suivant: "next",
@@ -151,7 +151,7 @@ $(document).ready(function () {
     });
 
     $("#prev1").click(function () {
-        if (master === true) {
+        if (master) {
             $($('#notre_frame').contents()).find("#prev").click();
             socket.send(JSON.stringify({
                 precedant: "prev",
@@ -161,7 +161,7 @@ $(document).ready(function () {
     });
 
     $("#first1").click(function () {
-        if (master === true) {
+        if (master) {
             $($('#notre_frame').contents()).find("#first").click();
             socket.send(JSON.stringify({
                 premier: "first"
@@ -170,7 +170,7 @@ $(document).ready(function () {
     });
 
     $("#last1").click(function () {
-        if (master === true) {
+        if (master) {
             $($('#notre_frame').contents()).find("#last").click();
             socket.send(JSON.stringify({
                 dernier: "last"
@@ -181,6 +181,7 @@ $(document).ready(function () {
   
 // Permet de charger les slides et de creer des evenements sur la presentation
 function chargementSlide() {
+    "use strict";
     console.log("chargementSlide");
     var containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
     slideControlContainer = containers[containers.length - 1];
@@ -188,8 +189,8 @@ function chargementSlide() {
     // Permet de recuperer l action fait sur le master et de le simuler sur les postes client connectes
     $($('#notre_frame').contents()).find(".slide").click(function(e) {
         e.stopPropagation();
-        if (master == true) {
-            idtempo = this.id;
+        if (master) {
+            var idtempo = this.id;
             socket.emit('envoiRefObjetHtml', idtempo);
         }
     });
@@ -197,7 +198,7 @@ function chargementSlide() {
     $($('#notre_frame').contents()).find("li").not("[class='highlight']").click(function (e) {
         if ($(this).parent().attr("class") !== "incremental") {
             e.stopPropagation();
-            if (master === true) {
+            if (master) {
                 idtempo = this.id;
                 socket.emit('envoiRefObjetHtml', idtempo);
             }
@@ -207,6 +208,7 @@ function chargementSlide() {
 
 // Permet de ne pas autocratiser les caracteres speciaux pour le pseudo
 function special_caract(evt) {
+    "use strict";
     var keyCode = evt.which ? evt.which : evt.keyCode;
     if (keyCode === 9) {
         return true;
@@ -218,15 +220,14 @@ function special_caract(evt) {
 }
 
 function setMaster(isMaster) {
+    "use strict";
     if (isMaster) {
         master = true;
-        $("#menu-control").removeClass("isHidden");
-        $("#bouton-selectPPT").removeClass("isHidden");
-        $("#cadre-video-disable").attr("id", "cadre-video");
+        $("#menu-control").show();
+        $("#bouton-selectPPT").show();
     } else {
         master = false;
-        $("#menu-control").addClass("isHidden");
-        $("#bouton-selectPPT").addClass("isHidden");
-        $("#cadre-video").id = "cadre-video-disable";
+        $("#menu-control").hide();
+        $("#bouton-selectPPT").hide();
     }
 }

@@ -8,11 +8,15 @@ function initVideo() {
     
     /* On affiche la barre de controle video lors du passage de la souris sur la video  */
     $($('#notre_frame').contents()).find("video").hover(function () {
-        $("#cadre-video").removeClass("isHidden");
+        if (master) {
+            $("#cadre-video").show();
+        }
     });
     
     $('#fermeture_controle_video').click(function () {
-        $("#cadre-video").addClass("isHidden");
+        if (master) {
+            $("#cadre-video").hide();
+        }
     });
     
     if (myVideo) {
