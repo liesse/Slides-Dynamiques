@@ -5,7 +5,7 @@ var app = express();
 var server = require('http').createServer(app);
 var socket = io.listen(server);
 
- // Chargement du serveur et definition du dossier static a inclure dans le serveur
+ // Loading server and static repository definition to include inside it.
 app.configure(function () {
     app.use(express.static(__dirname + '/public'));
 });
@@ -29,18 +29,18 @@ var tab_client = [];
 var arrayMasters = [];
 
 
-// On definie le fichier client
+// We define client side file
 app.get('/', function (req, res) {
     res.sendfile(__dirname + '/public/video.html');
 });
 
 
-// Connection d'un client
+// Client's connection
 socket.on('connection', function (client) {
     "use strict";
     var TempoPseudo;
     
-	// Apres avoir saisie son pseudo on ouvre la session
+	// After enter a password, we begin the session
 	client.on('ouvertureSession', function (connect) {
 		var obj_connect = JSON.parse(connect);
         allClients += 1;
@@ -52,7 +52,7 @@ socket.on('connection', function (client) {
             console.log("Bonjour Didier !");
         }
         
-        // On verifie si un master existe deja sinon, comme il n'existe pas, on lui attribue le droit
+     // We check if a master exists or not. If it doesn't, we give it the right.
 		if (arrayMasters.length === 0 || obj_connect.master) {
             arrayMasters.push(obj_connect.identifant);
 		}
@@ -60,7 +60,7 @@ socket.on('connection', function (client) {
 		TempoPseudo = obj_connect.identifant;
 		tab_client.push(TempoPseudo);
 		
-        // On envoi la nouvelle tab de client a l'utilisateur qui a demandé la connection
+    // We send client's tab to users that began connection
 		client.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
@@ -70,7 +70,7 @@ socket.on('connection', function (client) {
             ppt: TempoPPT
 		}));
         
-		// On envoi la nouvelle tab de client a tous les clients connectes
+		// We send tab's client to all clients connected
 		client.broadcast.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
@@ -80,7 +80,7 @@ socket.on('connection', function (client) {
     });
 
 	
-	// Reception d'un message pour la gestion des slides et l'envoi au poste esclave
+	// Slides management and messages management
 	client.on('message', function (data) {
 		var obj_client = JSON.parse(data);
 		slide_currently = obj_client.slide;
@@ -90,25 +90,25 @@ socket.on('connection', function (client) {
 			le_prev: obj_client.precedant,
 			le_first: obj_client.premier,
 			le_last: obj_client.dernier,
-			le_msg: obj_client.message,      // channel de discution
+			le_msg: obj_client.message,      // Discussion channel
 			le_pseudo: obj_client.pseudo,    // pseudo
-			le_slide: obj_client.slide,      // id du SLide
+			le_slide: obj_client.slide,      // Slide "id"
 			url: obj_client.url
 		}));
 	});
 	
-	// Reception de l'id de l'element clique et on envoi l'id a tous les clients
+	// Catches "id" of clicked element and sending "id" to all clients
 	client.on('envoiRefObjetHtml', function (idtempo) {
 		client.broadcast.emit('recupObjetHtml', idtempo);
     });
 	
-	// Reception d'un traitement video et l'envoi a tous les clients
+	// Catches video "events" and sending information to all clients 
 	client.on('envoiControlVideo', function (video) {
 		var obj_video = JSON.parse(video);
 		client.broadcast.emit('emettreControlVideo', JSON.stringify({
 			pause: obj_video.pause,
 			play: obj_video.play,
-			toPlay: obj_video.toPlay     // jouer la video sur position de lecture saisie
+			toPlay: obj_video.toPlay     // play video on actual "Play" position 
 		}));
     });
 
@@ -117,7 +117,7 @@ socket.on('connection', function (client) {
         console.log("demande annimateur " + identifiant);
     }); 
 
-	// Lors de la deconnexion d'un client
+	// Executed when a client disconnects
 	client.on('disconnect', function () {
 		console.log('disconnect ' + TempoPseudo);
 		
@@ -134,7 +134,7 @@ socket.on('connection', function (client) {
         
 		allClients -= 1;
         
-        // On renvoi la nouvelle table de client a tous les clients
+    // We send the new client table to all clients
 		client.broadcast.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,

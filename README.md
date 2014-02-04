@@ -1,7 +1,7 @@
 Slides-Dynamiques 
 =================
 
-Projet R&amp;D de Liesse NADJI, Philippe BENOIT et Abdoul karim CISSE
+Projet R&amp;D of Liesse NADJI, Philippe BENOIT and Abdoul karim CISSE
 Ce projet est la suite de ce qui a été fait par Aurelien GEANT et Julian DEMAREST l'an dernier
 
 Ce projet consiste à diffuser des slides utilisant la technologie SMIL/EAST sur des postes client.
@@ -84,6 +84,7 @@ ESSENTIAL FILES
 -----------------------------
     - server.js  // Gestion serveur
     - public/index.html  // Interface graphique manipulée par le client (slide, annimation, utilisateur)
+    - public/upload.html // Permet d'uploader une nouvelle présentation sur le serveur
     - public/js/video.js // Gestion vidéo
     - public/js/pannel.js // Gestion channel de discussion
     - public/js/client.js // Gestion des évenements du client

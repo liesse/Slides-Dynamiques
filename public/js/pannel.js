@@ -1,8 +1,8 @@
-/* Cette fonction s'execute lorsque le DOM est entierement charge */
+/* This function is executed when the DOM is loaded */
 			
 $(document).ready(function() { 
     
-    /* Permet d'envoyer les messages a tous les clients */
+    /* Send messages to all clients */
     $("#img-send").click(function() { 
         if ($("#input_text").val() != "") {
             $("#message ul").append("<li>(" + mon_identifiant + "): " + $("#input_text").val() + "</li>");	
@@ -14,7 +14,7 @@ $(document).ready(function() {
         }
     });
 
-    /* Permet l'ouverture et la fermeture du pannel */
+    /* Allow to open and close the panel */
     $("#bouton-menu").click(function() { 
         if ($("#cadre-menu").css("margin-Left") == "0px") {
             $("#cadre-menu").animate({ marginLeft: "175px"  }, 400 );

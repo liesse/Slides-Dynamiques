@@ -3,21 +3,23 @@
   <head>
 	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
     <title>Web Teach</title>
+    
+  <!-- Necessary Node.js scripts for building this application -->    
 	<script src="js/jquery-1.9.1.js"></script>
 	<script src="js/jquery-ui-1.10.2.custom.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
 	
-	<!-- Modules pour le traitement des messages envoyés et reçus, de la video et du channel de discutions -->
+	<!-- Scripts used for messages management (sent and received), videos and channel discussion-->
 	<script type="text/javascript" src="js/pannel.js"></script>
 	<script type="text/javascript" src="js/video.js"></script>
 	<script type="text/javascript" src="js/client.js"></script>
 	
-	<!-- On relie la feuille de style -->
+	<!-- We add style files -->
 	<link rel='stylesheet' href="css/style.css" type='text/css' media='screen' />
 	<link href="css/smoothness/jquery-ui-1.10.2.custom.css" rel="stylesheet">
-  </head>
+ </head>
 
-  <!-- Page de connection -->
+  <!-- Below the connection page -->
   <body class="base">   
     <div id="overlay"></div>
 	<div id="div_connection" >
@@ -31,9 +33,9 @@
             <div class="img-connect" id="identification"></div><br />
         </div>
 	</div>
-	<!-- Fin de la connection --> 
+	<!-- End of the connection page --> 
 
-	<!-- Menu de changement de Slide -->
+	<!-- Menu for slides management -->
     <div id="chgt_slide">
         <div id="titre1"> <img src="images/titre1.png" /> 
         <button id="bouton-selectPPT" class="isHidden" type="button">Selectionner une presentation</button></div>
@@ -53,14 +55,14 @@
 		</div>	  
     </div>
     <div id="degrade"></div>
-	<!-- Fin Menu de changement de Slide -->	
+	<!-- End of Menu for slides management -->	
 
-	<!-- Fenetre des utilisateurs connectes -->
+	<!-- Window for connected users -->
 	<div id="cadre-user">
         <ul></ul>
 	</div>
 	
-	<!-- Pannel de discussion -->
+	<!-- Discussion panel -->
 	<div id="cadre-menu">
 		<div id="bordure-menu">
 			<div id="message">
@@ -74,7 +76,7 @@
 	
 	<IFRAME id="notre_frame"  src="ppt/video.html"></IFRAME> 
 
-	<!-- Controls video -->
+	<!-- Controls for video management -->
 	<div id="cadre-video" class="isHidden">
 		<button id="lectureVideo">play</button>		
 		<div id="cadre-video-droit">

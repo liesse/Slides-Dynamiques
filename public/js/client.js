@@ -1,4 +1,5 @@
-/* Variable global */
+
+/* Globals variables */
 var TempoMaster = false;
 var master = false;
 var mon_identifiant;
@@ -11,7 +12,7 @@ $(document).ready(function () {
     "use strict";
     socket = io.connect();
 
-    // Se lance apres l authentification, et permet de s enregistrer aupres du serveur afin d avertir un nouvelle utilisateur
+		// Executed after authentication, this event allows users' register in order to warn the server of new user
     $("#identification").click(function () {
         if ($("#identifiant").val() !== "") {
             $('#identification').unbind('click');
@@ -36,7 +37,7 @@ $(document).ready(function () {
 
 
     
-    // On Verifie si on charge bien une presentation html
+		// Function that check if we are really loading an html presentation
     $("#img-select").click(function () {
         $("#hiddenfile").click();
         $("#hiddenfile").change(function () {
@@ -46,13 +47,13 @@ $(document).ready(function () {
         });
     });
 
-    // Permet de selectionner une nouvelle presentation
+    // Allow animators to run another presentation
     $("#bouton-selectPPT").click(function () {
         var w = window.open('upload.html', 'popUpWindow', 'height=200, width=400, left=10, top=10, resizable=no, scrollbars=yes, toolbar=no, menubar=no, location=no, directories=no, status=yes');
         w.focus();
     });
 
-    // Reception des messages du serveur et traitement des messages en fonction des donnees recues
+    // Management of received messages (validity treatment, Retrieval of datas, DOM manipulation) 
     socket.on('message', function (data) {
         var obj = jQuery.parseJSON(data);
         
@@ -66,11 +67,11 @@ $(document).ready(function () {
             $($('#notre_frame').contents()).find("#last").click();
         } else if (obj.url) {
             $('#notre_frame').attr("src", obj.url);
-        } else if (obj.le_msg) { // reception et traitement des messages de discussion
+        } else if (obj.le_msg) { // Treatment of discussion messages
             $("#message ul").append("<li>(" + obj.le_pseudo + "): " + obj.le_msg + "</li>");
             $("#message").scrollTop(100000);
                 
-            // Notification du pannel (rouge clignotant)
+            // Panel notification (blinking red)
             if ($("#cadre-menu").css("margin-Left") === "0px") {
                 var nbNewMessage;
                 if ($('#bouton-menu').html()) {
@@ -88,24 +89,24 @@ $(document).ready(function () {
                 ma_liste += "<li>" + obj.tab_client[i] + "</li>";
             }
             
-            $('#cadre-user ul').html(ma_liste); // actualisation de la liste des pseudos
-            $('#clients').text(obj.clients);    // affichage nombre de client connecte
+            $('#cadre-user ul').html(ma_liste); // Update pseudos list
+            $('#clients').text(obj.clients);    // Display the number of connected users
                 
             if (obj.connexion) {
                 $("#message ul").append("<li><font color='green'>(" + obj.connexion + ") s'est connect&#233;</font> </li>");
                 var timeLoad = 200;
                 
-                if (obj.ppt) { // Change la presentation sur les postes esclave
+                if (obj.ppt) { // Change presentation on slave computers
                     $("#notre_frame").attr("src", "ppt/" + obj.ppt);
                     timeLoad = 3000;
                 }
                     
                 setTimeout(function() {
-                    initVideo(); //charge les controles pour la gestion de la video
+                    initVideo(); // load controls for video management
                     chargementSlide();
                         
                     if (obj.le_slide) {
-                        slideControlContainer.selectIndex(obj.le_slide); // lors de la connection on charge le slide en cours
+                        slideControlContainer.selectIndex(obj.le_slide); // When a connection happen, we load the ongoing slide presentation
                     }
                             
                     $("#div_connection").hide();
@@ -113,7 +114,7 @@ $(document).ready(function () {
                 }, timeLoad);
             }
             
-            // Devenir annimateur si le serveur nous l'indique
+            // Become an animator if the server tell us.
             if (obj.arrayMasters) {
                 if (obj.arrayMasters.indexOf(mon_identifiant) === -1) {
                     setMaster(false);
@@ -132,14 +133,16 @@ $(document).ready(function () {
         }
     });
                 
-    // Les esclaves recois l id du slide ou de l element clique du poste master et on simule le click
+    // Slaves receive slide "id" of the click element on master computer, then we simulate "the click" on slaves computers.
     socket.on('recupObjetHtml', function (idtempo) {
         if (idtempo) {
             $($('#notre_frame').contents()).find("#" + idtempo).click();
         }
     });
     
-    // Permet de recuperer les evenements de la gestion des slides et de les envoyer au poste esclave
+    //Functions that are presents below allow to retrieve events on master computer and then sends informations on slaves computer.
+		
+		// Going on the next slide
     $("#next1").click(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#next").click();
@@ -150,6 +153,7 @@ $(document).ready(function () {
         }
     });
 
+		// Going on the previous slide
     $("#prev1").click(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#prev").click();
@@ -160,6 +164,7 @@ $(document).ready(function () {
         }
     });
 
+		// Going at the beginning of this presentation
     $("#first1").click(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#first").click();
@@ -169,6 +174,7 @@ $(document).ready(function () {
         }
     });
 
+		// Going at the end of this presentation
     $("#last1").click(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#last").click();
@@ -179,14 +185,14 @@ $(document).ready(function () {
     });
 });
   
-// Permet de charger les slides et de creer des evenements sur la presentation
+// Allow to load slides and create events on it
 function chargementSlide() {
     "use strict";
     console.log("chargementSlide");
     var containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
     slideControlContainer = containers[containers.length - 1];
 
-    // Permet de recuperer l action fait sur le master et de le simuler sur les postes client connectes
+    // Allow to retrieve action done on master computer and simulate it on slaves computers
     $($('#notre_frame').contents()).find(".slide").click(function(e) {
         e.stopPropagation();
         if (master) {
@@ -206,7 +212,7 @@ function chargementSlide() {
     });
 }
 
-// Permet de ne pas autocratiser les caracteres speciaux pour le pseudo
+// Allow to forbid special characters for the pseudo
 function special_caract(evt) {
     "use strict";
     var keyCode = evt.which ? evt.which : evt.keyCode;
@@ -219,6 +225,7 @@ function special_caract(evt) {
     }
 }
 
+// Allow to set a new master if he's not and the contrary delete master privilege if he's not.
 function setMaster(isMaster) {
     "use strict";
     if (isMaster) {

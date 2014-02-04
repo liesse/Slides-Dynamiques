@@ -3,10 +3,10 @@ var myVideo;
 function initVideo() {
     "use strict";
     
-    /* On recupere l'element video  */
+    /* We retrieve video element  */
     myVideo = $($('#notre_frame').contents()).find("video")[0];
     
-    /* On affiche la barre de controle video lors du passage de la souris sur la video  */
+    /* We display video controls panel when mouse hover the video */
     $($('#notre_frame').contents()).find("video").hover(function () {
         if (master) {
             $("#cadre-video").show();
@@ -22,14 +22,14 @@ function initVideo() {
     if (myVideo) {
         $("#lectureVideo").button({ text: true, icons: {primary: "ui-icon-play"} });
         
-        /* Capture le temps de la video l'affiche  */
+        /* Display video timer  */
         $(myVideo).bind('timeupdate', function () {
             TimeNow = myVideo.currentTime;
             $("#lectureVideo").button("option", "label", TimeNow.toFixed(1));
             $('#barre').slider('value', TimeNow);
         });
              
-        /* Lorsque l'on detecte l'evenement pause on l'envoi aux postes esclaves */
+        /* When detect "pause" event, we send information to slaves */
         $(myVideo).bind("pause", function () {
             $("#lectureVideo").button({ text: true, icons: {primary: "ui-icon-play"} });
             if (master) {
@@ -39,7 +39,7 @@ function initVideo() {
             }
         });
         
-        /* Lorsque l'on detecte l'evenement lecture on l'envoi aux postes esclaves */
+        /* When detect "lecture" event, we send information to slaves */
         $(myVideo).bind("playing", function () {
             $("#lectureVideo").button({ text: true, icons: {primary: "ui-icon-pause"} });
             if (master) {
@@ -49,7 +49,7 @@ function initVideo() {
             }
         });
             
-        /* Definition du slider pour la video */
+        /* Slider definition for the video */
         var video_duration = myVideo.duration;
         $('#barre').slider({
             value: 0,
@@ -64,7 +64,7 @@ function initVideo() {
             }
         });
         
-        /* Boutton de lecture video */
+        /* Button to play video */
         $("#lectureVideo").click(function () {
             if (myVideo.paused) {
                 myVideo.play();
@@ -73,7 +73,7 @@ function initVideo() {
             }
         });
                             
-        /* Lors du changement de la position de la video on envoi la nouvelle position aux postes esclaves */
+        /* When video position change, we give new positions to slaves computers */
         $(myVideo).bind("seeked", function () {
             if (master) {
                 socket.emit('envoiControlVideo', JSON.stringify({
@@ -83,7 +83,7 @@ function initVideo() {
         });
     }
     
-    /* Lors de la reception du controle video envoye par le serveur on l'execute */
+    /* When we receive video controls from the server, we run it */
     socket.on('emettreControlVideo', function (video) {
         var obj_video = jQuery.parseJSON(video);
         if (obj_video.play) {
