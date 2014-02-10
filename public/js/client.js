@@ -6,13 +6,14 @@ var mon_identifiant;
 var password;
 var socket;
 var slideControlContainer;
-
+var containers;
+var currentSlide = 0;
 
 $(document).ready(function () {
     "use strict";
     socket = io.connect();
 
-		// Executed after authentication, this event allows users' register in order to warn the server of new user
+	// Executed after authentication, this event allows users' register in order to warn the server of new user
     $("#identification").click(function () {
         if ($("#identifiant").val() !== "") {
             $('#identification').unbind('click');
@@ -35,9 +36,7 @@ $(document).ready(function () {
         }
     });
 
-
-    
-		// Function that check if we are really loading an html presentation
+	// Function that check if we are really loading an html presentation
     $("#img-select").click(function () {
         $("#hiddenfile").click();
         $("#hiddenfile").change(function () {
@@ -58,9 +57,11 @@ $(document).ready(function () {
         var obj = jQuery.parseJSON(data);
         
         if (obj.le_next) {
-            slideControlContainer.selectIndex(obj.le_slide);
+            //slideControlContainer.selectIndex(currentSlide);
+            $($('#notre_frame').contents()).find("#next").click();
         } else if (obj.le_prev) {
-            slideControlContainer.selectIndex(obj.le_slide);
+            //slideControlContainer.selectIndex(currentSlide);
+            $($('#notre_frame').contents()).find("#prev").click();
         } else if (obj.le_first) {
             $($('#notre_frame').contents()).find("#first").click();
         } else if (obj.le_last) {
@@ -133,27 +134,35 @@ $(document).ready(function () {
         }
     });
                 
-    // Slaves receive slide "id" of the click element on master computer, then we simulate "the click" on slaves computers.
+    //Slaves receive slide "id" of the click element on master computer, then we simulate "the click" on slaves computers.
     socket.on('recupObjetHtml', function (idtempo) {
+        console.log("recupObjetHtml " + idtempo);
         if (idtempo) {
             $($('#notre_frame').contents()).find("#" + idtempo).click();
         }
     });
     
-    //Functions that are presents below allow to retrieve events on master computer and then sends informations on slaves computer.
-		
-		// Going on the next slide
+
+    //Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves computer.
+    socket.on('updateSlide', function(){
+        console.log('***client receives updateSlide');
+        updateSlide();
+    });
+
+    // Permet de recuperer les evenements de la gestion des slides et de les envoyer au poste esclave
     $("#next1").click(function () {
+        console.log('clic next1');
         if (master) {
             $($('#notre_frame').contents()).find("#next").click();
             socket.send(JSON.stringify({
                 suivant: "next",
                 slide: slideControlContainer.currentIndex // on envoi l'ID du slide
             }));
+            console.log('Master send index: ' + slideControlContainer.currentIndex);
         }
     });
 
-		// Going on the previous slide
+	// Going on the previous slide
     $("#prev1").click(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#prev").click();
@@ -164,7 +173,7 @@ $(document).ready(function () {
         }
     });
 
-		// Going at the beginning of this presentation
+	// Going at the beginning of this presentation
     $("#first1").click(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#first").click();
@@ -174,7 +183,7 @@ $(document).ready(function () {
         }
     });
 
-		// Going at the end of this presentation
+	// Going at the end of this presentation
     $("#last1").click(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#last").click();
@@ -184,12 +193,29 @@ $(document).ready(function () {
         }
     });
 });
-  
-// Allow to load slides and create events on it
+
+// prevent clients when a new presentation is selected
+function preventSlideUpdate(){
+    console.log("***Master telling slide updated");
+    socket.emit('updateSlide');
+    console.log('***Message updateSlide sent');
+}
+
+//Load a new presentation selected by the animator
+function updateSlide(){ 
+    console.log("***Updating slide...");  
+    $('#notre_frame').attr('src', $('#notre_frame').attr('src'));
+    containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
+    slideControlContainer = containers[containers.length - 1];
+    slideControlContainer.selectIndex(0);
+    console.log("***Slide updated");
+}
+
+// Permet de charger les slides et de creer des evenements sur la presentation
 function chargementSlide() {
-    "use strict";
+    //"use strict";
     console.log("chargementSlide");
-    var containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
+    containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
     slideControlContainer = containers[containers.length - 1];
 
     // Allow to retrieve action done on master computer and simulate it on slaves computers
@@ -230,11 +256,15 @@ function setMaster(isMaster) {
     "use strict";
     if (isMaster) {
         master = true;
-        $("#menu-control").show();
-        $("#bouton-selectPPT").show();
+        //$("#menu-control").show();
+       // $("#bouton-selectPPT").show();
+        $("#menu-control").removeClass('isHidden');
+        $("#bouton-selectPPT").removeClass('isHidden');
     } else {
         master = false;
-        $("#menu-control").hide();
-        $("#bouton-selectPPT").hide();
+        //$("#menu-control").hide();
+        //$("#bouton-selectPPT").hide();
+        $("#menu-control").addClass('isHidden');
+        $("#bouton-selectPPT").addClass('isHidden');
     }
 }

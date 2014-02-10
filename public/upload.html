@@ -11,15 +11,16 @@
     <script type='text/javascript'>
         window.onunload = function() {
             if (window.opener && !window.opener.closed) {
-                window.opener.chargementSlide();
-             }
+                window.opener.updateSlide();
+                window.opener.preventSlideUpdate();
+            }
         };
     </script>
 </head>
 <body>
 	  <!-- Form that allow to choose a file presentation, anywhere on the disk (not necessary to choose it on project public repository -->
     <form id="newPPT" action="./public/ppt" method="post" enctype="multipart/form-data">
-        <input type="file" name="a" id="hiddenfile" style=""  accept='text/html' />
+        <input type="file" name="newPresentation" id="hiddenfile" accept='text/html' />
         <input type="submit" value="Submit" onclick="self.close();">
     </form>
 </body>

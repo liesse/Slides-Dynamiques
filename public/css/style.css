@@ -1,5 +1,5 @@
 /* Init for browser compatibility */
-html,body,div,span,ul,li{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outline:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}a {text-decoration:none;}
+html,body,div,span,ul,li{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1; min-width: 400px;}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outline:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}a {text-decoration:none;}
 
 html {
 	height: 99%;
@@ -8,6 +8,10 @@ html {
 
 .isHidden {
     display: none;
+}
+
+.isVisible {
+    display: inline-block;
 }
 
 /* Menu DEROULANT */
@@ -225,9 +229,10 @@ html {
 }
 
 #bouton-selectPPT {
-	margin-top:6px; 
-	position:absolute; 
-	width:201px;
+	margin-left: 5px;
+    margin-top: 5px;
+    position:absolute;
+    width:201px; 
 }
 
 #menu-control {

@@ -4,17 +4,20 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var socket = io.listen(server);
+var fs = require('fs');
 
  // Loading server and static repository definition to include inside it.
 app.configure(function () {
     app.use(express.static(__dirname + '/public'));
+    app.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + '/public/ppt' }));
 });
 app.get('/', function (req, res, next) {
     res.render('./public/index.html');
 });
 app.post('/public/ppt', function(req, res){
-	fs.renameSync(req.files.a.path,"./public/ppt/Presentation.html");
+	fs.renameSync(req.files.newPresentation.path,"./public/ppt/Presentation.html");
 	console.log("New presentation uploaded");
+	server.emit("nouveau");
 });
 server.listen(8333);
 
@@ -34,13 +37,12 @@ app.get('/', function (req, res) {
     res.sendfile(__dirname + '/public/video.html');
 });
 
-
 // Client's connection
 socket.on('connection', function (client) {
     "use strict";
     var TempoPseudo;
     
-	// After enter a password, we begin the session
+	// After entering a password, the session begin
 	client.on('ouvertureSession', function (connect) {
 		var obj_connect = JSON.parse(connect);
         allClients += 1;
@@ -52,15 +54,15 @@ socket.on('connection', function (client) {
             console.log("Bonjour Didier !");
         }
         
-     // We check if a master exists or not. If it doesn't, we give it the right.
+     	// We check if a master exists or not. If it doesn't, we give it the right.
 		if (arrayMasters.length === 0 || obj_connect.master) {
             arrayMasters.push(obj_connect.identifant);
 		}
         
 		TempoPseudo = obj_connect.identifant;
 		tab_client.push(TempoPseudo);
-		
-    // We send client's tab to users that began connection
+    
+    	// We send client's tab to users that began connection
 		client.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
@@ -79,12 +81,11 @@ socket.on('connection', function (client) {
 		 
     });
 
-	
 	// Slides management and messages management
 	client.on('message', function (data) {
 		var obj_client = JSON.parse(data);
 		slide_currently = obj_client.slide;
-		
+		console.log('Server reveices and broadcast index: ' + obj_client.slide);
 		client.broadcast.send(JSON.stringify({
 			le_next: obj_client.suivant,
 			le_prev: obj_client.precedant,
@@ -95,6 +96,12 @@ socket.on('connection', function (client) {
 			le_slide: obj_client.slide,      // Slide "id"
 			url: obj_client.url
 		}));
+	});
+
+	// Broadcast the message to prevent clients that a new presentation is selected by the animator 
+	client.on('updateSlide', function () {
+		console.log('server receives and broadcast updateSlide');
+		client.broadcast.emit('updateSlide');
 	});
 	
 	// Catches "id" of clicked element and sending "id" to all clients
@@ -111,8 +118,7 @@ socket.on('connection', function (client) {
 			toPlay: obj_video.toPlay     // play video on actual "Play" position 
 		}));
     });
-
-    
+  
     client.on('requestMaster', function (identifiant) {
         console.log("demande annimateur " + identifiant);
     }); 
