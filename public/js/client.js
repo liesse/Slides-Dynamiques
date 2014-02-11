@@ -20,16 +20,10 @@ $(document).ready(function () {
             $(".img-loading").css("visibility", "visible");
             mon_identifiant = $("#identifiant").val();
             password = $("#password").val();
-            
-            if ($("#master").is(':checked') === true) {
-                TempoMaster = true;
-                $("#menu-control").removeClass('isHidden');
-            }
-    
+
             socket.emit('ouvertureSession', JSON.stringify({
                 identifant: mon_identifiant,
                 password: password,
-                master: TempoMaster
             }));
               
             $("#menu-pseudo").html("Bonjour " + mon_identifiant);
@@ -53,11 +47,11 @@ $(document).ready(function () {
     });
 
     // Management of received messages (validity treatment, Retrieval of datas, DOM manipulation) 
-    socket.on('message', function (data) {
-        var obj = jQuery.parseJSON(data);
+    socket.on('message', function (message) {
+        var newMessage = jQuery.parseJSON(message);
        
-        if (obj.le_msg) { // Treatment of discussion messages
-            $("#message ul").append("<li>(" + obj.le_pseudo + "): " + obj.le_msg + "</li>");
+        if (newMessage.messageContent) { // Treatment of discussion messages
+            $("#message ul").append("<li>(" + newMessage.messageSender + "): " + newMessage.messageContent + "</li>");
             $("#message").scrollTop(100000);
                 
             // Panel notification (blinking red)
@@ -74,46 +68,39 @@ $(document).ready(function () {
             var ma_liste = "";
             var i;
                 
-            for (i = 0; i < obj.tab_client.length; i += 1) {
-                ma_liste += "<li>" + obj.tab_client[i] + "</li>";
+            for (i = 0; i < newMessage.tab_client.length; i += 1) {
+                ma_liste += "<li>" + newMessage.tab_client[i] + "</li>";
             }
             
             $('#cadre-user ul').html(ma_liste); // Update pseudos list
-            $('#clients').text(obj.clients);    // Display the number of connected users
+            $('#clients').text(newMessage.clients);    // Display the number of connected users
                 
-            if (obj.connexion) {
-                $("#message ul").append("<li><font color='green'>(" + obj.connexion + ") s'est connect&#233;</font> </li>");
+            if (newMessage.connexion) {
+                $("#message ul").append("<li><font color='green'>(" + newMessage.connexion + ") s'est connect&#233;</font> </li>");
                 var timeLoad = 200;
-                
-                if (obj.ppt) { // Change presentation on slave computers
-                    $("#notre_frame").attr("src", "ppt/" + obj.ppt);
-                    timeLoad = 3000;
-                }
                     
                 setTimeout(function() {
                     initVideo(); // load controls for video management
-                    chargementSlide();
-  
                     $("#div_connection").hide();
                     $("#overlay").hide();
                 }, timeLoad);
             }
             
             // Become an animator if the server tell us.
-            if (obj.arrayMasters) {
-                if (obj.arrayMasters.indexOf(mon_identifiant) === -1) {
+            if (newMessage.arrayMasters) {
+                if (newMessage.arrayMasters.indexOf(mon_identifiant) === -1) {
                     setMaster(false);
                 } else {
                     setMaster(true);
                 }
             }
                     
-            if (obj.pseudo) {
-                $("#message ul").append("<li><font color='green'>(" + obj.pseudo + ") s'est connect&#233;</font> </li>");
+            if (newMessage.messageSender) {
+                $("#message ul").append("<li><font color='green'>(" + newMessage.messageSender + ") s'est connect&#233;</font> </li>");
             }
             
-            if (obj.deconnexion) {
-                $("#message ul").append("<li><font color='red'>(" + obj.deconnexion + ") s'est d&#233connect&#233;</font> </li>");
+            if (newMessage.deconnexion) {
+                $("#message ul").append("<li><font color='red'>(" + newMessage.deconnexion + ") s'est d&#233connect&#233;</font> </li>");
             }
         }
     });
@@ -147,7 +134,6 @@ $(document).ready(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#next").click();
             socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
-            console.log('Master send index: ' + slideControlContainer.currentIndex);
         }
     });
 
@@ -174,6 +160,11 @@ $(document).ready(function () {
             socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
         }
     });
+
+    $("#notre_frame").load(function(){
+        $($('#notre_frame').contents()).find('#navigation_par').hide();
+    });
+
 });
 
 // prevent clients when a new presentation is selected
@@ -187,37 +178,8 @@ function preventSlideUpdate(){
 function updateSlide(){ 
     console.log("***Updating slide...");  
     $('#notre_frame').attr('src', $('#notre_frame').attr('src'));
-    containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
-    slideControlContainer = containers[containers.length - 1];
-    slideControlContainer.selectIndex(0);
+    //$($('#notre_frame').contents()).find('#navigation_par').hide();
     console.log("***Slide updated");
-}
-
-// Permet de charger les slides et de creer des evenements sur la presentation
-function chargementSlide() {
-    //"use strict";
-    console.log("chargementSlide");
-    containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
-    slideControlContainer = containers[containers.length - 1];
-
-    // Allow to retrieve action done on master computer and simulate it on slaves computers
-    $($('#notre_frame').contents()).find(".slide").click(function(e) {
-        e.stopPropagation();
-        if (master) {
-            var idtempo = this.id;
-            socket.emit('envoiRefObjetHtml', idtempo);
-        }
-    });
-    
-    $($('#notre_frame').contents()).find("li").not("[class='highlight']").click(function (e) {
-        if ($(this).parent().attr("class") !== "incremental") {
-            e.stopPropagation();
-            if (master) {
-                idtempo = this.id;
-                socket.emit('envoiRefObjetHtml', idtempo);
-            }
-        }
-    });
 }
 
 // Allow to forbid special characters for the pseudo

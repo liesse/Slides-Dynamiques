@@ -44,23 +44,23 @@ socket.on('connection', function (client) {
     var TempoPseudo;
     
 	// After entering a password, the session begin
-	client.on('ouvertureSession', function (connect) {
-		var obj_connect = JSON.parse(connect);
+	client.on('ouvertureSession', function (connection) {
+		var user = JSON.parse(connection);
         allClients += 1;
         
-        if (obj_connect.identifant === "root" && obj_connect.password === "pass") {
+        if (user.identifant === "root" && user.password === "pass") {
             asRoot = true;
-            arrayMasters.push(obj_connect.identifant);
+            arrayMasters.push(user.identifant);
             root = client;
             console.log("Bonjour Didier !");
         }
         
      	// We check if a master exists or not. If it doesn't, we give it the right.
-		if (arrayMasters.length === 0 || obj_connect.master) {
-            arrayMasters.push(obj_connect.identifant);
+		if (arrayMasters.length === 0 ) {
+            arrayMasters.push(user.identifant);
 		}
         
-		TempoPseudo = obj_connect.identifant;
+		TempoPseudo = user.identifant;
 		tab_client.push(TempoPseudo);
     
     	// We send client's tab to users that began connection
@@ -69,8 +69,6 @@ socket.on('connection', function (client) {
             "tab_client": tab_client,
             "connexion": TempoPseudo,
             "arrayMasters": arrayMasters,
-            le_slide : slide_currently,
-            ppt: TempoPPT
 		}));
 
 		client.emit('activeSlide', currentSlideId);
@@ -79,20 +77,17 @@ socket.on('connection', function (client) {
 		client.broadcast.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
-            "pseudo": TempoPseudo
+            "messageSender": TempoPseudo
 		}));
 		 
     });
 
 	// Slides management and messages management
-	client.on('message', function (data) {
-		var obj_client = JSON.parse(data);
-		slide_currently = obj_client.slide;
+	client.on('message', function (message) {
+		var newMessage = JSON.parse(message);
 		client.broadcast.send(JSON.stringify({
-			le_msg: obj_client.message,      // Discussion channel
-			le_pseudo: obj_client.pseudo,    // pseudo
-			le_slide: obj_client.slide,      // Slide "id"
-			url: obj_client.url
+			messageContent: newMessage.messageContent,      // Discussion channel
+			messageSender: newMessage.messageSender,    	// pseudo
 		}));
 	});
 
@@ -110,11 +105,6 @@ socket.on('connection', function (client) {
 	client.on('activeSlideIdRequest', function(){
 		client.broadcast.emit('activeSlide', currentSlideId);
 	});
-
-	// Catches "id" of clicked element and sending "id" to all clients
-	client.on('envoiRefObjetHtml', function (idtempo) {
-		client.broadcast.emit('recupObjetHtml', idtempo);
-    });
 	
 	// Catches video "events" and sending information to all clients 
 	client.on('envoiControlVideo', function (video) {

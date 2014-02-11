@@ -230,9 +230,11 @@ html {
 
 #bouton-selectPPT {
 	margin-left: 5px;
-    margin-top: 5px;
+    margin-top: 8px;
     position:absolute;
-    width:201px; 
+    width:201px;
+    font: 13px Arial;
+    color: rgb(85, 85, 85);
 }
 
 #menu-control {

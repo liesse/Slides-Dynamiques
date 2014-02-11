@@ -8,8 +8,8 @@ $(document).ready(function() {
             $("#message ul").append("<li>(" + mon_identifiant + "): " + $("#input_text").val() + "</li>");	
             $("#message").scrollTop(100000) ;
             socket.send(JSON.stringify({
-                message: $("#input_text").val(),
-                pseudo: mon_identifiant
+                messageContent: $("#input_text").val(),
+                messageSender: mon_identifiant
             }));
         }
     });
