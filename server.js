@@ -5,6 +5,7 @@ var app = express();
 var server = require('http').createServer(app);
 var socket = io.listen(server);
 var fs = require('fs');
+var currentSlideId;
 
  // Loading server and static repository definition to include inside it.
 app.configure(function () {
@@ -71,6 +72,8 @@ socket.on('connection', function (client) {
             le_slide : slide_currently,
             ppt: TempoPPT
 		}));
+
+		client.emit('activeSlide', currentSlideId);
         
 		// We send tab's client to all clients connected
 		client.broadcast.send(JSON.stringify({
@@ -85,12 +88,7 @@ socket.on('connection', function (client) {
 	client.on('message', function (data) {
 		var obj_client = JSON.parse(data);
 		slide_currently = obj_client.slide;
-		console.log('Server reveices and broadcast index: ' + obj_client.slide);
 		client.broadcast.send(JSON.stringify({
-			le_next: obj_client.suivant,
-			le_prev: obj_client.precedant,
-			le_first: obj_client.premier,
-			le_last: obj_client.dernier,
 			le_msg: obj_client.message,      // Discussion channel
 			le_pseudo: obj_client.pseudo,    // pseudo
 			le_slide: obj_client.slide,      // Slide "id"
@@ -103,7 +101,16 @@ socket.on('connection', function (client) {
 		console.log('server receives and broadcast updateSlide');
 		client.broadcast.emit('updateSlide');
 	});
-	
+
+	client.on('SlideChanged', function (activeSlideId) {
+		currentSlideId = activeSlideId;
+		client.broadcast.emit('activeSlide', currentSlideId);
+	});
+
+	client.on('activeSlideIdRequest', function(){
+		client.broadcast.emit('activeSlide', currentSlideId);
+	});
+
 	// Catches "id" of clicked element and sending "id" to all clients
 	client.on('envoiRefObjetHtml', function (idtempo) {
 		client.broadcast.emit('recupObjetHtml', idtempo);

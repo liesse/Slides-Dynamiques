@@ -55,20 +55,8 @@ $(document).ready(function () {
     // Management of received messages (validity treatment, Retrieval of datas, DOM manipulation) 
     socket.on('message', function (data) {
         var obj = jQuery.parseJSON(data);
-        
-        if (obj.le_next) {
-            //slideControlContainer.selectIndex(currentSlide);
-            $($('#notre_frame').contents()).find("#next").click();
-        } else if (obj.le_prev) {
-            //slideControlContainer.selectIndex(currentSlide);
-            $($('#notre_frame').contents()).find("#prev").click();
-        } else if (obj.le_first) {
-            $($('#notre_frame').contents()).find("#first").click();
-        } else if (obj.le_last) {
-            $($('#notre_frame').contents()).find("#last").click();
-        } else if (obj.url) {
-            $('#notre_frame').attr("src", obj.url);
-        } else if (obj.le_msg) { // Treatment of discussion messages
+       
+        if (obj.le_msg) { // Treatment of discussion messages
             $("#message ul").append("<li>(" + obj.le_pseudo + "): " + obj.le_msg + "</li>");
             $("#message").scrollTop(100000);
                 
@@ -105,11 +93,7 @@ $(document).ready(function () {
                 setTimeout(function() {
                     initVideo(); // load controls for video management
                     chargementSlide();
-                        
-                    if (obj.le_slide) {
-                        slideControlContainer.selectIndex(obj.le_slide); // When a connection happen, we load the ongoing slide presentation
-                    }
-                            
+  
                     $("#div_connection").hide();
                     $("#overlay").hide();
                 }, timeLoad);
@@ -143,6 +127,14 @@ $(document).ready(function () {
     });
     
 
+    socket.on('activeSlide', function(activeSlideId) {
+        if (activeSlideId != null){
+            var slide = $($('#notre_frame').contents()).find('#' + activeSlideId);
+            $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr('smil', 'idle');
+            slide.attr('smil', 'active');
+        }
+    });
+
     //Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves computer.
     socket.on('updateSlide', function(){
         console.log('***client receives updateSlide');
@@ -154,10 +146,7 @@ $(document).ready(function () {
         console.log('clic next1');
         if (master) {
             $($('#notre_frame').contents()).find("#next").click();
-            socket.send(JSON.stringify({
-                suivant: "next",
-                slide: slideControlContainer.currentIndex // on envoi l'ID du slide
-            }));
+            socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
             console.log('Master send index: ' + slideControlContainer.currentIndex);
         }
     });
@@ -166,10 +155,7 @@ $(document).ready(function () {
     $("#prev1").click(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#prev").click();
-            socket.send(JSON.stringify({
-                precedant: "prev",
-                slide: slideControlContainer.currentIndex // on envoi l'ID du slide
-            }));
+            socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
         }
     });
 
@@ -177,9 +163,7 @@ $(document).ready(function () {
     $("#first1").click(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#first").click();
-            socket.send(JSON.stringify({
-                premier: "first"
-            }));
+            socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
         }
     });
 
@@ -187,9 +171,7 @@ $(document).ready(function () {
     $("#last1").click(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#last").click();
-            socket.send(JSON.stringify({
-                dernier: "last"
-            }));
+            socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
         }
     });
 });
@@ -267,4 +249,8 @@ function setMaster(isMaster) {
         $("#menu-control").addClass('isHidden');
         $("#bouton-selectPPT").addClass('isHidden');
     }
+}
+
+function getCurrentSlideIndex(){
+   alert("current slide id: " + $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
 }
