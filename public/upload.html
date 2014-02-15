@@ -8,20 +8,32 @@
             font-family: sans-serif;
         }
     </style>
+    <script src="js/jquery-1.9.1.js"></script>
+    <script src="js/jquery-ui-1.10.2.custom.js"></script>
     <script type='text/javascript'>
-        window.onunload = function() {
-            if (window.opener && !window.opener.closed) {
-                window.opener.updateSlide();
-                window.opener.preventSlideUpdate();
-            }
-        };
+        $(document).ready(function(){
+            $("#submit").click( function() {
+                if ($("#hiddenfile").val().split('.').reverse()[0] === "html") {
+                    if (window.opener && !window.opener.closed ) {
+                        $("#submitForm").click();
+                    }
+                    
+                    self.close();
+                }
+                else {
+                    alert("Veuillez choisir une présentation EAST");
+                }   
+            });
+        });
+
     </script>
 </head>
 <body>
-	  <!-- Form that allow to choose a file presentation, anywhere on the disk (not necessary to choose it on project public repository -->
+      <!-- Form that allow to choose a file presentation, anywhere on the disk (not necessary to choose it on project public repository -->
     <form id="newPPT" action="./public/ppt" method="post" enctype="multipart/form-data">
         <input type="file" name="newPresentation" id="hiddenfile" accept='text/html' />
-        <input type="submit" value="Submit" onclick="self.close();">
+        <input type="button" id="submit" value="Submit">
+        <input id="submitForm" type="submit" style="display:none">
     </form>
 </body>
 </html>
