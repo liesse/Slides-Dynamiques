@@ -44,7 +44,7 @@ Ajout des fonctionalités suivantes :
     - Nouvelle fonctionnalité : interface permettant de charger une présentation autre que celle par défaut et de la diffusée sur les postes esclaves.
     - Correction du bug sur la fermeture du contrôleur vidéo.
     
-VERSION 4.5
+VERSION 5.0
 ----------------------------  
 
 Ajout des fonctionalités suivantes :
@@ -52,19 +52,21 @@ Ajout des fonctionalités suivantes :
     - mise à jours de Node.js
     - mise à jour d'Express
     - éclaircir/nettoyer le code
-    - éviter les chemins en dur (recherche des diapos, etc)
-    - correction du bug vidéo
-    
-VERSION 5.0
+    - Amélioration de la communication des messages 
+    - éviter les chemins en dur 
+    - Possibilité de choisir une présentation sur le disque
+
+VERSION 6.0
 ----------------------------  
 
 Ajout des fonctionalités suivantes :
- 
+
+    - correction du bug vidéo
     - émetteur / proxy -> client
     - émetteur -> proxy / client
     - émetteur / proxy -> proxy / client
 
-VERSION 6.0
+VERSION 7.0
 ----------------------------  
 
 Ajout des fonctionalités suivantes :
@@ -82,10 +84,10 @@ Pour faire fonctionner le Projet Slides-Dynamiques :
     
 ESSENTIAL FILES
 -----------------------------
-    - server.js  // Gestion serveur
-    - public/index.html  // Interface graphique manipulée par le client (slide, annimation, utilisateur)
-    - public/upload.html // Permet d'uploader une nouvelle présentation sur le serveur
-    - public/js/video.js // Gestion vidéo
+    - server.js  	  // Gestion serveur
+    - public/index.html   // Interface graphique manipulée par le client (slide, annimation, utilisateur)
+    - public/upload.html  // Permet d'uploader une nouvelle présentation sur le serveur
+    - public/js/video.js  // Gestion vidéo
     - public/js/pannel.js // Gestion channel de discussion
     - public/js/client.js // Gestion des évenements du client
  
