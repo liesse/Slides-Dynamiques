@@ -216,4 +216,4 @@ function lancerChat(pseudo){
     myWindow.mon_identifiant = mon_identifiant;
     myWindow.destinataire = pseudo.innerHTML;
  }
-     
+
