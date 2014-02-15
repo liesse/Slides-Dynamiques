@@ -56,6 +56,7 @@ Ajout des fonctionalités suivantes :
     - éviter les chemins en dur 
     - Possibilité de choisir une présentation sur le disque
 
+
 VERSION 6.0
 ----------------------------
 
