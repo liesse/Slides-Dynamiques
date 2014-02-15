@@ -5,20 +5,50 @@ var app = express();
 var server = require('http').createServer(app);
 var socket = io.listen(server);
 var fs = require('fs');
+var formidable = require('formidable');
 var currentSlideId;
 
  // Loading server and static repository definition to include inside it.
 app.configure(function () {
     app.use(express.static(__dirname + '/public'));
-    app.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + '/public/ppt' }));
+    app.use(express.json());
+	app.use(express.urlencoded());
 });
 app.get('/', function (req, res, next) {
     res.render('./public/index.html');
 });
 app.post('/public/ppt', function(req, res){
-	fs.renameSync(req.files.newPresentation.path,"./public/ppt/Presentation.html");
-	console.log("New presentation uploaded");
-	server.emit("nouveau");
+	console.log("new post");
+
+	var form = new formidable.IncomingForm({ 
+	  uploadDir: __dirname + '/public/ppt/',  // don't forget the __dirname here
+	  keepExtensions: true
+	});
+
+    console.log(form.uploadDir);
+
+    form.parse(req, function(err, fields, files){
+      if (err) return res.end('You found error');
+      console.log(files.image);
+    });
+
+    form.on('file', function(field, file) {
+        //rename the incoming file to the file's name
+        fs.rename(file.path, form.uploadDir + "/Presentation.html", function(err){
+        	preventClients(); //tell to all clients to update their presentation
+        });  
+    });
+
+    form.on('progress', function(bytesReceived, bytesExpected) {
+        console.log(bytesReceived + ' ' + bytesExpected);
+    });
+
+    form.on('error', function(err) {
+        res.writeHead(200, {'content-type': 'text/plain'});
+        res.end('error:\n\n'+util.inspect(err));
+    });
+
+   return;
 });
 server.listen(8333);
 
@@ -31,7 +61,6 @@ var my_timer;
 var TempoPPT;
 var tab_client = [];
 var arrayMasters = [];
-
 
 // We define client side file
 app.get('/', function (req, res) {
@@ -109,17 +138,11 @@ socket.on('connection', function (client) {
 	client.on('activeSlideIdRequest', function(){
 		client.broadcast.emit('activeSlide', currentSlideId);
 	});
-	
-	// Catches video "events" and sending information to all clients 
-	client.on('envoiControlVideo', function (video) {
-		var obj_video = JSON.parse(video);
-		client.broadcast.emit('emettreControlVideo', JSON.stringify({
-			pause: obj_video.pause,
-			play: obj_video.play,
-			toPlay: obj_video.toPlay     // play video on actual "Play" position 
-		}));
-    });
-  
+
+	client.on('actionOnVideo', function(data){
+		client.broadcast.emit('actionOnVideo', data);
+	});
+
     client.on('requestMaster', function (identifiant) {
         console.log("demande annimateur " + identifiant);
     }); 
@@ -136,3 +159,7 @@ socket.on('connection', function (client) {
     });
     
 });
+
+function preventClients(){
+	socket.sockets.emit('updateSlide');
+}
