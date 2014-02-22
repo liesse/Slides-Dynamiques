@@ -138,4 +138,13 @@ socket.on('connection', function (client) {
 		
 	});
   
+    client.on('messageChat', function(infos){
+        
+        console.log('emetteur: ' + infos.emetteur)
+           client.broadcast.emit('messageChat', JSON.stringify({
+             emetteur: infos.emetteur,
+             destinataire: infos.destinataire
+           }));
+    });
+
 });

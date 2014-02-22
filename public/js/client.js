@@ -94,6 +94,13 @@ $(document).ready(function () {
         console.log('***client receives updateSlide');
         updateSlide();
     });
+    
+    
+    client.on('messageChat', function(infos){
+    
+        console.log(infos.emetteur);
+   
+    });
 
     // Permet de recuperer les evenements de la gestion des slides et de les envoyer au poste esclave
     $("#next1").click(function () {
@@ -195,17 +202,25 @@ function getCurrentSlideIndex(){
 
 // Display a div structure in order to chat with someone
 function lancerChat(pseudo){
-   document.getElementById('pseudoChat').innerHTML = pseudo.innerHTML;
+   document.getElementById('pseudoChatDestinataire').innerHTML = pseudo.innerHTML;
    document.getElementById('BlocChat1').style.display = "block";
  }
       
 function ajouterMessageChat(messageInput,event) {
            
-           if(event.keyCode == 13) {
-               document.getElementById("messageChat").innerHTML += "<p>" + messageInput.value + "</p>";
-               document.getElementById("zone_texte_Chat").value = "";
-               
-               // envoyer un message au serveur node avec le pseudo de la personne
-               // le serveur node enverra le msg à la personne concernée seulement
-           }
+    if(event.keyCode == 13) {
+       document.getElementById("messageChat").innerHTML += "<p>" + mon_identifiant + ":" + messageInput.value + "</p>";
+       document.getElementById("zone_texte_Chat").value = "";
+           
+       socket.emit('messageChat', JSON.stringify({
+         emetteur: mon_identifiant,
+         desinataire: document.getElementById('pseudoChatDestinataire').innerHTML
+       }));
+        
+       
+     }
 }  
+
+
+
+
