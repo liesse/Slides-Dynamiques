@@ -66,7 +66,7 @@ $(document).ready(function () {
             
           document.getElementById("connectedUsers").innerHTML = "<p><strong>" + newMessage.clients + " utilisateur(s) connecté(s):</strong></p>";
           for(var i=0; i < newMessage.tab_client.length; i++){
-            document.getElementById("connectedUsers").innerHTML += "<p class='users'>" + newMessage.tab_client[i] + "</p>";
+          document.getElementById("connectedUsers").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
           }    
         
         
@@ -117,7 +117,16 @@ $(document).ready(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#first").click();
             socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
-        }
+        }function ajouterMessageChat(messageInput,event) {
+           
+           if(event.keyCode == 13) {
+               document.getElementById("message").innerHTML += "<p>" + messageInput.value + "</p>";
+               document.getElementById("zone_texte").value = "";
+               
+               // envoyer un message au serveur node avec le pseudo de la personne
+               // le serveur node enverra le msg à la personne concernée seulement
+           }
+        }  
     });
 
 	// Going at the end of this presentation
@@ -183,3 +192,20 @@ function setMaster(isMaster) {
 function getCurrentSlideIndex(){
    alert("current slide id: " + $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
 }
+
+// Display a div structure in order to chat with someone
+function lancerChat(pseudo){
+   document.getElementById('pseudoChat').innerHTML = pseudo.innerHTML;
+   document.getElementById('BlocChat1').style.display = "block";
+ }
+      
+function ajouterMessageChat(messageInput,event) {
+           
+           if(event.keyCode == 13) {
+               document.getElementById("messageChat").innerHTML += "<p>" + messageInput.value + "</p>";
+               document.getElementById("zone_texte_Chat").value = "";
+               
+               // envoyer un message au serveur node avec le pseudo de la personne
+               // le serveur node enverra le msg à la personne concernée seulement
+           }
+}  

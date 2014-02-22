@@ -24,6 +24,7 @@ server.listen(8333);
 
 
 // Attributs
+var tab_pseudo_idSocket = [];
 var asRoot = false;
 var allClients = 0;
 var root;
@@ -64,6 +65,7 @@ socket.on('connection', function (client) {
         
 		TempoPseudo = user.identifant;
 		tab_client.push(TempoPseudo);
+        tab_pseudo_idSocket[TempoPseudo] = client.id;
     
     	//We send client's tab to users that began connection
 		client.send(JSON.stringify({
@@ -108,12 +110,12 @@ socket.on('connection', function (client) {
     });
   
     client.on('requestMaster', function (identifiant) {
-        console.log("demande annimateur " + identifiant);
+        console.log("Demande pour devenir animateur de : " + identifiant);
     }); 
 
 	// Executed when a client disconnects
 	client.on('disconnect', function () {
-		console.log('disconnect ' + TempoPseudo);
+		console.log('Deconnection de ' + TempoPseudo);
 		
 		if (TempoPseudo) {
 			tab_client.splice(tab_client.indexOf(TempoPseudo), 1);
@@ -135,4 +137,5 @@ socket.on('connection', function (client) {
 		}));
 		
 	});
+  
 });
