@@ -21,11 +21,17 @@ $(document).ready(function () {
             mon_identifiant = $("#identifiant").val();
             password = $("#password").val();
 
+            console.log('avant ouvertureSession');
             socket.emit('ouvertureSession', JSON.stringify({
                 identifant: mon_identifiant,
                 password: password,
             }));
-              
+            console.log('apres ouvertureSession');
+
+                    initVideo(); // load controls for video management
+                    $("#div_connection").hide();
+                    $("#overlay").hide();
+            
             $("#menu-pseudo").html("Bonjour " + mon_identifiant);
         }
     });
@@ -46,7 +52,7 @@ $(document).ready(function () {
         w.focus();
     });
 
-    // Management of received messages (validity treatment, Retrieval of datas, DOM manipulation) 
+    /* Management of received messages (validity treatment, Retrieval of datas, DOM manipulation) 
     socket.on('message', function (message) {
         var newMessage = jQuery.parseJSON(message);
        
@@ -103,7 +109,7 @@ $(document).ready(function () {
                 $("#message ul").append("<li><font color='red'>(" + newMessage.deconnexion + ") s'est d&#233connect&#233;</font> </li>");
             }
         }
-    });
+    }); */
                 
     //Slaves receive slide "id" of the click element on master computer, then we simulate "the click" on slaves computers.
     socket.on('recupObjetHtml', function (idtempo) {

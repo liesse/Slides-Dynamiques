@@ -1,3 +1,5 @@
+// A supprimer
+
 /* This function is executed when the DOM is loaded */
 			
 $(document).ready(function() { 

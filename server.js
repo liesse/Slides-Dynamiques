@@ -45,6 +45,11 @@ socket.on('connection', function (client) {
     
 	// After entering a password, the session begin
 	client.on('ouvertureSession', function (connection) {
+        
+        // LNA
+        
+        
+        
 		var user = JSON.parse(connection);
         allClients += 1;
         
@@ -63,33 +68,33 @@ socket.on('connection', function (client) {
 		TempoPseudo = user.identifant;
 		tab_client.push(TempoPseudo);
     
-    	// We send client's tab to users that began connection
+    	/* We send client's tab to users that began connection
 		client.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
             "connexion": TempoPseudo,
             "arrayMasters": arrayMasters,
-		}));
+		}));*/
 
 		client.emit('activeSlide', currentSlideId);
         
-		// We send tab's client to all clients connected
+		/* We send tab's client to all clients connected
 		client.broadcast.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
             "messageSender": TempoPseudo
-		}));
+		})); */
 		 
     });
 
-	// Slides management and messages management
+	/* Slides management and messages management
 	client.on('message', function (message) {
 		var newMessage = JSON.parse(message);
 		client.broadcast.send(JSON.stringify({
 			messageContent: newMessage.messageContent,      // Discussion channel
 			messageSender: newMessage.messageSender,    	// pseudo
 		}));
-	});
+	});*/
 
 	// Broadcast the message to prevent clients that a new presentation is selected by the animator 
 	client.on('updateSlide', function () {
@@ -137,13 +142,13 @@ socket.on('connection', function (client) {
         
 		allClients -= 1;
         
-    // We send the new client table to all clients
+    /* We send the new client table to all clients
 		client.broadcast.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
             "deconnexion": TempoPseudo,
             "arrayMasters": arrayMasters
-		}));
+		}));*/
 		
 	});
 });
