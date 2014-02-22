@@ -136,6 +136,11 @@ socket.on('connection', function (client) {
         
 		allClients -= 1;
         
+        client.broadcast.send(JSON.stringify({
+            "clients": allClients,
+            "tab_client": tab_client,
+            "arrayMasters": arrayMasters
+		}));
 		
 	});
 });
