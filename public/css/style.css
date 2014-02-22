@@ -46,7 +46,6 @@ html {
     font-weight: bold;
 }
 
-/* List of connected users */
 #connectedUsers {
     border: 2px solid;
     font: 10px Arial;

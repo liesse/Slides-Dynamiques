@@ -15,19 +15,17 @@ $(document).ready(function () {
 
 	// Executed after authentication, this event allows users' register in order to warn the server of new user
     $("#identification").click(function () {
+        
         if ($("#identifiant").val() !== "") {
             $('#identification').unbind('click');
             $(".img-loading").css("visibility", "visible");
             mon_identifiant = $("#identifiant").val();
             password = $("#password").val();
 
-            console.log('a');
             socket.emit('ouvertureSession', JSON.stringify({
                 identifant: mon_identifiant,
                 password: password,
             }));
-            console.log('b');
-
             
             $("#menu-pseudo").html("Bonjour " + mon_identifiant);
         }

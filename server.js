@@ -24,8 +24,6 @@ server.listen(8333);
 
 
 // Attributs
-
-
 var asRoot = false;
 var allClients = 0;
 var root;
@@ -48,9 +46,6 @@ socket.on('connection', function (client) {
     
 	// After entering a password, the session begin
 	client.on('ouvertureSession', function (connection) {
-        
-        // LNA
-        console.log('d');
 
 		var user = JSON.parse(connection);
         allClients += 1;
@@ -83,10 +78,7 @@ socket.on('connection', function (client) {
             "arrayMasters": arrayMasters
 		}));
         
-        
-        console.log('z');
-
-		client.emit('activeSlide', currentSlideId);
+        client.emit('activeSlide', currentSlideId);
 		 
     });
 
