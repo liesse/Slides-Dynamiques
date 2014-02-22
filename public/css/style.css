@@ -41,16 +41,20 @@ html {
 	z-index: 5;
 }
 
+.users {
+    border: 2px solid #808080;
+    font-weight: bold;
+}
 
-/* Pannel DEROULANT */
-#cadre-menu {
-	position: fixed;
-	left: -175px;
-	overflow: hidden;
-	top: 50px;
-	width: 217px; 
-	font: 10px Arial;
-	height: 90%;
+/* List of connected users */
+#connectedUsers {
+    border: 2px solid;
+    font: 10px Arial;
+    height: 84%;
+    left: 3px;
+    position: fixed;
+    top: 44px;
+    width: 133px;
 }
 
 #bordure-menu {	

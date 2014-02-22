@@ -21,16 +21,13 @@ $(document).ready(function () {
             mon_identifiant = $("#identifiant").val();
             password = $("#password").val();
 
-            console.log('avant ouvertureSession');
+            console.log('a');
             socket.emit('ouvertureSession', JSON.stringify({
                 identifant: mon_identifiant,
                 password: password,
             }));
-            console.log('apres ouvertureSession');
+            console.log('b');
 
-                    initVideo(); // load controls for video management
-                    $("#div_connection").hide();
-                    $("#overlay").hide();
             
             $("#menu-pseudo").html("Bonjour " + mon_identifiant);
         }
@@ -52,46 +49,11 @@ $(document).ready(function () {
         w.focus();
     });
 
-    /* Management of received messages (validity treatment, Retrieval of datas, DOM manipulation) 
+    // Management of received messages (validity treatment, Retrieval of datas, DOM manipulation) at the connection only
     socket.on('message', function (message) {
         var newMessage = jQuery.parseJSON(message);
-       
-        if (newMessage.messageContent) { // Treatment of discussion messages
-            $("#message ul").append("<li>(" + newMessage.messageSender + "): " + newMessage.messageContent + "</li>");
-            $("#message").scrollTop(100000);
-                
-            // Panel notification (blinking red)
-            if ($("#cadre-menu").css("margin-Left") === "0px") {
-                var nbNewMessage;
-                if ($('#bouton-menu').html()) {
-                    nbNewMessage = parseInt($('#bouton-menu b').html()) + 1;
-                } else {
-                    nbNewMessage = 1;
-                }
-                $('#bouton-menu').html("(<b>" + nbNewMessage + "</b>)");
-            }
-        } else {
-            var ma_liste = "";
-            var i;
-                
-            for (i = 0; i < newMessage.tab_client.length; i += 1) {
-                ma_liste += "<li>" + newMessage.tab_client[i] + "</li>";
-            }
-            
-            $('#cadre-user ul').html(ma_liste); // Update pseudos list
-            $('#clients').text(newMessage.clients);    // Display the number of connected users
-                
-            if (newMessage.connexion) {
-                $("#message ul").append("<li><font color='green'>(" + newMessage.connexion + ") s'est connect&#233;</font> </li>");
-                var timeLoad = 200;
-                    
-                setTimeout(function() {
-                    initVideo(); // load controls for video management
-                    $("#div_connection").hide();
-                    $("#overlay").hide();
-                }, timeLoad);
-            }
-            
+            console.log('dans message');
+        
             // Become an animator if the server tell us.
             if (newMessage.arrayMasters) {
                 if (newMessage.arrayMasters.indexOf(mon_identifiant) === -1) {
@@ -100,16 +62,17 @@ $(document).ready(function () {
                     setMaster(true);
                 }
             }
-                    
-            if (newMessage.messageSender) {
-                $("#message ul").append("<li><font color='green'>(" + newMessage.messageSender + ") s'est connect&#233;</font> </li>");
-            }
+        
+          $("#div_connection").hide();
+          $("#overlay").hide();
             
-            if (newMessage.deconnexion) {
-                $("#message ul").append("<li><font color='red'>(" + newMessage.deconnexion + ") s'est d&#233connect&#233;</font> </li>");
-            }
-        }
-    }); */
+          document.getElementById("connectedUsers").innerHTML = "<p><strong>" + newMessage.clients + " utilisateur(s) connecté(s):</strong></p>";
+          for(var i=0; i < newMessage.tab_client.length; i++){
+            document.getElementById("connectedUsers").innerHTML += "<p class='users'>" + newMessage.tab_client[i] + "</p>";
+          }    
+        
+        
+    });
                 
     //Slaves receive slide "id" of the click element on master computer, then we simulate "the click" on slaves computers.
     socket.on('recupObjetHtml', function (idtempo) {

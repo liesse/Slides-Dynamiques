@@ -22,7 +22,10 @@ app.post('/public/ppt', function(req, res){
 });
 server.listen(8333);
 
+
 // Attributs
+
+
 var asRoot = false;
 var allClients = 0;
 var root;
@@ -47,9 +50,8 @@ socket.on('connection', function (client) {
 	client.on('ouvertureSession', function (connection) {
         
         // LNA
-        
-        
-        
+        console.log('d');
+
 		var user = JSON.parse(connection);
         allClients += 1;
         
@@ -68,33 +70,25 @@ socket.on('connection', function (client) {
 		TempoPseudo = user.identifant;
 		tab_client.push(TempoPseudo);
     
-    	/* We send client's tab to users that began connection
+    	//We send client's tab to users that began connection
 		client.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
-            "connexion": TempoPseudo,
-            "arrayMasters": arrayMasters,
-		}));*/
+            "arrayMasters": arrayMasters
+		}));
 
-		client.emit('activeSlide', currentSlideId);
-        
-		/* We send tab's client to all clients connected
-		client.broadcast.send(JSON.stringify({
+        client.broadcast.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
-            "messageSender": TempoPseudo
-		})); */
+            "arrayMasters": arrayMasters
+		}));
+        
+        
+        console.log('z');
+
+		client.emit('activeSlide', currentSlideId);
 		 
     });
-
-	/* Slides management and messages management
-	client.on('message', function (message) {
-		var newMessage = JSON.parse(message);
-		client.broadcast.send(JSON.stringify({
-			messageContent: newMessage.messageContent,      // Discussion channel
-			messageSender: newMessage.messageSender,    	// pseudo
-		}));
-	});*/
 
 	// Broadcast the message to prevent clients that a new presentation is selected by the animator 
 	client.on('updateSlide', function () {
@@ -142,13 +136,6 @@ socket.on('connection', function (client) {
         
 		allClients -= 1;
         
-    /* We send the new client table to all clients
-		client.broadcast.send(JSON.stringify({
-            "clients": allClients,
-            "tab_client": tab_client,
-            "deconnexion": TempoPseudo,
-            "arrayMasters": arrayMasters
-		}));*/
 		
 	});
 });
