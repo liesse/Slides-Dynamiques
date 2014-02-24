@@ -4,7 +4,7 @@ function initVideo() {
     // We retrieve video element  
     var videos = $($('#notre_frame').contents()).find("video");
     
-    if (videos.length == 0){
+    if (videos.length === 0){
         return;
     }
     

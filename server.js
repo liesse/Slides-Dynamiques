@@ -38,12 +38,12 @@ app.post('/public/ppt', function(req, res) {
 	})
 	
 	.on ('fileBegin', function(name, file) {
-		//Rename the incoming file to the file's name
+		// Rename the incoming file to the file's name
 		file.path = form.uploadDir + "/" + file.name;
 	})
 
 	.on('file', function(field, file) {
-		//On file received
+		// On file received
 		console.log("new file: " + './ppt/' + file.name);
 		alertClients('./ppt/' + file.name); //Tell to all clients to update their presentation
 	})
@@ -135,7 +135,7 @@ socket.on('connection', function (client) {
 		}
 		else {		
 			client.broadcast.send(JSON.stringify({
-				messageContent: newMessage.messageContent,      // Discussion channel
+				messageContent: newMessage.messageContent,    // Discussion channel
 				messageSender: newMessage.messageSender,    	// pseudo
 			}));
 		}
