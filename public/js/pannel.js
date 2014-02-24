@@ -30,9 +30,4 @@ $(document).ready(function() {
         }
     });
     
-    $("#boutton-user").hover(function() { 
-        $("#cadre-user").animate({ marginRight: "125px"  }, 400 );
-    }, function() {
-        $("#cadre-user").animate({ marginRight: "0"  }, 300 );
-    });
 }); 

@@ -42,7 +42,6 @@ html {
 }
 
 
-/* Pannel DEROULANT */
 #cadre-menu {
 	position: fixed;
 	left: -175px;
@@ -122,7 +121,7 @@ html {
 }
 
 /* Menu DEROULANT */
-#cadre-user{
+#cadre-user {
     position: fixed;
     right: -125px;
     overflow: hidden;
@@ -133,7 +132,7 @@ html {
     margin: 0;
     padding: 10px;
     padding-top: 10px;
-    background-image: url('../images/titre5.png');
+    baakground-image: url('../images/titre5.png');
     border-top: none;
     border-right: none;
 }
@@ -318,3 +317,21 @@ html {
 #title-connection {
     font-size: 16px;
 }
+
+
+#cadre-menu-droite {
+    border: 2px solid;
+    height: 90%;
+    position: fixed;
+    right: 4px;
+    top: 40px;
+    width: 95px;
+    font-size:12px;
+}
+
+.users {
+    border: 2px solid #808080;
+    font-weight: bold;
+}
+
+

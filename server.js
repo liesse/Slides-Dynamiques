@@ -45,6 +45,10 @@ socket.on('connection', function (client) {
     
 	// After entering a password, the session begin
 	client.on('ouvertureSession', function (connection) {
+        
+        // LNA
+        
+        
 		var user = JSON.parse(connection);
         allClients += 1;
         
@@ -119,31 +123,16 @@ socket.on('connection', function (client) {
     client.on('requestMaster', function (identifiant) {
         console.log("demande annimateur " + identifiant);
     }); 
-
-	// Executed when a client disconnects
-	client.on('disconnect', function () {
-		console.log('disconnect ' + TempoPseudo);
-		
-		if (TempoPseudo) {
-			tab_client.splice(tab_client.indexOf(TempoPseudo), 1);
+    
+    client.on('new_message_PersonalChat', function(infos){
             
-            if (arrayMasters.indexOf(TempoPseudo) !== -1) {
-                arrayMasters.splice(arrayMasters.indexOf(TempoPseudo), 1);
-                if (arrayMasters.length === 0 && tab_client.length > 0) {
-                    arrayMasters.push(tab_client[0]);
-                }
-            }
-		}
+       var obj = JSON.parse(infos);
         
-		allClients -= 1;
-        
-    // We send the new client table to all clients
-		client.broadcast.send(JSON.stringify({
-            "clients": allClients,
-            "tab_client": tab_client,
-            "deconnexion": TempoPseudo,
-            "arrayMasters": arrayMasters
-		}));
-		
-	});
+       client.broadcast.emit('notification_PersonalChat', JSON.stringify({
+         emetteur: obj.emetteur,
+         destinataire: obj.destinataire,
+         contenu: obj.contenu
+       }));
+    });
+    
 });

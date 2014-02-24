@@ -50,6 +50,11 @@ $(document).ready(function () {
     socket.on('message', function (message) {
         var newMessage = jQuery.parseJSON(message);
        
+        document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>" + newMessage.clients + " utilisateur(s) connecté(s):</strong></p>";
+        for(var i=0; i < newMessage.tab_client.length; i++){
+            document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
+        } 
+        
         if (newMessage.messageContent) { // Treatment of discussion messages
             $("#message ul").append("<li>(" + newMessage.messageSender + "): " + newMessage.messageContent + "</li>");
             $("#message").scrollTop(100000);
@@ -216,3 +221,13 @@ function setMaster(isMaster) {
 function getCurrentSlideIndex(){
    alert("current slide id: " + $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
 }
+
+// Display a div structure in order to chat with someone
+function lancerChat(pseudo){
+    var myWindow = window.open("PersonalChat.html",pseudo.innerHTML,"width=400,height=400");
+    myWindow.mon_identifiant = mon_identifiant;
+    myWindow.destinataire = pseudo.innerHTML;
+ }
+      
+
+
