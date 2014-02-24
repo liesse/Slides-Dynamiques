@@ -1,4 +1,3 @@
-
 var io = require('socket.io');
 var express = require('express');
 var app = express();
@@ -21,7 +20,7 @@ app.get('/', function (req, res, next) {
 app.post('/public/ppt', function(req, res) {
 	console.log("new post");
 	var fileName;
-	var form = new formidable.IncomingForm({ 
+	var form = new formidable.IncomingForm( { 
 		uploadDir: __dirname + '/public/ppt/',
 		keepExtensions: true
 	});
@@ -175,6 +174,13 @@ socket.on('connection', function (client) {
 			destinataire: obj.destinataire,
 			contenu: obj.contenu
 		}));
+	});
+
+	client.on('allPresentations_request', function(){
+		var files = fs.readdirSync(__dirname + '/public/ppt/');
+		for (var i in files){
+			console.log(files[i].name);
+		}
 	});
 
 	// Executed when a client disconnects

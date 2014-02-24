@@ -24,6 +24,14 @@
                         alert("Veuillez choisir une présentation EAST");
                     }   
                 });
+
+                socket.emit('allPresentations_request');
+
+                socket.on('allPresentations_response', function (files)){
+                    
+
+                });
+
             });
 
         </script>
