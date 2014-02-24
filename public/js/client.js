@@ -15,7 +15,6 @@ $(document).ready(function () {
 
 	// Executed after authentication, this event allows users' register in order to warn the server of new user
     $("#identification").click(function () {
-        
         if ($("#identifiant").val() !== "") {
             $('#identification').unbind('click');
             $(".img-loading").css("visibility", "visible");
@@ -26,7 +25,7 @@ $(document).ready(function () {
                 identifant: mon_identifiant,
                 password: password,
             }));
-            
+              
             $("#menu-pseudo").html("Bonjour " + mon_identifiant);
         }
     });
@@ -47,11 +46,51 @@ $(document).ready(function () {
         w.focus();
     });
 
-    // Management of received messages (validity treatment, Retrieval of datas, DOM manipulation) at the connection only
+    // Management of received messages (validity treatment, Retrieval of datas, DOM manipulation) 
     socket.on('message', function (message) {
         var newMessage = jQuery.parseJSON(message);
-            console.log('dans message');
+       
+        document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>" + newMessage.clients + " utilisateur(s) connecté(s):</strong></p>";
+        for(var i=0; i < newMessage.tab_client.length; i++){
+            document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
+        } 
         
+        if (newMessage.messageContent) { // Treatment of discussion messages
+            $("#message ul").append("<li>(" + newMessage.messageSender + "): " + newMessage.messageContent + "</li>");
+            $("#message").scrollTop(100000);
+                
+            // Panel notification (blinking red)
+            if ($("#cadre-menu").css("margin-Left") === "0px") {
+                var nbNewMessage;
+                if ($('#bouton-menu').html()) {
+                    nbNewMessage = parseInt($('#bouton-menu b').html()) + 1;
+                } else {
+                    nbNewMessage = 1;
+                }
+                $('#bouton-menu').html("(<b>" + nbNewMessage + "</b>)");
+            }
+        } else {
+            var ma_liste = "";
+            var i;
+                
+            for (i = 0; i < newMessage.tab_client.length; i += 1) {
+                ma_liste += "<li>" + newMessage.tab_client[i] + "</li>";
+            }
+            
+            $('#cadre-user ul').html(ma_liste); // Update pseudos list
+            $('#clients').text(newMessage.clients);    // Display the number of connected users
+                
+            if (newMessage.connexion) {
+                $("#message ul").append("<li><font color='green'>(" + newMessage.connexion + ") s'est connect&#233;</font> </li>");
+                var timeLoad = 200;
+                    
+                setTimeout(function() {
+                    initVideo(); // load controls for video management
+                    $("#div_connection").hide();
+                    $("#overlay").hide();
+                }, timeLoad);
+            }
+            
             // Become an animator if the server tell us.
             if (newMessage.arrayMasters) {
                 if (newMessage.arrayMasters.indexOf(mon_identifiant) === -1) {
@@ -60,16 +99,15 @@ $(document).ready(function () {
                     setMaster(true);
                 }
             }
-        
-          $("#div_connection").hide();
-          $("#overlay").hide();
+                    
+            if (newMessage.messageSender) {
+                $("#message ul").append("<li><font color='green'>(" + newMessage.messageSender + ") s'est connect&#233;</font> </li>");
+            }
             
-          document.getElementById("connectedUsers").innerHTML = "<p><strong>" + newMessage.clients + " utilisateur(s) connecté(s):</strong></p>";
-          for(var i=0; i < newMessage.tab_client.length; i++){
-          document.getElementById("connectedUsers").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
-          }    
-        
-        
+            if (newMessage.deconnexion) {
+                $("#message ul").append("<li><font color='red'>(" + newMessage.deconnexion + ") s'est d&#233connect&#233;</font> </li>");
+            }
+        }
     });
                 
     //Slaves receive slide "id" of the click element on master computer, then we simulate "the click" on slaves computers.
@@ -94,13 +132,6 @@ $(document).ready(function () {
         console.log('***client receives updateSlide');
         updateSlide();
     });
-    
-    
-    client.on('messageChat', function(infos){
-    
-        console.log(infos.emetteur);
-   
-    });
 
     // Permet de recuperer les evenements de la gestion des slides et de les envoyer au poste esclave
     $("#next1").click(function () {
@@ -124,16 +155,7 @@ $(document).ready(function () {
         if (master) {
             $($('#notre_frame').contents()).find("#first").click();
             socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
-        }function ajouterMessageChat(messageInput,event) {
-           
-           if(event.keyCode == 13) {
-               document.getElementById("message").innerHTML += "<p>" + messageInput.value + "</p>";
-               document.getElementById("zone_texte").value = "";
-               
-               // envoyer un message au serveur node avec le pseudo de la personne
-               // le serveur node enverra le msg à la personne concernée seulement
-           }
-        }  
+        }
     });
 
 	// Going at the end of this presentation
@@ -202,25 +224,10 @@ function getCurrentSlideIndex(){
 
 // Display a div structure in order to chat with someone
 function lancerChat(pseudo){
-   document.getElementById('pseudoChatDestinataire').innerHTML = pseudo.innerHTML;
-   document.getElementById('BlocChat1').style.display = "block";
+    var myWindow = window.open("PersonalChat.html",pseudo.innerHTML,"width=400,height=400");
+    myWindow.mon_identifiant = mon_identifiant;
+    myWindow.destinataire = pseudo.innerHTML;
  }
       
-function ajouterMessageChat(messageInput,event) {
-           
-    if(event.keyCode == 13) {
-       document.getElementById("messageChat").innerHTML += "<p>" + mon_identifiant + ":" + messageInput.value + "</p>";
-       document.getElementById("zone_texte_Chat").value = "";
-           
-       socket.emit('messageChat', JSON.stringify({
-         emetteur: mon_identifiant,
-         desinataire: document.getElementById('pseudoChatDestinataire').innerHTML
-       }));
-        
-       
-     }
-}  
-
-
 
 

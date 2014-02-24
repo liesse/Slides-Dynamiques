@@ -22,9 +22,7 @@ app.post('/public/ppt', function(req, res){
 });
 server.listen(8333);
 
-
 // Attributs
-var tab_pseudo_idSocket = [];
 var asRoot = false;
 var allClients = 0;
 var root;
@@ -47,7 +45,10 @@ socket.on('connection', function (client) {
     
 	// After entering a password, the session begin
 	client.on('ouvertureSession', function (connection) {
-
+        
+        // LNA
+        
+        
 		var user = JSON.parse(connection);
         allClients += 1;
         
@@ -65,24 +66,34 @@ socket.on('connection', function (client) {
         
 		TempoPseudo = user.identifant;
 		tab_client.push(TempoPseudo);
-        tab_pseudo_idSocket[TempoPseudo] = client.id;
     
-    	//We send client's tab to users that began connection
+    	// We send client's tab to users that began connection
 		client.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
-            "arrayMasters": arrayMasters
+            "connexion": TempoPseudo,
+            "arrayMasters": arrayMasters,
 		}));
 
-        client.broadcast.send(JSON.stringify({
+		client.emit('activeSlide', currentSlideId);
+        
+		// We send tab's client to all clients connected
+		client.broadcast.send(JSON.stringify({
             "clients": allClients,
             "tab_client": tab_client,
-            "arrayMasters": arrayMasters
+            "messageSender": TempoPseudo
 		}));
-        
-        client.emit('activeSlide', currentSlideId);
 		 
     });
+
+	// Slides management and messages management
+	client.on('message', function (message) {
+		var newMessage = JSON.parse(message);
+		client.broadcast.send(JSON.stringify({
+			messageContent: newMessage.messageContent,      // Discussion channel
+			messageSender: newMessage.messageSender,    	// pseudo
+		}));
+	});
 
 	// Broadcast the message to prevent clients that a new presentation is selected by the animator 
 	client.on('updateSlide', function () {
@@ -110,41 +121,18 @@ socket.on('connection', function (client) {
     });
   
     client.on('requestMaster', function (identifiant) {
-        console.log("Demande pour devenir animateur de : " + identifiant);
+        console.log("demande annimateur " + identifiant);
     }); 
-
-	// Executed when a client disconnects
-	client.on('disconnect', function () {
-		console.log('Deconnection de ' + TempoPseudo);
-		
-		if (TempoPseudo) {
-			tab_client.splice(tab_client.indexOf(TempoPseudo), 1);
+    
+    client.on('new_message_PersonalChat', function(infos){
             
-            if (arrayMasters.indexOf(TempoPseudo) !== -1) {
-                arrayMasters.splice(arrayMasters.indexOf(TempoPseudo), 1);
-                if (arrayMasters.length === 0 && tab_client.length > 0) {
-                    arrayMasters.push(tab_client[0]);
-                }
-            }
-		}
+       var obj = JSON.parse(infos);
         
-		allClients -= 1;
-        
-        client.broadcast.send(JSON.stringify({
-            "clients": allClients,
-            "tab_client": tab_client,
-            "arrayMasters": arrayMasters
-		}));
-		
-	});
-  
-    client.on('messageChat', function(infos){
-        
-        console.log('emetteur: ' + infos.emetteur)
-           client.broadcast.emit('messageChat', JSON.stringify({
-             emetteur: infos.emetteur,
-             destinataire: infos.destinataire
-           }));
+       client.broadcast.emit('notification_PersonalChat', JSON.stringify({
+         emetteur: obj.emetteur,
+         destinataire: obj.destinataire,
+         contenu: obj.contenu
+       }));
     });
-
+    
 });
