@@ -7,41 +7,49 @@
             body {
                 font-family: sans-serif;
             }
+
+            #uploadedFiles ul {
+                padding-left: 0px;
+            }
+
+            #uploadedFiles ul li {
+                
+            }
+
+            #uploadedFiles ul li:hover {
+                background-color: #c9f600;
+            }
+
+            #uploadedFiles ul li img {
+                width: 30px;
+                height: 40px;
+            }
+
+            .span1 {
+                position: absolute;
+                margin-top: 3px;
+                margin-left: 5px;
+            }
+
+            .span2 {
+                position: absolute;
+                font-size: 12px;
+                color: gray;
+                margin-left: 35px;
+                margin-top: -20px;
+            }
+
         </style>
         <script src="js/jquery-1.9.1.js"></script>
         <script src="js/jquery-ui-1.10.2.custom.js"></script>
-        <script type='text/javascript'>
-            $(document).ready(function(){
-                $("#submit").click( function() {
-                    if ($("#hiddenfile").val().split('.').reverse()[0] === "html") {
-                        if (window.opener && !window.opener.closed ) {
-                            $("#submitForm").click();
-                        }
-
-                        self.close();
-                    }
-                    else {
-                        alert("Veuillez choisir une présentation EAST");
-                    }   
-                });
-
-                socket.emit('allPresentations_request');
-
-                socket.on('allPresentations_response', function (files)){
-                    
-
-                });
-
-            });
-
-        </script>
+        <script type="text/javascript" src="js/upload.js"></script>
     </head>
     <body>
       <!-- Form that allow to choose a file presentation, anywhere on the disk (not necessary to choose it on project public repository -->
         <form id="newPPT" action="./public/ppt" method="post" enctype="multipart/form-data">
             <input type="file" name="newPresentation" id="hiddenfile" accept='text/html' />
             <input type="button" id="submit" value="Submit">
-            <input id="submitForm" type="submit" style="display:none" multiple>
+            <input id="submitForm" type="submit" style="display:none" >
         </form>
         <div id="uploadedFiles">
             <ul>          
