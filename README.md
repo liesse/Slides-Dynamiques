@@ -56,8 +56,9 @@ Ajout des fonctionalités suivantes :
     - éviter les chemins en dur 
     - Possibilité de choisir une présentation sur le disque
 
+
 VERSION 6.0
-----------------------------  
+----------------------------
 
 Ajout des fonctionalités suivantes :
 
@@ -65,6 +66,7 @@ Ajout des fonctionalités suivantes :
     - émetteur / proxy -> client
     - émetteur -> proxy / client
     - émetteur / proxy -> proxy / client
+    
 
 VERSION 7.0
 ----------------------------  
@@ -84,7 +86,7 @@ Pour faire fonctionner le Projet Slides-Dynamiques :
     
 ESSENTIAL FILES
 -----------------------------
-    - server.js  	  // Gestion serveur
+    - server.js  	      // Gestion serveur
     - public/index.html   // Interface graphique manipulée par le client (slide, annimation, utilisateur)
     - public/upload.html  // Permet d'uploader une nouvelle présentation sur le serveur
     - public/js/video.js  // Gestion vidéo

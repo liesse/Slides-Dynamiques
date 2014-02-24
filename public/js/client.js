@@ -24,8 +24,9 @@ $(document).ready(function () {
             socket.emit('ouvertureSession', JSON.stringify({
                 identifant: mon_identifiant,
                 password: password,
+                socketId: socket.id
             }));
-              
+
             $("#menu-pseudo").html("Bonjour " + mon_identifiant);
         }
     });
@@ -50,15 +51,17 @@ $(document).ready(function () {
     socket.on('message', function (message) {
         var newMessage = jQuery.parseJSON(message);
        
-        document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>" + newMessage.clients + " utilisateur(s) connecté(s):</strong></p>";
-        for(var i=0; i < newMessage.tab_client.length; i++){
-            document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
-        } 
-        
+        if (newMessage.clients) {
+            document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>" + newMessage.clients + " utilisateur(s) connecté(s):</strong></p>";
+            for(var i=0; i < newMessage.tab_client.length; i++){
+                document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
+            } 
+        }
+
         if (newMessage.messageContent) { // Treatment of discussion messages
             $("#message ul").append("<li>(" + newMessage.messageSender + "): " + newMessage.messageContent + "</li>");
             $("#message").scrollTop(100000);
-                
+
             // Panel notification (blinking red)
             if ($("#cadre-menu").css("margin-Left") === "0px") {
                 var nbNewMessage;
@@ -69,23 +72,28 @@ $(document).ready(function () {
                 }
                 $('#bouton-menu').html("(<b>" + nbNewMessage + "</b>)");
             }
-        } else {
+        }
+
+        else if (newMessage.videosStates) {
+            videosStates(newMessage.videosStates);
+        } 
+
+        else {
             var ma_liste = "";
             var i;
-                
+
             for (i = 0; i < newMessage.tab_client.length; i += 1) {
                 ma_liste += "<li>" + newMessage.tab_client[i] + "</li>";
             }
             
             $('#cadre-user ul').html(ma_liste); // Update pseudos list
             $('#clients').text(newMessage.clients);    // Display the number of connected users
-                
+
             if (newMessage.connexion) {
                 $("#message ul").append("<li><font color='green'>(" + newMessage.connexion + ") s'est connect&#233;</font> </li>");
                 var timeLoad = 200;
-                    
+
                 setTimeout(function() {
-                    initVideo(); // load controls for video management
                     $("#div_connection").hide();
                     $("#overlay").hide();
                 }, timeLoad);
@@ -99,7 +107,7 @@ $(document).ready(function () {
                     setMaster(true);
                 }
             }
-                    
+
             if (newMessage.messageSender) {
                 $("#message ul").append("<li><font color='green'>(" + newMessage.messageSender + ") s'est connect&#233;</font> </li>");
             }
@@ -109,16 +117,13 @@ $(document).ready(function () {
             }
         }
     });
-                
+
     //Slaves receive slide "id" of the click element on master computer, then we simulate "the click" on slaves computers.
-    socket.on('recupObjetHtml', function (idtempo) {
-        console.log("recupObjetHtml " + idtempo);
-        if (idtempo) {
-            $($('#notre_frame').contents()).find("#" + idtempo).click();
-        }
+    socket.on('click', function (eltId) {
+        console.log("**click " + eltId);
+        $($('#notre_frame').contents()).find(eltId).click();
     });
     
-
     socket.on('activeSlide', function(activeSlideId) {
         if (activeSlideId != null){
             var slide = $($('#notre_frame').contents()).find('#' + activeSlideId);
@@ -128,15 +133,15 @@ $(document).ready(function () {
     });
 
     //Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves computer.
-    socket.on('updateSlide', function(){
+    socket.on('updateSlide', function(filePath) {
         console.log('***client receives updateSlide');
-        updateSlide();
+        updateSlide(filePath);
     });
 
-    // Permet de recuperer les evenements de la gestion des slides et de les envoyer au poste esclave
+    // Going to the next slide
     $("#next1").click(function () {
-        console.log('clic next1');
         if (master) {
+            pauseAllVideos(); //Pause playing videos when changing slide
             $($('#notre_frame').contents()).find("#next").click();
             socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
         }
@@ -145,6 +150,7 @@ $(document).ready(function () {
 	// Going on the previous slide
     $("#prev1").click(function () {
         if (master) {
+            pauseAllVideos();
             $($('#notre_frame').contents()).find("#prev").click();
             socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
         }
@@ -153,6 +159,7 @@ $(document).ready(function () {
 	// Going at the beginning of this presentation
     $("#first1").click(function () {
         if (master) {
+            pauseAllVideos();
             $($('#notre_frame').contents()).find("#first").click();
             socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
         }
@@ -161,29 +168,28 @@ $(document).ready(function () {
 	// Going at the end of this presentation
     $("#last1").click(function () {
         if (master) {
+            pauseAllVideos();
             $($('#notre_frame').contents()).find("#last").click();
             socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
         }
     });
 
-    $("#notre_frame").load(function(){
+    $("#notre_frame").load(function() {
         $($('#notre_frame').contents()).find('#navigation_par').hide();
+        $($('#notre_frame').contents()).find('#slideshow div').click(function(event) {
+            if (master && (event.target.nodeName != "VIDEO")){
+                socket.emit('click', getSelector($(this)));
+            }
+        });
+        initVideo(); // load controls for video management
     });
 
 });
 
-// prevent clients when a new presentation is selected
-function preventSlideUpdate(){
-    console.log("***Master telling slide updated");
-    socket.emit('updateSlide');
-    console.log('***Message updateSlide sent');
-}
-
 //Load a new presentation selected by the animator
-function updateSlide(){ 
+function updateSlide(filePath){ 
     console.log("***Updating slide...");  
-    $('#notre_frame').attr('src', $('#notre_frame').attr('src'));
-    //$($('#notre_frame').contents()).find('#navigation_par').hide();
+    $('#notre_frame').attr('src', filePath); //$('#notre_frame').attr('src'));
     console.log("***Slide updated");
 }
 
@@ -205,21 +211,15 @@ function setMaster(isMaster) {
     "use strict";
     if (isMaster) {
         master = true;
-        //$("#menu-control").show();
-       // $("#bouton-selectPPT").show();
-        $("#menu-control").removeClass('isHidden');
-        $("#bouton-selectPPT").removeClass('isHidden');
+        initVideo();
+        $("#menu-control").show();
+        $("#bouton-selectPPT").show();
     } else {
         master = false;
-        //$("#menu-control").hide();
-        //$("#bouton-selectPPT").hide();
-        $("#menu-control").addClass('isHidden');
-        $("#bouton-selectPPT").addClass('isHidden');
+        initVideo();
+        $("#menu-control").hide();
+        $("#bouton-selectPPT").hide();
     }
-}
-
-function getCurrentSlideIndex(){
-   alert("current slide id: " + $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
 }
 
 // Display a div structure in order to chat with someone
@@ -228,6 +228,37 @@ function lancerChat(pseudo){
     myWindow.mon_identifiant = mon_identifiant;
     myWindow.destinataire = pseudo.innerHTML;
  }
-      
 
 
+function getCurrentSlideId() {
+    return $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id");
+}
+
+function getSelector(elt) {
+    var selector = elt.parents()
+                    .map(function() { return this.tagName; })
+                    .get().reverse().join(" ");
+
+    if (selector) { 
+      selector += " "+ elt[0].nodeName;
+    }
+
+    var id = elt.attr("id");
+    if (id) { 
+      selector += "#"+ id;
+    }
+
+    var classNames = elt.attr("class");
+    if (classNames) {
+      selector += "." + $.trim(classNames).replace(/\s/gi, ".");
+    }
+
+    return selector;
+}
+
+function pauseAllVideos() {
+    var videos = $($('#notre_frame').contents()).find('#'+ getCurrentSlideId() + ' video');
+    videos.each(function() {
+        $(this)[0].pause();
+    });
+}
