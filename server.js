@@ -20,18 +20,23 @@ app.get('/', function (req, res, next) {
 });
 app.post('/public/ppt', function(req, res) {
 	console.log("new post");
-
+	var fileName;
 	var form = new formidable.IncomingForm({ 
 		uploadDir: __dirname + '/public/ppt/',
 		keepExtensions: true
 	});
 
 	form
-	.on('error', function(err) {
-		console.log("An error occured");
-		throw err;
+	.on('aborted', function() {
+		req.resume();
+		console.log('request resumed after aborted');
 	})
 
+	.on('error', function(err) {
+		req.resume();
+		console.log('request resumed after error');
+	})
+	
 	.on ('fileBegin', function(name, file) {
 		//Rename the incoming file to the file's name
 		file.path = form.uploadDir + "/" + file.name;

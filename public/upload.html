@@ -33,7 +33,12 @@
         <form id="newPPT" action="./public/ppt" method="post" enctype="multipart/form-data">
             <input type="file" name="newPresentation" id="hiddenfile" accept='text/html' />
             <input type="button" id="submit" value="Submit">
-            <input id="submitForm" type="submit" style="display:none">
+            <input id="submitForm" type="submit" style="display:none" multiple>
         </form>
+        <div id="uploadedFiles">
+            <ul>          
+            </ul>
+        </div>
+        <div>
     </body>
 </html>
