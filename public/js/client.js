@@ -8,6 +8,7 @@ var socket;
 var slideControlContainer;
 var containers;
 var currentSlide = 0;
+var presentationsList = [];
 
 $(document).ready(function () {
     "use strict";
@@ -43,6 +44,7 @@ $(document).ready(function () {
 
     // Allow animators to run another presentation
     $("#bouton-selectPPT").click(function () {
+        setPresentationsList();
         var w = window.open('upload.html', 'popUpWindow', 'height=200, width=400, left=10, top=10, resizable=no, scrollbars=yes, toolbar=no, menubar=no, location=no, directories=no, status=yes');
         w.focus();
     });
@@ -53,7 +55,7 @@ $(document).ready(function () {
        
         if (newMessage.clients) {
             document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>" + newMessage.clients + " utilisateur(s) connecté(s):</strong></p>";
-            for(var i=0; i < newMessage.tab_client.length; i++){
+            for(var i=0; i < newMessage.tab_client.length; i++) {
                 document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
             } 
         }
@@ -125,7 +127,7 @@ $(document).ready(function () {
     });
     
     socket.on('activeSlide', function(activeSlideId) {
-        if (activeSlideId != null){
+        if (activeSlideId !== null) {
             var slide = $($('#notre_frame').contents()).find('#' + activeSlideId);
             $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr('smil', 'idle');
             slide.attr('smil', 'active');
@@ -136,6 +138,14 @@ $(document).ready(function () {
     socket.on('updateSlide', function(filePath) {
         console.log('***client receives updateSlide');
         updateSlide(filePath);
+    });
+
+    socket.on('allPresentationsList_response', function (data) {
+        var files = jQuery.parseJSON(data).files;
+        presentationsList = [];
+        for (var i = 0; i < files.length; i++) {
+            presentationsList.push(files[i]);
+        }
     });
 
     // Going to the next slide
@@ -177,7 +187,7 @@ $(document).ready(function () {
     $("#notre_frame").load(function() {
         $($('#notre_frame').contents()).find('#navigation_par').hide();
         $($('#notre_frame').contents()).find('#slideshow div').click(function(event) {
-            if (master && (event.target.nodeName != "VIDEO")){
+            if (master && (event.target.nodeName !== "VIDEO")) {
                 socket.emit('click', getSelector($(this)));
             }
         });
@@ -187,10 +197,8 @@ $(document).ready(function () {
 });
 
 // Load a new presentation selected by the animator
-function updateSlide(filePath){ 
-    console.log("***Updating slide...");  
+function updateSlide(filePath) { 
     $('#notre_frame').attr('src', filePath);
-    console.log("***Slide updated");
 }
 
 // Allow to forbid special characters for the pseudo
@@ -223,7 +231,7 @@ function setMaster(isMaster) {
 }
 
 // Display a div structure in order to chat with someone
-function lancerChat(pseudo){
+function lancerChat(pseudo) {
     var myWindow = window.open("PersonalChat.html",pseudo.innerHTML,"width=400,height=400");
     myWindow.mon_identifiant = mon_identifiant;
     myWindow.destinataire = pseudo.innerHTML;
@@ -262,3 +270,17 @@ function pauseAllVideos() {
         $(this)[0].pause();
     });
 }
+
+function setPresentationsList() {
+    socket.emit('allPresentationsList_request');
+}
+
+function getPresentationsList() {
+    return presentationsList;
+}
+
+function alert_server(filePath) {
+    socket.emit('updateSlide', filePath);
+}
+
+
