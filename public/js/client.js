@@ -8,6 +8,9 @@ var socket;
 var slideControlContainer;
 var containers;
 var currentSlide = 0;
+var tab_windows_opened = []; // this tab contains all pseudos of all opened windows 
+var messages_history = []; // This tab contains history of all opened windows. 
+
 
 $(document).ready(function () {
     "use strict";
@@ -137,6 +140,30 @@ $(document).ready(function () {
         console.log('***client receives updateSlide');
         updateSlide(filePath);
     });
+    
+    // Test if the window is open or nor. If not, we underline the name on the connected user panel
+    socket.on('test_presence', function(infos){
+                        
+        var obj = JSON.parse(infos);
+         
+        messages_history[obj.emetteur] = '<p>' + obj.emetteur + ':' + obj.contenu + '</p>';
+        
+        for(var i=0; i <tab_windows_opened.length; i++) {
+            
+            if(tab_windows_opened[i] === obj.emetteur) {
+                return;
+            }
+        }
+        
+        // The pseudo window is closed client side, we underline it on orange
+        var tab_p = document.getElementsByClassName('users');
+        for(var i=0; i < tab_p.length; i++){
+            
+            if(tab_p[i].innerHTML === obj.emetteur){
+                tab_p[i].style.backgroundColor = "orange";
+            }
+        }
+    });
 
     // Going to the next slide
     $("#next1").click(function () {
@@ -224,9 +251,24 @@ function setMaster(isMaster) {
 
 // Display a div structure in order to chat with someone
 function lancerChat(pseudo){
+    
     var myWindow = window.open("PersonalChat.html",pseudo.innerHTML,"width=400,height=400");
     myWindow.mon_identifiant = mon_identifiant;
     myWindow.destinataire = pseudo.innerHTML;
+    myWindow.socket = socket;
+    myWindow.historique = '';
+    //messages_history[myWindow.destinataire] = '';
+    
+    tab_windows_opened.push(myWindow.destinataire);  
+
+    var tab_p = document.getElementsByClassName('users');
+    for(var i=0; i < tab_p.length; i++){
+        
+        if(tab_p[i].innerHTML == myWindow.destinataire && tab_p[i].style.backgroundColor == "orange"){
+            tab_p[i].style.backgroundColor = "white";
+            myWindow.historique = messages_history[myWindow.destinataire];
+        }
+    }
  }
 
 
@@ -262,3 +304,9 @@ function pauseAllVideos() {
         $(this)[0].pause();
     });
 }
+
+$(window).bind("beforeunload", function() { 
+    return confirm("Do you really want to close?"); 
+})
+
+
