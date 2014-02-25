@@ -1,4 +1,3 @@
-
 var io = require('socket.io');
 var express = require('express');
 var app = express();
@@ -21,7 +20,7 @@ app.get('/', function (req, res, next) {
 app.post('/public/ppt', function(req, res) {
 	console.log("new post");
 	var fileName;
-	var form = new formidable.IncomingForm({ 
+	var form = new formidable.IncomingForm( { 
 		uploadDir: __dirname + '/public/ppt/',
 		keepExtensions: true
 	});
@@ -45,7 +44,6 @@ app.post('/public/ppt', function(req, res) {
 	.on('file', function(field, file) {
 		// On file received
 		console.log("new file: " + './ppt/' + file.name);
-		alertClients('./ppt/' + file.name); //Tell to all clients to update their presentation
 	})
 
 	.on('progress', function(bytesReceived, bytesExpected) {
@@ -113,7 +111,7 @@ socket.on('connection', function (client) {
 
 		client.emit('activeSlide', currentSlideId);
 
-		if (newClientSocketId != rootSocketId){
+		if (newClientSocketId != rootSocketId) {
 			sendMessage(rootSocketId, 'videoStates_request');
 			console.log('Server request videos states to root');
 		}
@@ -142,9 +140,11 @@ socket.on('connection', function (client) {
 	});
 
 	// Broadcast the message to prevent clients that a new presentation is selected by the animator 
-	client.on('updateSlide', function () {
+	client.on('updateSlide', function (filePath) {
 		console.log('server receives and broadcast updateSlide');
-		client.broadcast.emit('updateSlide');
+		//client.broadcast.emit('updateSlide');
+		console.log('filePath: ' + filePath);
+		alertClients(filePath);
 	});
 
 	client.on('SlideChanged', function (activeSlideId) {
@@ -168,13 +168,24 @@ socket.on('connection', function (client) {
 		client.broadcast.emit('click', eltId);
 	});
 
-	client.on('new_message_PersonalChat', function(infos){
+	client.on('new_message_PersonalChat', function(infos) {
 		var obj = JSON.parse(infos);
 		client.broadcast.emit('notification_PersonalChat', JSON.stringify({
 			emetteur: obj.emetteur,
 			destinataire: obj.destinataire,
 			contenu: obj.contenu
 		}));
+	});
+
+	client.on('allPresentationsList_request', function() {
+		var files = fs.readdirSync(__dirname + '/public/ppt/');
+		var htmlFiles = [];
+		for (var i = 0; i < files.length; i++) {
+			if (files[i].split('.').reverse()[0] === "html") {
+				htmlFiles.push(files[i]);
+			}
+		}
+		client.emit('allPresentationsList_response', JSON.stringify({files: htmlFiles}));
 	});
 
 	// Executed when a client disconnects
