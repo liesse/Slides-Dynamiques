@@ -66,6 +66,9 @@ var tab_client = [];
 var arrayMasters = [];
 var rootSocketId = "";
 var newClientSocketId;
+var tab_pseudo_socket = [];
+
+
 // We define client side file
 app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/public/video.html');
@@ -98,6 +101,8 @@ socket.on('connection', function (client) {
 
 		TempoPseudo = user.identifant;
 		tab_client.push(TempoPseudo);
+        tab_pseudo_socket[user.identifant] = client.id;
+
 
 		// We send client's tab to users that began connection
 		client.send(JSON.stringify({
@@ -166,14 +171,22 @@ socket.on('connection', function (client) {
 		client.broadcast.emit('click', eltId);
 	});
 
-	client.on('new_message_PersonalChat', function(infos) {
-		var obj = JSON.parse(infos);
-		client.broadcast.emit('notification_PersonalChat', JSON.stringify({
-			emetteur: obj.emetteur,
-			destinataire: obj.destinataire,
-			contenu: obj.contenu
-		}));
-	});
+	client.on('new_message_PersonalChat', function(infos){
+            
+       var obj = JSON.parse(infos);
+        
+       socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('notification_PersonalChat', JSON.stringify({
+         emetteur: obj.emetteur,
+         destinataire: obj.destinataire,
+         contenu: obj.contenu
+       }));
+        
+      socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('test_presence', JSON.stringify({
+         emetteur: obj.emetteur,
+         contenu: obj.contenu
+       }));
+    
+    });
 
 	client.on('allPresentationsList_request', function() {
 		var files = fs.readdirSync(__dirname + '/public/ppt/');
