@@ -50,7 +50,7 @@
        var destinataire = window.destinataire;
        var mon_identifiant = window.mon_identifiant;
         
-       socket = io.connect();
+        socket = window.socket; //io.connect();
         
         socket.on('notification_PersonalChat', function(infos){
                         
@@ -73,12 +73,13 @@
                     emetteur: mon_identifiant,
                     destinataire: destinataire,
                     contenu: texte
-               }));                  
+               }));    
            }
         }
         
         function chargerDonnees(){
             document.getElementById("pseudo").innerHTML = window.mon_identifiant + " --> " + window.destinataire;
+            document.getElementById("messageChat").innerHTML = window.historique;
         }
         
     </script>
