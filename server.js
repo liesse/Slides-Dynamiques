@@ -27,8 +27,6 @@ app.post('/public/ppt', function(req, res) {
 
 	form
 	.on('aborted', function() {
-		req.resume();
-		console.log('request resumed after aborted');
 	})
 
 	.on('error', function(err) {
