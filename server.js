@@ -187,6 +187,16 @@ socket.on('connection', function (client) {
        }));
     
     });
+    
+    client.on('MAJ_tab_windows_opened', function(infos){
+        
+        var obj = JSON.parse(infos);
+        
+        socket.sockets.socket(tab_pseudo_socket[obj.emetteur]).emit('MAJ_tab_windows_opened', JSON.stringify({
+           destinataire: obj.destinataire          
+        }));
+        
+    });
 
 	client.on('allPresentationsList_request', function() {
 		var files = fs.readdirSync(__dirname + '/public/ppt/');
