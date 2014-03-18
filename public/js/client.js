@@ -56,9 +56,11 @@ $(document).ready(function () {
         var newMessage = jQuery.parseJSON(message);
        
         if (newMessage.clients) {
-            document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>" + newMessage.clients + " utilisateur(s) connecté(s):</strong></p>";
+            document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>" + (newMessage.clients-1) + " utilisateur(s) connecté(s):</strong></p>";
             for(var i=0; i < newMessage.tab_client.length; i++) {
-                document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
+                if(newMessage.tab_client[i] != mon_identifiant) {               
+                    document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
+                }
             } 
         }
 
