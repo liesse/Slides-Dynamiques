@@ -5,6 +5,25 @@
     <script src="/socket.io/socket.io.js"></script>
     <style type="text/css">
       
+          #pseudo {
+           color: #A52A2A;
+           font-size: 24px;
+           margin-left: 100px;
+         }
+        .emetteur {
+            border: 1px #008000;
+            border-radius: 8px;
+            width: 218px;
+            box-shadow: 5px 5px 5px green;
+        }
+        .destinataire {
+            border: 2px #FF0000;
+            border-radius: 8px;
+            text-align: right;
+            width: 218px;
+            box-shadow: 5px 5px 5px red;
+        }
+
         .users {
             border: 1px solid;
         }
@@ -28,6 +47,7 @@
             width: 250px;
             overflow:scroll;
             margin-top: 12px;
+            background-color: #ECECEC;
         }
         
         #zone_texte_Chat {
@@ -47,6 +67,10 @@
       
     <script type="text/javascript">
                 
+       window.onbeforeunload = function(event){    
+          console.log("Fermeture");
+       };
+        
        var destinataire = window.destinataire;
        var mon_identifiant = window.mon_identifiant;
         
@@ -57,7 +81,7 @@
             var obj = JSON.parse(infos);
             
             if(obj.destinataire === mon_identifiant && obj.emetteur === destinataire) {
-                document.getElementById("messageChat").innerHTML += "<p>" + obj.emetteur + ":" + obj.contenu + "</p>";   
+                document.getElementById("messageChat").innerHTML += "<p class='destinataire'>" /* + obj.emetteur + ":" */ + obj.contenu + "</p>";   
             }
         });
         
@@ -66,7 +90,7 @@
            var texte = messageInput.value;
 
            if(event.keyCode == 13) {
-               document.getElementById("messageChat").innerHTML += "<p>" + mon_identifiant + ":" + texte + "</p>";
+               document.getElementById("messageChat").innerHTML += "<p class='emetteur'>" /* + mon_identifiant + ":" */ + texte + "</p>";
                document.getElementById("zone_texte_Chat").value = "";
                               
                socket.emit('new_message_PersonalChat', JSON.stringify({
@@ -78,9 +102,17 @@
         }
         
         function chargerDonnees(){
-            document.getElementById("pseudo").innerHTML = window.mon_identifiant + " --> " + window.destinataire;
+            document.getElementById("pseudo").innerHTML = /*window.mon_identifiant + " --> " + */ window.destinataire;
             document.getElementById("messageChat").innerHTML = window.historique;
         }
+        
+        window.onbeforeunload = function(e){ 
+                socket.emit('MAJ_tab_windows_opened', JSON.stringify({
+                    emetteur: mon_identifiant,
+                    destinataire: destinataire
+               }));            
+        } 
+    
         
     </script>
       

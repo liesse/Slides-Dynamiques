@@ -321,12 +321,14 @@ html {
 
 #cadre-menu-droite {
     border: 2px solid;
+    border-radius: 15px;
+    box-shadow: 9px 9px 7px #808080;
+    font-size: 12px;
     height: 90%;
     position: fixed;
     right: 4px;
     top: 40px;
     width: 95px;
-    font-size:12px;
 }
 
 .users {

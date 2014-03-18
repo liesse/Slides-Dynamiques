@@ -142,12 +142,12 @@ $(document).ready(function () {
         updateSlide(filePath);
     });
     
-    // Test if the window is open or nor. If not, we underline the name on the connected user panel
+    // Test if the window is open or not. If not, we underline the name on the connected user panel
     socket.on('test_presence', function(infos){
                         
         var obj = JSON.parse(infos);
          
-        messages_history[obj.emetteur] = '<p>' + obj.emetteur + ':' + obj.contenu + '</p>';
+        messages_history[obj.emetteur] = "<p class='destinataire'>" + obj.contenu + "</p>";
         
         for(var i=0; i <tab_windows_opened.length; i++) {
             
@@ -162,6 +162,17 @@ $(document).ready(function () {
             
             if(tab_p[i].innerHTML === obj.emetteur){
                 tab_p[i].style.backgroundColor = "orange";
+            }
+        }
+    });
+    
+    socket.on('MAJ_tab_windows_opened', function(infos){
+                        
+        var obj = JSON.parse(infos);
+        
+        for(var i in tab_windows_opened){
+            if(tab_windows_opened[i] == obj.destinataire){
+                delete tab_windows_opened[i];
             }
         }
     });
@@ -315,10 +326,6 @@ function setPresentationsList() {
     socket.emit('allPresentationsList_request');
 }
 
-$(window).bind("beforeunload", function() { 
-    return confirm("Do you really want to close?"); 
-});
-
 function getPresentationsList() {
     return presentationsList;
 }
@@ -326,5 +333,4 @@ function getPresentationsList() {
 function alert_server(filePath) {
     socket.emit('updateSlide', filePath);
 }
-
 
