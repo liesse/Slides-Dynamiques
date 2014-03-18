@@ -1,62 +1,11 @@
 <!DOCTYPE html>
 <html>
+    
   <head>
-        
     <script src="/socket.io/socket.io.js"></script>
-    <style type="text/css">
-      
-          #pseudo {
-           color: #A52A2A;
-           font-size: 24px;
-           margin-left: 100px;
-         }
-        .emetteur {
-            border: 1px #008000;
-            border-radius: 8px;
-            width: 218px;
-            box-shadow: 5px 5px 5px green;
-        }
-        .destinataire {
-            border: 2px #FF0000;
-            border-radius: 8px;
-            text-align: right;
-            width: 218px;
-            box-shadow: 5px 5px 5px red;
-        }
-
-        .users {
-            border: 1px solid;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .visible {
-            display: block;
-        }    
-
-        #BlocChat1 {
-            border: 2px solid #808080;
-            width: 260px;
-        }        
-
-        #messageChat {
-            border: 2px solid #000000;
-            height: 250px;
-            width: 250px;
-            overflow:scroll;
-            margin-top: 12px;
-            background-color: #ECECEC;
-        }
-        
-        #zone_texte_Chat {
-            size: 50px;
-        }
-        
-    </style>  
-   
+    <link rel='stylesheet' href="css/personalChat.css" type='text/css' media='screen' />
   </head>
+    
   <body onload="chargerDonnees()">       
       
    <div id="BlocChat1">
@@ -65,57 +14,8 @@
       <p><input type="text" id="zone_texte_Chat"  onkeydown="ajouterMessageChat(this,event)"/></p>
    </div>          
       
-    <script type="text/javascript">
-                
-       window.onbeforeunload = function(event){    
-          console.log("Fermeture");
-       };
-        
-       var destinataire = window.destinataire;
-       var mon_identifiant = window.mon_identifiant;
-        
-        socket = window.socket; //io.connect();
-        
-        socket.on('notification_PersonalChat', function(infos){
-                        
-            var obj = JSON.parse(infos);
-            
-            if(obj.destinataire === mon_identifiant && obj.emetteur === destinataire) {
-                document.getElementById("messageChat").innerHTML += "<p class='destinataire'>" /* + obj.emetteur + ":" */ + obj.contenu + "</p>";   
-            }
-        });
-        
-       function ajouterMessageChat(messageInput,event) {
-        
-           var texte = messageInput.value;
+   <script type="text/javascript" src="js/personalChat.js"></script>
 
-           if(event.keyCode == 13) {
-               document.getElementById("messageChat").innerHTML += "<p class='emetteur'>" /* + mon_identifiant + ":" */ + texte + "</p>";
-               document.getElementById("zone_texte_Chat").value = "";
-                              
-               socket.emit('new_message_PersonalChat', JSON.stringify({
-                    emetteur: mon_identifiant,
-                    destinataire: destinataire,
-                    contenu: texte
-               }));    
-           }
-        }
-        
-        function chargerDonnees(){
-            document.getElementById("pseudo").innerHTML = /*window.mon_identifiant + " --> " + */ window.destinataire;
-            document.getElementById("messageChat").innerHTML = window.historique;
-        }
-        
-        window.onbeforeunload = function(e){ 
-                socket.emit('MAJ_tab_windows_opened', JSON.stringify({
-                    emetteur: mon_identifiant,
-                    destinataire: destinataire
-               }));            
-        } 
-    
-        
-    </script>
-      
   </body>
 </html>
  
