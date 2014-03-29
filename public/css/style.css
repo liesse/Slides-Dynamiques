@@ -246,7 +246,7 @@ html {
 #menu-pseudo {
     position: absolute;
     top: 10px;
-	right: 10%;
+	right: 11%;
 	font: 16px Arial;
 	color: #555;
 }
@@ -336,4 +336,9 @@ html {
     font-weight: bold;
 }
 
-
+#deconnexion {
+    height: 37px;
+    position: absolute;
+    right: 6.2%;
+    top: -2px;
+}

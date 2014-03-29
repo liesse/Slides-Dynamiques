@@ -33,6 +33,11 @@ $(document).ready(function () {
             $("#menu-pseudo").html("Bonjour " + mon_identifiant);
         }
     });
+    
+    $("#deconnexion").click(function(){
+        socket.disconnect();
+        document.location.href="index.html"
+    });
 
 	// Function that check if we are really loading an html presentation
     $("#img-select").click(function () {
