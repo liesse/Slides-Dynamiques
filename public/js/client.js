@@ -34,6 +34,13 @@ $(document).ready(function () {
         }
     });
     
+    $("#identifiant").keypress(function(e) {
+        
+        if(e.keyCode == 13) {
+         $("#identification").click();
+        }
+    });
+    
     $("#deconnexion").click(function(){
         socket.disconnect();
         document.location.href="index.html"
@@ -340,4 +347,3 @@ function getPresentationsList() {
 function alert_server(filePath) {
     socket.emit('updateSlide', filePath);
 }
-
