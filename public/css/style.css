@@ -29,6 +29,44 @@ html {
 	cursor: pointer;
 }
 
+#liste_session {
+    margin-left: 140px;
+    padding: 0;
+    list-style-type: none;
+    position: absolute;
+    top: 8px;
+    width: 200px;
+}
+
+#liste_session li {
+    float: left;
+    margin-left: 3px;
+    cursor: pointer;
+}
+
+#liste_session li:hover {
+    margin-top: -6px;
+}
+
+#liste_session li img {
+    width: 21px;
+    height: 20px;
+    margin-left: 0px;
+    margin-top: -1px;
+}
+
+#liste_session li img#export_session {
+    width: 31px;
+    height: 29px;
+    margin-top: -5px;
+}
+
+#liste_session li img#import_session {
+    width: 31px;
+    height: 29px;
+    margin-top: -5px;
+}
+
 #overlay {
 	position: absolute;
 	top: 0;
@@ -229,7 +267,7 @@ html {
 
 #bouton-selectPPT {
 	margin-left: 5px;
-    margin-top: 8px;
+    margin-top: 5px;
     position:absolute;
     width:201px;
     font: 13px Arial;

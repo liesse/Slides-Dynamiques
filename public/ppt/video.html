@@ -361,8 +361,10 @@
 <script src="config_EAST/html5.js" type="text/javascript"/>
 <script src="config_EAST/mediaelement.js" type="text/javascript"/> <![endif]--> 
 <script src="config_EAST/EAST.js" type="text/javascript"> </script>
+<script src="config_EAST/BrowserDetect.js" type="text/javascript"> </script>
 <script src="config_EAST/timesheets.js" type="text/javascript"> </script>
 <script src="config_EAST/timesheets-navigation.js" type="text/javascript"> </script>
+<script src="config_EAST/EAST_session.js" type="text/javascript"> </script>
 </head>
 <body style="font-size: 100%" class="burst">
 	<div id="slideshow">
@@ -481,8 +483,8 @@
 			<li class="li_class" id="l1110">
 				<span class="spanli" id="s1110">Premier item de liste</span>
 			</li>
-			<video id="video1" poster="config_EAST/videos.png" src="video.webm" style="display: inline-block; height: 50%; width: 50%;">x</video>
-			<video id="video2" poster="config_EAST/videos.png" src="trailer.mp4" style="display: inline-block; height: 50%; width: 50%; margin-left: 50%">x</video>
+			<video id="video1" poster="config_EAST/videos.png" src="video.webm" style="display: inline-block; height: 150px; width: 300px;">x</video>
+			<video id="video2" poster="config_EAST/videos.png" src="trailer.mp4" style="display: inline-block; height: 150px; width: 300px; margin-left:0px">x</video>
 		</span>
 
 		<li class="li_class" id="l1112">
@@ -506,6 +508,8 @@
 		</tr>
 	</table>
 </div>
+<p class="menu" id="session_info">
+</p>
 <p class="menu" id="navigation_par">
 	<button title="first slide" id="first">  &lt;&lt; begin   </button>
 	<button title="previous slide" id="prev"> &lt; prev </button>

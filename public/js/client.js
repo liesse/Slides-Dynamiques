@@ -1,7 +1,7 @@
 
 /* Globals variables */
 var TempoMaster = false;
-var master = false;
+var master = false; 
 var mon_identifiant;
 var password;
 var socket;
@@ -235,6 +235,36 @@ $(document).ready(function () {
         }
     });
 
+    // import session 
+    $("#import_session").click(function () {
+        $($('#notre_frame').contents()).find("#session_import").click();
+    });
+
+    // play session
+    $("#play_session").click(function () {
+        window["notre_frame"].playSession();
+    });
+
+    // pause session
+    $("#pause_session").click(function () {
+        window["notre_frame"].pauseSession();
+    });
+
+    // stop session
+    $("#stop_session").click(function () {
+        window["notre_frame"].stopSession();
+    });
+
+    // record session
+    $("#record_session").click(function () {
+        $($('#notre_frame').contents()).find("#session_rec").click();
+    });
+
+    // export session
+    $("#export_session").click(function () {
+        $($('#notre_frame').contents()).find("#session_export").click();
+    });
+
     $("#notre_frame").load(function() {
         $($('#notre_frame').contents()).find('#navigation_par').hide();
         $($('#notre_frame').contents()).find('#slideshow div').click(function(event) {
@@ -346,4 +376,9 @@ function getPresentationsList() {
 
 function alert_server(filePath) {
     socket.emit('updateSlide', filePath);
+}
+
+//returns the active slide
+function activeSlide () {
+    return $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id");
 }

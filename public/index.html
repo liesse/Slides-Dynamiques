@@ -7,7 +7,7 @@
   <!-- Necessary Node.js scripts for building this application -->    
 	<script src="js/jquery-1.9.1.js"></script>
 	<script src="js/jquery-ui-1.10.2.custom.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
+  	<script src="/socket.io/socket.io.js"></script>
 	
 	<!-- Scripts used for messages management (sent and received), videos and channel discussion-->
 	<script type="text/javascript" src="js/pannel.js"></script>
@@ -44,6 +44,14 @@
                 <li><img id="next1" src="images/next.png" /></li>
                 <li><img id="last1" src="images/last.png" /></li>
 			</ul>
+			<ul id="liste_session">
+				<li><img id="import_session" title="Import session" src="images/import_session.png"></li>
+				<li><img id="play_session" title="Play session" src="images/play.png"></li>
+				<li><img id="pause_session" title="Pause session" src="images/pause.png"></li>
+				<li><img id="stop_session" title="Stop session" src="images/stop.png"></li>	
+				<li><img id="record_session" title="Record the session" src="images/rec.png"></li>
+				<li><img id="export_session" title="Export session" src="images/export_session.png"></li>
+			</ul>
         </div>
 		<div id="menu-pseudo"></div>
         <div id="boutton-user">
@@ -71,7 +79,7 @@
     <!-- Personal chat panel -->
 	<div id="cadre-menu-droite">Utilisateurs</div>
 	
-	<IFRAME id="notre_frame"  src="ppt/video.html"></IFRAME> 
+	<IFRAME name="notre_frame" id="notre_frame"  src="ppt/video.html"></IFRAME> 
 
 	<!-- Controls for video management -->
 	<div id="cadre-video" class="isHidden">
