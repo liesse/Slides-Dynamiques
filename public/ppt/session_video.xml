@@ -1,0 +1,18 @@
+<!--SMIL session file-->
+<!--Open your presentation, click "Load session" button and select this file.-->
+<xml>
+<event type="slide" id="0" time="0"/>
+<event type="slide" id="1" time="6747"/>
+<event type="slide" id="2" time="2899"/>
+<event type="slide" id="3" time="2570"/>
+<event type="click" id="undefined" time="2993"/>
+<event type="li" id="el100" time="6995"/>
+<event type="click" id="undefined" time="4"/>
+<event type="li" id="el100" time="1838"/>
+<event type="click" id="undefined" time="4"/>
+<event type="slide" id="4" time="4367"/>
+<event type="slide" id="2" time="4342"/>
+<event type="slide" id="1" time="2108"/>
+<event type="slide" id="3" time="2587"/>
+<event type="slide" id="0" time="2804"/>
+</xml>

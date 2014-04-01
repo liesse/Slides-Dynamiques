@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1"?><EAST transition="burst">
+    <PREFERENCES>
+        <PUCE colorpuce="green" level="1" type="square"/><PUCE colorpuce="orange" level="2" type="disc"/>
+    </PREFERENCES>
+    <PAGE_TITRE>
+        <TITRE>Démonstration session EAST</TITRE>
+    </PAGE_TITRE>
+    <PARTIE>
+        <TITRE>Démo Session</TITRE>
+        <SECTION>
+            <TITRE>EAST</TITRE>
+            <PARAGRAPHE>
+                EAST est un logiciel de présentation
+            </PARAGRAPHE>
+            <LISTE mode="incremental_allume">
+                <EL>WYSIWYM</EL>
+                <EL>S'appuyant sur XML et HTML</EL>
+                <EL>Entièrement portable sur toute plateforme</EL>
+            </LISTE>
+        </SECTION>
+        <SECTION>
+            <TITRE>Session</TITRE>
+            <LISTE mode="pliage">
+              <EL>Une session correspond 
+                <LISTE>
+                    <EL>A une succession d'actions et d'affichages</EL>
+                    <EL>Synchronisée en temps</EL>
+                </LISTE>
+              </EL>
+              <EL> L'intérêt de l'enregistrer réside
+                <LISTE>
+                    <EL>dans la possibilité de la rejouer à l'dentique</EL>
+                    <EL>dans la facilité à mettre à disposition cet enregistrement</EL>
+                </LISTE>
+              </EL>
+         
+              
+            </LISTE>
+         
+            
+        </SECTION>
+    </PARTIE>
+</EAST>
