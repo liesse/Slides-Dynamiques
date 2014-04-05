@@ -1,6 +1,6 @@
 /* Globals variables */
 var TempoMaster = false;
-var master = false; // 
+var master = false;
 var mon_identifiant;
 var password;
 var socket;
@@ -10,30 +10,25 @@ var currentSlide = 0;
 var tab_windows_opened = []; // this tab contains all pseudos of all opened windows 
 var messages_history = []; // This tab contains history of all opened windows. 
 var presentationsList = []; // This tab contains all presentation already upload on the server
+var token;
 
 $(document).ready(function () {
     "use strict";
-    socket = io.connect();
 
-    /* Executed after authentication, this event warn the server that a new person wants to connect to EAST application
-     *  Identifier and password are transmitted through client's web socket which are linked with the only one remote server
-     *  After this step, a new screen is received by the user and then he can follow the current presentation
-     */
-    $("#identification").click(function () {
-        if ($("#identifiant").val() !== "") {
-            $('#identification').unbind('click');
-            $(".img-loading").css("visibility", "visible");
-            mon_identifiant = $("#identifiant").val();
-            password = $("#password").val();
-
-            socket.emit('ouvertureSession', JSON.stringify({
-                identifant: mon_identifiant,
-                password: password,
-                socketId: socket.id
-            }));
-
-            $("#menu-pseudo").html("Bonjour " + mon_identifiant);
-        }
+    // Identification of user
+    $("#identification").click(function (e) {
+        e.preventDefault();
+        mon_identifiant = $('#identifiant').val();
+        password = $('#password').val();
+        $.post('/login', {
+            type: 'POST',
+            data: {
+                identifiant: mon_identifiant,
+                password: password
+            },
+        }).done(function (result) {
+            connect_socket(result.token);
+        });
     });
     
     // This event allow users' connection by simply Enter
@@ -50,7 +45,8 @@ $(document).ready(function () {
         socket.disconnect();
         document.location.href="index.html"
     });
-
+    
+    
 	// Event that check if we are really loading an html presentation
     $("#img-select").click(function () {
         $("#hiddenfile").click();

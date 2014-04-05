@@ -1,22 +1,56 @@
 
 // Include all necessary packages
 var io = require('socket.io');
+var socketio_jwt = require('socketio-jwt');
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var socket = io.listen(server);
 var fs = require('fs');
 var formidable = require('formidable');
+var jwt = require('jsonwebtoken');
+var jwt_secret = 'knkninnfsf,;sdf,ozqefsdvsfdbsnoenerkls,d;:';
 var currentSlideId;
 var videosStates;
+
+// Routes
+app.get('/', function (req, res, next) {
+  if (req['body'] !== undefined && req['body']['data'] !== undefined && req['body']['data']['identifiant'] !== undefined && req['body']['data']['identifiant'] === 'didier') {
+    // User is authenticated, let him in
+    res.render('index.html');
+  } else {
+    // Otherwise we redirect him to login form
+    res.redirect("/login.html");
+  }
+});
 
 app.configure(function () {
 	app.use(express.static(__dirname + '/public'));
 	app.use(express.json());
 	app.use(express.urlencoded());
 });
-app.get('/', function (req, res, next) {
-	res.render('./public/index.html');
+
+
+
+
+app.post('/login', function (req, res) {
+    var profile = {
+        identifiant: 'didier',
+        password: 'comete',
+        id: 123
+    };
+    
+    console.log(req);
+ //   var user = req['body']['data'];
+    
+//    if (user.identifiant === profile.identifiant && user.password === profile.password) {
+        // We are sending the profile inside the token
+        var token = jwt.sign(profile, jwt_secret, { expiresInMinutes: 60*5 });
+        res.json({token: token});
+
+//    } else {
+ //       console.log("client rejected");
+  //  }
 });
 
 // Events for uploading new presentations
@@ -88,7 +122,7 @@ socket.on('connection', function (client) {
 		newClientSocketId = client.id;
 		allClients += 1;
 
-		if (user.identifant === "root" && user.password === "pass") {
+		if (user.identifant === "didier" && user.password === "comete") {
 			asRoot = true;
 			arrayMasters.push(user.identifant);
 			root = client;
