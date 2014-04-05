@@ -1,3 +1,5 @@
+
+// Include all necessary packages
 var io = require('socket.io');
 var express = require('express');
 var app = express();
@@ -8,7 +10,6 @@ var formidable = require('formidable');
 var currentSlideId;
 var videosStates;
 
-// Loading server and static repository definition to include inside it.
 app.configure(function () {
 	app.use(express.static(__dirname + '/public'));
 	app.use(express.json());
@@ -17,6 +18,8 @@ app.configure(function () {
 app.get('/', function (req, res, next) {
 	res.render('./public/index.html');
 });
+
+// Events for uploading new presentations
 app.post('/public/ppt', function(req, res) {
 	console.log("new post");
 	var fileName;
@@ -57,16 +60,16 @@ server.listen(8333);
 
 // Attributs
 var asRoot = false;
-var allClients = 0;
+var allClients = 0; // number of all connected users
 var root;
 var slide_currently;
 var my_timer;
 var TempoPPT;
-var tab_client = [];
-var arrayMasters = [];
+var tab_client = []; // contains all connected clients
+var arrayMasters = []; // contains the master who has all controls on presentation
 var rootSocketId = "";
 var newClientSocketId;
-var tab_pseudo_socket = [];
+var tab_pseudo_socket = []; // contains all pseudo and their socket id (used to contact specific user when necessary)
 
 
 // We define client side file
@@ -142,7 +145,7 @@ socket.on('connection', function (client) {
 		}
 	});
 
-	// Broadcast the message to prevent clients that a new presentation is selected by the animator 
+	// Broadcast the message to warn clients that a new presentation is selected by the animator 
 	client.on('updateSlide', function (filePath) {
 		console.log('server receives and broadcast updateSlide');
 		//client.broadcast.emit('updateSlide');
@@ -171,6 +174,7 @@ socket.on('connection', function (client) {
 		client.broadcast.emit('click', eltId);
 	});
 
+    // Event that both warn recipient of a new message and check recicpient's disponibility
 	client.on('new_message_PersonalChat', function(infos){
             
        var obj = JSON.parse(infos);
@@ -188,6 +192,7 @@ socket.on('connection', function (client) {
     
     });
     
+    // Event that update the tab that contains all opened recipient windows (to keep at date notification)
     client.on('MAJ_tab_windows_opened', function(infos){
         
         var obj = JSON.parse(infos);

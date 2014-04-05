@@ -3,49 +3,13 @@
     <head>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
         <title>Upload new presentation</title>
-        <style type='text/css'>
-            body {
-                font-family: sans-serif;
-            }
-
-            #uploadedFiles ul {
-                padding-left: 0px;
-            }
-
-            #uploadedFiles ul li {
-                
-            }
-
-            #uploadedFiles ul li:hover {
-                background-color: #c9f600;
-            }
-
-            #uploadedFiles ul li img {
-                width: 30px;
-                height: 40px;
-            }
-
-            .span1 {
-                position: absolute;
-                margin-top: 3px;
-                margin-left: 5px;
-            }
-
-            .span2 {
-                position: absolute;
-                font-size: 12px;
-                color: gray;
-                margin-left: 35px;
-                margin-top: -20px;
-            }
-
-        </style>
+        <link rel='stylesheet' href="css/upload.css" type='text/css' media='screen' />
         <script src="js/jquery-1.9.1.js"></script>
         <script src="js/jquery-ui-1.10.2.custom.js"></script>
         <script type="text/javascript" src="js/upload.js"></script>
     </head>
     <body>
-      <!-- Form that allow to choose a file presentation, anywhere on the disk (not necessary to choose it on project public repository -->
+      <!-- Form that allow to choose a file presentation, anywhere on the disk (not necessary to choose into public repository -->
         <form id="newPPT" action="./public/ppt" method="post" enctype="multipart/form-data">
             <input type="file" name="newPresentation" id="hiddenfile" accept='text/html' />
             <input type="button" id="submit" value="Submit">

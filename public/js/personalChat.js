@@ -1,9 +1,10 @@
     
-var destinataire = window.destinataire;
+var destinataire = window.destinataire; 
 var mon_identifiant = window.mon_identifiant;
         
 socket = window.socket; //io.connect();
-        
+
+// listener that notify personal chat. It retrieves informations like the recipient and message's content.
 socket.on('notification_PersonalChat', function(infos){
                         
     var obj = JSON.parse(infos);
@@ -13,6 +14,9 @@ socket.on('notification_PersonalChat', function(infos){
     }
 });
     
+/* function that add messages on personal chat frames both on the client and then notify recipient 
+ * Recipient receive messages from the server after control
+ */
 function ajouterMessageChat(messageInput,event) {
         
    var texte = messageInput.value;
@@ -28,12 +32,16 @@ function ajouterMessageChat(messageInput,event) {
      }));    
    }
 }
-        
+      
+// function that load some informations from parent frame like client's pseudo, client's recipient and history
 function chargerDonnees(){
     document.getElementById("pseudo").innerHTML = /*window.mon_identifiant + " --> " + */ window.destinataire;
     document.getElementById("messageChat").innerHTML = window.historique;
 }
         
+/* Function that catch frame closing in order to warn parent frame that one recipient is gone.
+   Therefore, parent frame receive from the server recipient's identifier and then updates opened windows table. 
+*/
 window.onbeforeunload = function(e){ 
     socket.emit('MAJ_tab_windows_opened', JSON.stringify({
         emetteur: mon_identifiant,

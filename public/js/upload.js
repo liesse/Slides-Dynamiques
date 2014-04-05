@@ -1,3 +1,5 @@
+
+// Script used for uploading some presentations towards the server
 $(document).ready(function() {
 
     var files = window.opener.getPresentationsList();

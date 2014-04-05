@@ -1,7 +1,6 @@
-
 /* Globals variables */
 var TempoMaster = false;
-var master = false;
+var master = false; // 
 var mon_identifiant;
 var password;
 var socket;
@@ -10,13 +9,16 @@ var containers;
 var currentSlide = 0;
 var tab_windows_opened = []; // this tab contains all pseudos of all opened windows 
 var messages_history = []; // This tab contains history of all opened windows. 
-var presentationsList = [];
+var presentationsList = []; // This tab contains all presentation already upload on the server
 
 $(document).ready(function () {
     "use strict";
     socket = io.connect();
 
-	// Executed after authentication, this event allows users' register in order to warn the server of new user
+    /* Executed after authentication, this event warn the server that a new person wants to connect to EAST application
+     *  Identifier and password are transmitted through client's web socket which are linked with the only one remote server
+     *  After this step, a new screen is received by the user and then he can follow the current presentation
+     */
     $("#identification").click(function () {
         if ($("#identifiant").val() !== "") {
             $('#identification').unbind('click');
@@ -33,8 +35,23 @@ $(document).ready(function () {
             $("#menu-pseudo").html("Bonjour " + mon_identifiant);
         }
     });
+    
+    // This event allow users' connection by simply Enter
+    $("#identifiant").keypress(function(e) {    
+        if(e.keyCode == 13) {
+         $("#identification").click();
+        }
+    });
+    
+    /* This event allow users (master or salves) to properly disconnect from the server.
+     * After that, the user is redirected on log in page.
+    */
+    $("#deconnexion").click(function(){
+        socket.disconnect();
+        document.location.href="index.html"
+    });
 
-	// Function that check if we are really loading an html presentation
+	// Event that check if we are really loading an html presentation
     $("#img-select").click(function () {
         $("#hiddenfile").click();
         $("#hiddenfile").change(function () {
@@ -44,14 +61,24 @@ $(document).ready(function () {
         });
     });
 
-    // Allow animators to run another presentation
+    /* This event allows animator to run another presentation as he wants
+     * A button on the top left-hand corner has been specially placed. 
+    */
     $("#bouton-selectPPT").click(function () {
         setPresentationsList();
         var w = window.open('upload.html', 'popUpWindow', 'height=200, width=400, left=10, top=10, resizable=no, scrollbars=yes, toolbar=no, menubar=no, location=no, directories=no, status=yes');
         w.focus();
     });
 
-    // Management of received messages (validity treatment, Retrieval of datas, DOM manipulation) 
+    /* Management of received messages and DOM insertion, modification, deletion
+        --> if '.client' parameter : client's number and connected pannel users
+        --> if '.newMessage' parameter : retrieve some messages from broadcast discussion
+        --> if '.videoState' parameter : video management in order to adjust videos (move forward, move back, pause, play)
+        --> if '.messageContent' parameter : messages retrieve from broadcast (we have both sender and content liked to it)
+        --> if '.arrayMasters' : become an animator (master) if the server send a tab with client's identifier
+        --> if '.connexion' : warns all users (master and slaves) that a new slave has come around
+        --> if '.dexonnexion' : warns all users (master and slaves) that one slaves leave 
+    */
     socket.on('message', function (message) {
         var newMessage = jQuery.parseJSON(message);
        
@@ -64,7 +91,7 @@ $(document).ready(function () {
             } 
         }
 
-        if (newMessage.messageContent) { // Treatment of discussion messages
+        if (newMessage.messageContent) { 
             $("#message ul").append("<li>(" + newMessage.messageSender + "): " + newMessage.messageContent + "</li>");
             $("#message").scrollTop(100000);
 
@@ -104,8 +131,7 @@ $(document).ready(function () {
                     $("#overlay").hide();
                 }, timeLoad);
             }
-            
-            // Become an animator if the server tell us.
+                        
             if (newMessage.arrayMasters) {
                 if (newMessage.arrayMasters.indexOf(mon_identifiant) === -1) {
                     setMaster(false);
@@ -124,12 +150,14 @@ $(document).ready(function () {
         }
     });
 
-    // Slaves receive slide "id" of the click element on master computer, then we simulate "the click" on slaves computers.
+   /* Slaves receive current slide 'id' from master's computer.
+    * Then we simulate 'click' event on slaves computers.
+   */
     socket.on('click', function (eltId) {
         console.log("**click " + eltId);
         $($('#notre_frame').contents()).find(eltId).click();
     });
-    
+     
     socket.on('activeSlide', function(activeSlideId) {
         if (activeSlideId !== null) {
             var slide = $($('#notre_frame').contents()).find('#' + activeSlideId);
@@ -138,13 +166,14 @@ $(document).ready(function () {
         }
     });
 
-    // Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves computer.
     socket.on('updateSlide', function(filePath) {
         console.log('***client receives updateSlide');
         updateSlide(filePath);
     });
     
-    // Test if the window is open or not. If not, we underline the name on the connected user panel
+    /*  Test if the personal chat window liked to the recipient receive message is open or not. 
+     *  If not, we underline the name on the connected user panel in order to warn it that one user want to contact him/her
+     */ 
     socket.on('test_presence', function(infos){
                         
         var obj = JSON.parse(infos);
@@ -158,7 +187,7 @@ $(document).ready(function () {
             }
         }
         
-        // The pseudo window is closed client side, we underline it on orange
+        // The pseudo window is closed client side, we underline it with orange colour.
         var tab_p = document.getElementsByClassName('users');
         for(var i=0; i < tab_p.length; i++){
             
@@ -168,6 +197,7 @@ $(document).ready(function () {
         }
     });
     
+    // Update the table that contains all opened windows in order to both - notify client and - keep the table updated
     socket.on('MAJ_tab_windows_opened', function(infos){
                         
         var obj = JSON.parse(infos);
@@ -187,7 +217,11 @@ $(document).ready(function () {
         }
     });
 
-    // Going to the next slide
+    /* Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves    
+     * computer.
+     */
+    
+        //  Going to the next slide
     $("#next1").click(function () {
         if (master) {
             pauseAllVideos(); //Pause playing videos when changing slide
@@ -195,8 +229,8 @@ $(document).ready(function () {
             socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
         }
     });
-
-	// Going on the previous slide
+    
+	//  Going on the previous slide
     $("#prev1").click(function () {
         if (master) {
             pauseAllVideos();
@@ -205,7 +239,7 @@ $(document).ready(function () {
         }
     });
 
-	// Going at the beginning of this presentation
+	//  Going at the beginning of this presentation
     $("#first1").click(function () {
         if (master) {
             pauseAllVideos();
@@ -214,13 +248,43 @@ $(document).ready(function () {
         }
     });
 
-	// Going at the end of this presentation
+	//  Going at the end of this presentation
     $("#last1").click(function () {
         if (master) {
             pauseAllVideos();
             $($('#notre_frame').contents()).find("#last").click();
             socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
         }
+    });
+
+    // import session 
+    $("#import_session").click(function () {
+        $($('#notre_frame').contents()).find("#session_import").click();
+    });
+
+    // play session
+    $("#play_session").click(function () {
+        window["notre_frame"].playSession();
+    });
+
+    // pause session
+    $("#pause_session").click(function () {
+        window["notre_frame"].pauseSession();
+    });
+
+    // stop session
+    $("#stop_session").click(function () {
+        window["notre_frame"].stopSession();
+    });
+
+    // record session
+    $("#record_session").click(function () {
+        $($('#notre_frame').contents()).find("#session_rec").click();
+    });
+
+    // export session
+    $("#export_session").click(function () {
+        $($('#notre_frame').contents()).find("#session_export").click();
     });
 
     $("#notre_frame").load(function() {
@@ -235,12 +299,12 @@ $(document).ready(function () {
 
 });
 
-// Load a new presentation selected by the animator
+//  Load a new presentation selected by the animator
 function updateSlide(filePath) { 
     $('#notre_frame').attr('src', filePath);
 }
 
-// Allow to forbid special characters for the pseudo
+//  Allow to forbid special characters for the pseudo
 function special_caract(evt) {
     "use strict";
     var keyCode = evt.which ? evt.which : evt.keyCode;
@@ -253,7 +317,10 @@ function special_caract(evt) {
     }
 }
 
-// Allow to set a new master if he's not and the contrary delete master privilege if he's not.
+/* Master rights management
+ * if the client is not master , we set it the right
+ * On contrary, we delete master privilege if he's not master.
+*/
 function setMaster(isMaster) {
     "use strict";
     if (isMaster) {
@@ -269,7 +336,11 @@ function setMaster(isMaster) {
     }
 }
 
-// Display a div structure in order to chat with someone
+/* Function that create a new frame to begin communication
+   -> Create a new frame names PersonalChat.html
+   -> Set it many attributes (identifier, recipient, socket, last message history)
+   -> Check if the frame is opened after notification (then pseudo color is orange) or not and then do some actions to update
+*/
 function lancerChat(pseudo) {
     var myWindow = window.open("PersonalChat.html",pseudo.innerHTML,"width=400,height=400");
     myWindow.mon_identifiant = mon_identifiant;
@@ -336,3 +407,7 @@ function alert_server(filePath) {
     socket.emit('updateSlide', filePath);
 }
 
+//returns the active slide in order to reach the current slide directed by the master
+function activeSlide () {
+    return $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id");
+}
