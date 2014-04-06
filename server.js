@@ -15,7 +15,7 @@ var videosStates;
 
 // Routes
 app.get('/', function (req, res, next) {
-  if (req['body'] !== undefined && req['body']['data'] !== undefined && req['body']['data']['identifiant'] !== undefined && req['body']['data']['identifiant'] === 'didier') {
+  if (req['body'] !== undefined && req['body']['data'] !== undefined && req['body']['data']['token'] !== undefined) {
     // User is authenticated, let him in
     res.render('index.html');
   } else {
@@ -29,8 +29,6 @@ app.configure(function () {
 	app.use(express.json());
 	app.use(express.urlencoded());
 });
-
-
 
 
 app.post('/login', function (req, res) {
@@ -118,7 +116,7 @@ socket.on('connection', function (client) {
 
 	// After entering a password, the session begin
 	client.on('ouvertureSession', function (connection) {
-		var user = JSON.parse(connection);
+		var user = JSON.parse(connection);        
 		newClientSocketId = client.id;
 		allClients += 1;
 
@@ -148,7 +146,8 @@ socket.on('connection', function (client) {
 			"connexion": TempoPseudo,
 			"arrayMasters": arrayMasters,
 		}));
-
+        
+        client.emit('login_success');
 		client.emit('activeSlide', currentSlideId);
 
 		if (newClientSocketId != rootSocketId) {

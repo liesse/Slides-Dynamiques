@@ -34,7 +34,15 @@ $(document).ready(function () {
         });
     });
 
+    // This event allow users' connection by simply Enter
+    $("#identifiant").keypress(function(e) {    
+        if(e.keyCode == 13) {
+         $("#identification").click();
+        }
+    });
+    
     function connect_socket(token) {
+        sessionStorage.setItem('token', token);
         socket = io.connect('', {
             query: 'token=' + token
         });
@@ -44,8 +52,10 @@ $(document).ready(function () {
             password: password,
             socketId: socket.id
         }));
-    
-        socket.on('time', function (data) {
+      
+        socket.on('login_success', function(data) {
+            document.location.href = "/index.html";
+        }).on('time', function (data) {
             console.log('- broadcast: ' + data);
         }).on('authenticated', function () {
             console.log('- authenticated');
@@ -53,22 +63,4 @@ $(document).ready(function () {
             console.log('- disconnected');
         });
     }
-
-    socket.on('pong', function () {
-        console.log('- pong');
-    }).on('time', function (data) {
-        console.log('- broadcast: ' + data);
-    }).on('authenticated', function () {
-        console.log('- authenticated');
-    }).on('disconnect', function () {
-        console.log('- disconnected');
-    });
-
-    connect(); //connect now, it will drop
-
-    $('#ping').on('click', function () {
-        console.log('- ping');
-        socket.emit('ping');
-    });
-
 });

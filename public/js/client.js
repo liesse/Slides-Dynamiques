@@ -15,28 +15,11 @@ var token;
 $(document).ready(function () {
     "use strict";
 
-    // Identification of user
-    $("#identification").click(function (e) {
-        e.preventDefault();
-        mon_identifiant = $('#identifiant').val();
-        password = $('#password').val();
-        $.post('/login', {
-            type: 'POST',
-            data: {
-                identifiant: mon_identifiant,
-                password: password
-            },
-        }).done(function (result) {
-            connect_socket(result.token);
-        });
-    });
-    
-    // This event allow users' connection by simply Enter
-    $("#identifiant").keypress(function(e) {    
-        if(e.keyCode == 13) {
-         $("#identification").click();
-        }
-    });
+    socket = io.connect();
+    token = localStorage.getItem('token');
+    socket.emit('ouvertureSession', JSON.stringify({
+        token: token
+    }));
     
     /* This event allow users (master or salves) to properly disconnect from the server.
      * After that, the user is redirected on log in page.
