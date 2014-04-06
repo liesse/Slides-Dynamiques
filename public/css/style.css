@@ -67,18 +67,6 @@ html {
     margin-top: -5px;
 }
 
-#overlay {
-	position: absolute;
-	top: 0;
-    left: 0;	
-	background: white;
-	opacity: 1;
-	width: 100%; 
-	height: 115%; 
-	display: block; 
-	z-index: 5;
-}
-
 
 #cadre-menu {
 	position: fixed;
