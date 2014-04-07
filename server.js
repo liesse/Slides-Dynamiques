@@ -17,7 +17,7 @@ var videosStates;
 app.get('/', function (req, res, next) {
   if (req['body'] !== undefined && req['body']['data'] !== undefined && req['body']['data']['token'] !== undefined) {
     // User is authenticated, let him in
-    res.render('index.html');
+    res.render('/index.html');
   } else {
     // Otherwise we redirect him to login form
     res.redirect("/login.html");
@@ -31,24 +31,21 @@ app.configure(function () {
 });
 
 
-app.post('/login', function (req, res) {
-    var profile = {
-        identifiant: 'didier',
-        password: 'comete',
-        id: 123
+app.post('/login', function (req, res) {    
+    console.log(req);
+    
+    var user = {
+        identifiant: 'aa',
+        password: 'comete'
     };
     
-    console.log(req);
- //   var user = req['body']['data'];
-    
-//    if (user.identifiant === profile.identifiant && user.password === profile.password) {
+//    if (req.authorized.password === 'comete') {
         // We are sending the profile inside the token
-        var token = jwt.sign(profile, jwt_secret, { expiresInMinutes: 60*5 });
+        var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token});
-
-//    } else {
- //       console.log("client rejected");
-  //  }
+//   } else {
+//       console.log("client rejected");
+//    }
 });
 
 // Events for uploading new presentations
@@ -88,7 +85,10 @@ app.post('/public/ppt', function(req, res) {
 
 	return;
 });
-server.listen(8333);
+
+server.listen(8333, function () {
+  console.log('listening on http://localhost:8333');
+});
 
 // Attributs
 var asRoot = false;
