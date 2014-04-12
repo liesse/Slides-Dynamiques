@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        <title>Upload new presentation</title>
+        <link rel='stylesheet' href="css/upload.css" type='text/css' media='screen' />
+        <script src="js/jquery-1.9.1.js"></script>
+        <script src="js/jquery-ui-1.10.2.custom.js"></script>
+        <script type="text/javascript" src="js/upload.js"></script>
+    </head>
+    <body>
+      <!-- Form that allow to choose a file presentation, anywhere on the disk (not necessary to choose into public repository -->
+        <form id="newPPT" action="./public/ppt" method="post" enctype="multipart/form-data">
+            <input type="file" name="newPresentation" id="hiddenfile" accept='text/html' />
+            <input type="button" id="submit" value="Submit">
+            <input id="submitForm" type="submit" style="display:none" >
+        </form>
+        <div id="uploadedFiles">
+            <ul>          
+            </ul>
+        </div>
+        <template id='fileElementModel'>
+            <li>
+                <a href="#">
+                    <img src='images/file.png' />
+                    <span class='span1'></span><br />
+                    <span class='span2'></span>
+                </a>
+            </li>
+        </template>
+    </body>
+</html>

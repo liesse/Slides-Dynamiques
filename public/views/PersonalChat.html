@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel='stylesheet' href="css/personalChat.css" type='text/css' media='screen' />
+  </head>
+    
+  <body onload="chargerDonnees()">       
+      
+   <!-- div used for sending all messages between client and recipient -->
+   <div id="BlocChat1">
+      <span id="pseudo"></span>
+      <div id="messageChat"></div>  
+      <p><input type="text" id="zone_texte_Chat"  onkeydown="ajouterMessageChat(this,event)"/></p>
+   </div>          
+      
+   <script type="text/javascript" src="js/personalChat.js"></script>
+
+  </body>
+</html>
+ 

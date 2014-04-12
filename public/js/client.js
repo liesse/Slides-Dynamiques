@@ -18,7 +18,7 @@ $(document).ready(function () {
     /**
      * Open the socket with the token build by login process
      */
-    socket = io.connect();
+    socket = io.connect('http://localhost:8334');
     token = localStorage.getItem('token');
     socket.emit('ouvertureSession', JSON.stringify({
         token: token
@@ -30,7 +30,7 @@ $(document).ready(function () {
      */
     $("#deconnexion").click(function(){
         socket.disconnect();
-        document.location.href="index.html"
+        document.location.href="east"
     });
     
     

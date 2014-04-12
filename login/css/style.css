@@ -1,0 +1,370 @@
+/* Init for browser compatibility */
+html,body,div,span,ul,li{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1; min-width: 400px;}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outline:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}a {text-decoration:none;}
+
+html {
+	height: 99%;
+	width: 100%;
+}
+
+.isHidden {
+    display: none;
+}
+
+.isVisible {
+    display: inline-block;
+}
+
+/* Menu DEROULANT */
+#liste_player {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	position: absolute;
+	top: 8px;
+}
+
+#liste_player li {
+	float: left;
+	margin-left: 12px;
+	cursor: pointer;
+}
+
+#liste_session {
+    margin-left: 140px;
+    padding: 0;
+    list-style-type: none;
+    position: absolute;
+    top: 8px;
+    width: 200px;
+}
+
+#liste_session li {
+    float: left;
+    margin-left: 3px;
+    cursor: pointer;
+}
+
+#liste_session li:hover {
+    margin-top: -6px;
+}
+
+#liste_session li img {
+    width: 21px;
+    height: 20px;
+    margin-left: 0px;
+    margin-top: -1px;
+}
+
+#liste_session li img#export_session {
+    width: 31px;
+    height: 29px;
+    margin-top: -5px;
+}
+
+#liste_session li img#import_session {
+    width: 31px;
+    height: 29px;
+    margin-top: -5px;
+}
+
+
+#cadre-menu {
+	position: fixed;
+	left: -175px;
+	overflow: hidden;
+	top: 50px;
+	width: 217px; 
+	font: 10px Arial;
+	height: 90%;
+}
+
+#bordure-menu {	
+	float: left;
+	background-image: url('../images/titre5.png');
+	width: 147px;
+	margin: 0;
+	padding: 10px;
+	padding-top: 15px;
+	border: 5px solid #999;
+	border-left: none;
+	height: 90%;
+}
+
+#message {	
+	padding-left: 1px;
+	background: white;
+	height: 85%;
+	border: 2px solid #999;
+	overflow: auto; 
+	white-space: pre-line;
+}
+
+#input_text {
+    margin-top: 5px;
+    font-style: italic;
+    font-size: 10px;
+    width: 143px;
+    height: 22px;
+    color: #555;
+    border: 2px solid #999;
+}
+
+#img-send {
+    margin-top: 5px;
+    width: 143px;
+    height: 22px;
+    background: url('../images/btn-send.png') center no-repeat;
+    border-radius: 30px
+}
+
+#bordure-menu ul {
+	list-style: disc inside;
+}
+
+#bordure-menu ul li {
+	padding-bottom: 5px;
+	color: #555;
+}
+
+#bouton-menu {
+    text-align: center;
+    font-weight :bold ;
+    text-decoration: blink;
+    color: red;
+    float: right;
+    width: 45px;
+    margin: 0;
+    margin-top: 160px;
+    height: 165px;
+    background: url('../images/fond-demo-menu-open.jpg')  bottom no-repeat;
+}
+
+#notre_frame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    overflow: hidden;
+}
+
+/* Menu DEROULANT */
+#cadre-user {
+    position: fixed;
+    right: -125px;
+    overflow: hidden;
+    top: 33px;
+    width: 100px; 
+    font: 14px Arial;
+    border: 5px solid #999;
+    margin: 0;
+    padding: 10px;
+    padding-top: 10px;
+    baakground-image: url('../images/titre5.png');
+    border-top: none;
+    border-right: none;
+}
+
+#cadre-user ul li {
+	padding-bottom: 5px;
+	color: #555;
+}
+
+#cadre-user ul {
+	list-style: disc inside;
+}
+
+
+#cadre-video{
+	position: fixed;
+	overflow: hidden;
+	top: 33px;
+	width: 380px; 
+	font: 10px Arial;
+	border: 5px solid #999;
+	padding: 10px;
+	padding-bottom: 5px;
+	padding-top: 10px;
+	left: 50%;
+	margin-left: -190px;
+	background-image: url('../images/titre5.png');
+	border-top: none;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+#cadre-video button{
+    float: left;
+}
+
+#cadre-video-droit {
+	margin-top: 10px;
+	float: right;
+}
+
+.img-connect{
+    width: 80%;
+    height: 22px;
+    padding-left: 50px;
+    background: url('../images/btn-connect.png') center no-repeat;
+}
+
+.img-select{
+    float : right;
+    width:143px;
+    height:22px;
+    background: url('../images/btn-select.PNG') center no-repeat;
+}
+
+.img-loading{
+    visibility: hidden;
+    float: right;
+    width: 20px;
+    height: 20px;
+    background: url('../images/loading.gif') center no-repeat;
+}
+
+#div_connection {
+    width: 300px;
+    left: 50%;
+    margin-left: -150px;
+    position: fixed; 
+    top: 40%; 
+    background: white; 
+    padding: 15px;
+    font-family: arial; 
+    font-size: 12px;
+    box-shadow: 1px 1px 4px black;
+    z-index: 5;
+}
+
+#hiddenfile {
+    display: none;
+}
+
+#chgt_slide {
+    position: fixed;
+    width: 100%; 
+    height: 33px;
+    background-image: url('../images/titre2.png');
+}
+
+#titre1 {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#bouton-selectPPT {
+	margin-left: 5px;
+    margin-top: 5px;
+    position:absolute;
+    width:201px;
+    font: 13px Arial;
+    color: rgb(85, 85, 85);
+}
+
+#menu-control {
+	position: relative;
+	width: 105px;
+	margin: auto;
+	padding-top: 6px;
+}
+
+#menu-pseudo {
+    position: absolute;
+    top: 10px;
+	right: 11%;
+	font: 16px Arial;
+	color: #555;
+}
+
+#boutton-user {
+    position: absolute;
+	top: 0;
+	right: 0;
+}
+
+#clients {
+	position: absolute;
+	top: 12px;
+	left: 19px;
+	color: #787777;
+	font-size: 19px;
+}
+
+#fermeture_controle_video {
+	cursor: pointer;
+	float: right;
+	padding-top: 2px;
+}
+
+#barre {
+	width: 280px;	
+}
+
+#lectureVideo {
+    font-size: 14px;
+}
+
+.base {
+	margin-top: 0;
+	margin-left: 0;
+	height: 100%;
+	width: 100%;
+}
+
+#degrade {
+    z-index: 3; 
+    position: fixed; 
+    top: 33px; 
+    left: 0; 
+    width: 100%; 
+    height: 3px; 
+    background-image: url('../images/degrade-inf.png');
+}
+
+#master {
+    width: 11px;
+    height: 11px;
+    padding:0;
+    margin: 0;
+    vertical-align: bottom;
+    position: relative;
+    top:1px;
+    overflow: hidden;   
+}
+
+#label-checkbox {
+    display: block;
+    text-indent: -15px;
+    width: 78%;
+    color: #555;
+}
+
+#title-connection {
+    font-size: 16px;
+}
+
+
+#cadre-menu-droite {
+    border: 2px solid;
+    border-radius: 15px;
+    box-shadow: 9px 9px 7px #808080;
+    font-size: 12px;
+    height: 90%;
+    position: fixed;
+    right: 4px;
+    top: 40px;
+    width: 95px;
+}
+
+.users {
+    border: 2px solid #808080;
+    font-weight: bold;
+}
+
+#deconnexion {
+    height: 37px;
+    position: absolute;
+    right: 6.2%;
+    top: -2px;
+}
