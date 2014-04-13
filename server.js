@@ -1,3 +1,14 @@
+// Include all necessary packages
+var socketio_jwt = require('socketio-jwt'),
+    fs = require('fs'),
+    formidable = require('formidable'),
+    jwt = require('jsonwebtoken'),
+    jwt_secret = 'knkninnfsf,;sdf,ozqefsdvsfdbsnoenerkls,d;:',
+    app = require('express')(),
+    server = require('http').createServer(app),
+    io = require('socket.io').listen(server),
+    express = require('express');
+
 // Attributs
 var asRoot = false,
     allClients = 0,         // number of all connected users
@@ -15,17 +26,7 @@ var asRoot = false,
     currentSlideId,
     videosStates;
 
-// Include all necessary packages
-var socketio_jwt = require('socketio-jwt'),
-    fs = require('fs'),
-    formidable = require('formidable'),
-    jwt = require('jsonwebtoken'),
-    jwt_secret = 'knkninnfsf,;sdf,ozqefsdvsfdbsnoenerkls,d;:',
-    app = require('express')(), 
-    server = require('http').createServer(app),
-    io = require('socket.io').listen(server),
-    express = require('express');
-
+// Config for Express, set static folder and add middleware
 app.configure(function () {
     app.use(express.static(__dirname + '/public'));
     app.use(express.json());
@@ -51,21 +52,21 @@ app.post('/login', function (req, res) {
     	identifiant: req.body.identifiant,
     	password: req.body.password
     };
-    console.log(user.identifiant +' '+user.password);
-    if (user.identifiant === 'root' &&  user.password === 'P@ssw0rd!') {
+
+    console.log(user.identifiant + ' ' + user.password);
+    if (user.identifiant === 'root' &&  user.password === 'lkp') {
         // We are sending the profile inside the token
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: true});
         rootToken = token;
         arrayMasters.push(req.body.identifiant);
         allClients += 1;
-    } else if (user.identifiant !== undefined &&  user.password === 'pass'){
+    } else if (user.identifiant !== undefined &&  user.password === 'comete'){
     	// We are sending the profile inside the token
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: false});
         allClients += 1;
-    } 
-    else {
+    } else {
        console.log("client rejected");
        res.json({rejected: true});
     }
@@ -75,14 +76,15 @@ app.get('/index.html', function (req, res, next) {
 	console.log('index.html requested');
 	console.log(req['headers'] !== undefined);
 	console.log('token: ' + req.headers.token);
+    
     if (req.headers.token !== undefined) {
-    // User is authenticated, let him in
+        // User is authenticated, let him in
     	console.log('request accepted');
     	res.sendfile('./public/views/index.html');
     	console.log('index.html sent');
     } else {
+        // Otherwise we redirect him to login form
     	console.log('not authenticated, request rejected');
-    	// Otherwise we redirect him to login form
     	res.redirect("/login.html");
   	}
 });
@@ -131,49 +133,32 @@ server.listen(8333, function () {
 });
 
 
-/**
- * We define client side file
- *  
-app.get('/', function (req, res) {
-    console.log('route ppt');
-	res.sendfile(__dirname + '/public/video.html');
-});
-*/
-
 // Client's connection
 io.on('connection', function (client) {
 	"use strict";
-	var TempoPseudo;
 
 	// After entering a password, the session begin
 	client.on('ouvertureSession', function (connection) {
-		var user = JSON.parse(connection);        
+		var user = JSON.parse(connection);
 		newClientSocketId = client.id;
-		//allClients += 1;
-		/*if (user.identifant === "didier" && user.password === "comete") {
-			asRoot = true;
-			arrayMasters.push(user.identifant);
-			root = client;
-			rootSocketId = client.id;
-			console.log("Bonjour Didier !");            
-		}*/
+
 		if (rootToken === user.token) {
 			asRoot = true;
-			//arrayMasters.push(user.identifant);
 			root = client;
 			rootSocketId = client.id;
+            arrayMasters.push(user.identifant);
 			console.log("Bonjour Didier !");            
 		}
 
 		// We check if a master exists or not. If it doesn't, we give it the right.
 		if (arrayMasters.length === 0 ) {
+            asRoot = true;
 			arrayMasters.push(user.identifant);
 			rootSocketId = client.id;
 			rootToken = user.token;
 		}
 
-		TempoPseudo = user.identifant;
-		tab_client.push(TempoPseudo);
+		tab_client.push(user.identifant);
         tab_pseudo_socket[user.identifant] = client.id;
 
 
@@ -181,14 +166,14 @@ io.on('connection', function (client) {
 		client.send(JSON.stringify({
 			"clients": allClients,
 			"tab_client": tab_client,
-			"connexion": TempoPseudo,
-			"arrayMasters": arrayMasters,
+			"connexion": user.identifant,
+			"arrayMasters": arrayMasters
 		}));
-        
+
         client.emit('login_success');
 		client.emit('activeSlide', currentSlideId);
 
-		if (newClientSocketId != rootSocketId) {
+		if (newClientSocketId !== rootSocketId) {
 			sendMessage(rootSocketId, 'videoStates_request');
 			console.log('Server request videos states to root');
 		}
@@ -197,7 +182,7 @@ io.on('connection', function (client) {
 		client.broadcast.send(JSON.stringify({
 			"clients": allClients,
 			"tab_client": tab_client,
-			"messageSender": TempoPseudo
+			"messageSender": user.identifant
 		}));
 	});
 
@@ -210,8 +195,8 @@ io.on('connection', function (client) {
 		}
 		else {		
 			client.broadcast.send(JSON.stringify({
-				messageContent: newMessage.messageContent,    // Discussion channel
-				messageSender: newMessage.messageSender,    	// pseudo
+				messageContent: newMessage.messageContent,      // Discussion channel
+				messageSender: newMessage.messageSender     	// pseudo
 			}));
 		}
 	});
@@ -287,13 +272,13 @@ io.on('connection', function (client) {
 
 	// Executed when a client disconnects
 	client.on('disconnect', function () {
-		console.log('disconnect ' + TempoPseudo);
+		console.log('disconnect ' + user.identifiant);
 
-		if (TempoPseudo) {
-			tab_client.splice(tab_client.indexOf(TempoPseudo), 1);
+		if (user.identifiant) {
+			tab_client.splice(tab_client.indexOf(user.identifiant), 1);
 
-			if (arrayMasters.indexOf(TempoPseudo) !== -1) {
-				arrayMasters.splice(arrayMasters.indexOf(TempoPseudo), 1);
+			if (arrayMasters.indexOf(user.identifiant) !== -1) {
+				arrayMasters.splice(arrayMasters.indexOf(user.identifiant), 1);
 				if (arrayMasters.length === 0 && tab_client.length > 0) {
 					arrayMasters.push(tab_client[0]);
 				}
