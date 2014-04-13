@@ -11,17 +11,30 @@ var tab_windows_opened = [];    // this tab contains all pseudos of all opened w
 var messages_history = [];      // This tab contains history of all opened windows
 var presentationsList = [];     // This tab contains all presentation already upload on the server
 var token;
+var setMaster;
 
 $(document).ready(function () {
     "use strict";
+    alert('before master');
+    if (sessionStorage.getItem('isMaster')) {
+        $("#menu-control").show();
+        $("#bouton-selectPPT").show();
+    } else {
+        $("#menu-control").hide();
+        $("#bouton-selectPPT").hide();
+    }
+    
+    alert('after done');
+    initVideo();
 
     /**
      * Open the socket with the token build by login process
      */
-    socket = io.connect('http://localhost:8334');
-    token = localStorage.getItem('token');
+    socket = io.connect('http://localhost:8333');
+    token = sessionStorage.getItem('token');
     socket.emit('ouvertureSession', JSON.stringify({
-        token: token
+        token: token,
+        identifiant: sessionStorage.getItem('mon_identifiant');
     }));
     
     /**
@@ -30,10 +43,9 @@ $(document).ready(function () {
      */
     $("#deconnexion").click(function(){
         socket.disconnect();
-        document.location.href="east"
+        document.location.href="/login.html"
     });
-    
-    
+        
 	// Event that check if we are really loading an html presentation
     $("#img-select").click(function () {
         $("#hiddenfile").click();
@@ -112,7 +124,7 @@ $(document).ready(function () {
                     $("#overlay").hide();
                 }, timeLoad);
             }
-                        
+            /*            
             if (newMessage.arrayMasters) {
                 if (newMessage.arrayMasters.indexOf(mon_identifiant) === -1) {
                     setMaster(false);
@@ -120,6 +132,7 @@ $(document).ready(function () {
                     setMaster(true);
                 }
             }
+            */
 
             if (newMessage.messageSender) {
                 $("#message ul").append("<li><font color='green'>(" + newMessage.messageSender + ") s'est connect&#233;</font> </li>");
@@ -282,39 +295,6 @@ $(document).ready(function () {
 //  Load a new presentation selected by the animator
 function updateSlide(filePath) { 
     $('#notre_frame').attr('src', filePath);
-}
-
-//  Allow to forbid special characters for the pseudo
-function special_caract(evt) {
-    "use strict";
-    var keyCode = evt.which ? evt.which : evt.keyCode;
-    if (keyCode === 9) {
-        return true;
-    }
-    var interdit = 'ààâäãçéèêëìîïòôöõµùûüñ &\?!:\.;,\t#~"^¨@%\$£?²¤§%\*()[]{}-_=+<>|\\/`\'';
-    if (interdit.indexOf(String.fromCharCode(keyCode)) >= 0) {
-        return false;
-    }
-}
-
-/**
- * Master rights management
- * if the client is not master , we set it the right
- * On contrary, we delete master privilege if he's not master.
- */
-function setMaster(isMaster) {
-    "use strict";
-    if (isMaster) {
-        master = true;
-        initVideo();
-        $("#menu-control").show();
-        $("#bouton-selectPPT").show();
-    } else {
-        master = false;
-        initVideo();
-        $("#menu-control").hide();
-        $("#bouton-selectPPT").hide();
-    }
 }
 
 /**

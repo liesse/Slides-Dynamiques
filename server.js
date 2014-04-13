@@ -1,3 +1,19 @@
+// Attributs
+var asRoot = false,
+    allClients = 0,         // number of all connected users
+    root,
+    slide_currently,
+    my_timer,
+    TempoPPT,
+    tab_client = [],        // contains all connected clients
+    arrayMasters = [],      // contains the master who has all controls on presentation
+    rootToken,
+    clientTokens = [],
+    rootSocketId = "",
+    newClientSocketId,
+    tab_pseudo_socket = [], // contains all pseudo and their socket id (used to contact specific user when necessary)
+    currentSlideId,
+    videosStates;
 
 // Include all necessary packages
 var socketio_jwt = require('socketio-jwt'),
@@ -17,47 +33,58 @@ app.configure(function () {
     app.use(app.router);
 });
 
-
-
-
 // Routes for Express
 app.get('/', function (req, res, next) {
-  /*if (req['body'] !== undefined && req['body']['data'] !== undefined && req['body']['data']['token'] !== undefined) {
-    // User is authenticated, let him in
-    res.render('east.html');
-  } else {
-    // Otherwise we redirect him to login form
-    res.redirect("/login.html");
-  }
-  */
-    res.redirect('/login');
+  	res.redirect('/index.html');
 });
-
-/*
-app.get('/east.html', function (req, res, next) {
-    console.log('passe dans east');
-  if (req['body'] !== undefined && req['body']['data'] !== undefined && req['body']['data']['token'] !== undefined) {
-    // User is authenticated, let him in
-    res.render('/east.html');
-  } else {
-    // Otherwise we redirect him to login form
-    res.redirect("/login.html");
-  }
-});
-*/
 
 app.get('/login.html', function (req, res, next) {
-   if (req['body'] !== undefined && req['body']['data'] !== undefined && req['body']['data']['token'] !== undefined) {
-    // User is authenticated, let him in
-    res.sendfile('./public/views/index.html');
-    } else {
-    // Otherwise we redirect him to login form
-    res.redirect("/login.html");
-  }
+   console.log('token: ' + sessionStorage.getItem('token'));
+   res.render('./public/login.html');
+   console.log('login.html sent');
+});
+
+app.post('/login', function (req, res) {
+    console.log('post on login');
+
+    var user = {
+    	identifiant: req.body.identifiant,
+    	password: req.body.password
+    };
+    console.log(user.identifiant +' '+user.password);
+    if (user.identifiant === 'root' &&  user.password === 'P@ssw0rd!') {
+        // We are sending the profile inside the token
+        var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
+        res.json({token: token, isMaster: true});
+        rootToken = token;
+        arrayMasters.push(req.body.identifiant);
+        allClients += 1;
+    } else if (user.identifiant !== undefined &&  user.password === 'pass'){
+    	// We are sending the profile inside the token
+        var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
+        res.json({token: token, isMaster: false});
+        allClients += 1;
+    } 
+    else {
+       console.log("client rejected");
+       res.json({rejected: true});
+    }
 });
 
 app.get('/index.html', function (req, res, next) {
-     res.redirect('/login.html');
+	console.log('index.html requested');
+	console.log(req['headers'] !== undefined);
+	console.log('token: ' + req.headers.token);
+    if (req.headers.token !== undefined) {
+    // User is authenticated, let him in
+    	console.log('request accepted');
+    	res.sendfile('./public/views/index.html');
+    	console.log('index.html sent');
+    } else {
+    	console.log('not authenticated, request rejected');
+    	// Otherwise we redirect him to login form
+    	res.redirect("/login.html");
+  	}
 });
 
 // Events for uploading new presentations
@@ -98,42 +125,11 @@ app.post('/public/ppt', function(req, res) {
 	return;
 });
 
-app.post('/login', function (req, res) {
-    console.log(req);
-    
-    var user = {
-        identifiant: 'aa',
-        password: 'comete'
-    };
-    
-//    if (req.authorized.password === 'comete') {
-        // We are sending the profile inside the token
-        var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
-        res.json({token: token});
-//   } else {
-//       console.log("client rejected");
-//    }
-});
 
 server.listen(8333, function () {
   console.log('listening on http://localhost:8333');
 });
 
-
-// Attributs
-var asRoot = false,
-    allClients = 0,         // number of all connected users
-    root,
-    slide_currently,
-    my_timer,
-    TempoPPT,
-    tab_client = [],        // contains all connected clients
-    arrayMasters = [],      // contains the master who has all controls on presentation
-    rootSocketId = "",
-    newClientSocketId,
-    tab_pseudo_socket = [], // contains all pseudo and their socket id (used to contact specific user when necessary)
-    currentSlideId,
-    videosStates;
 
 /**
  * We define client side file
@@ -153,11 +149,17 @@ io.on('connection', function (client) {
 	client.on('ouvertureSession', function (connection) {
 		var user = JSON.parse(connection);        
 		newClientSocketId = client.id;
-		allClients += 1;
-
-		if (user.identifant === "didier" && user.password === "comete") {
+		//allClients += 1;
+		/*if (user.identifant === "didier" && user.password === "comete") {
 			asRoot = true;
 			arrayMasters.push(user.identifant);
+			root = client;
+			rootSocketId = client.id;
+			console.log("Bonjour Didier !");            
+		}*/
+		if (rootToken === user.token) {
+			asRoot = true;
+			//arrayMasters.push(user.identifant);
 			root = client;
 			rootSocketId = client.id;
 			console.log("Bonjour Didier !");            
@@ -167,6 +169,7 @@ io.on('connection', function (client) {
 		if (arrayMasters.length === 0 ) {
 			arrayMasters.push(user.identifant);
 			rootSocketId = client.id;
+			rootToken = user.token;
 		}
 
 		TempoPseudo = user.identifant;
