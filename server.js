@@ -41,13 +41,10 @@ app.get('/', function (req, res, next) {
 
 app.get('/login.html', function (req, res, next) {
    console.log('token: ' + sessionStorage.getItem('token'));
-   res.render('./public/login.html');
-   console.log('login.html sent');
+    res.redirect('/index.html');
 });
 
 app.post('/login', function (req, res) {
-    console.log('post on login');
-
     var user = {
     	identifiant: req.body.identifiant,
     	password: req.body.password
@@ -73,10 +70,6 @@ app.post('/login', function (req, res) {
 });
 
 app.get('/index.html', function (req, res, next) {
-	console.log('index.html requested');
-	console.log(req['headers'] !== undefined);
-	console.log('token: ' + req.headers.token);
-    
     if (req.headers.token !== undefined) {
         // User is authenticated, let him in
     	console.log('request accepted');

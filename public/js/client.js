@@ -1,29 +1,29 @@
 /* Globals variables */
-var TempoMaster = false;
-var master = false;
-var mon_identifiant;
-var password;
-var socket;
-var slideControlContainer;
-var containers;
-var currentSlide = 0;
-var tab_windows_opened = [];    // this tab contains all pseudos of all opened windows
-var messages_history = [];      // This tab contains history of all opened windows
-var presentationsList = [];     // This tab contains all presentation already upload on the server
-var token;
+var TempoMaster = false,
+    master = false,
+    mon_identifiant,
+    password,
+    socket = io.connect('http://localhost:8333'),
+    slideControlContainer,
+    containers,
+    currentSlide = 0,
+    tab_windows_opened = [],    // This tab contains all pseudos of all opened windows
+    messages_history = [],      // This tab contains history of all opened windows
+    presentationsList = [],     // This tab contains all presentation already upload on the server
+    token;
 
 $(document).ready(function () {
     "use strict";
-    setMaster(false);
+    setMaster(sessionStorage.getItem('isMaster'));
+    mon_identifiant = sessionStorage.getItem('mon_identifiant');
 
     /**
      * Open the socket with the token build by login process
      */
-    socket = io.connect('http://localhost:8333');
     token = sessionStorage.getItem('token');
     socket.emit('ouvertureSession', JSON.stringify({
         token: token,
-        identifiant: sessionStorage.getItem('mon_identifiant')
+        identifiant: mon_identifiant
     }));
     
     /**
@@ -116,8 +116,6 @@ $(document).ready(function () {
             }
             
             if (newMessage.arrayMasters) {
-                console.log("PPPPPPPPPPPPPPPPPPPPP");
-                console.log(mon_identifiant);
                 if (newMessage.arrayMasters.indexOf(mon_identifiant) === -1) {
                     setMaster(false);
                 } else {
@@ -278,7 +276,7 @@ $(document).ready(function () {
                 socket.emit('click', getSelector($(this)));
             }
         });
-        initVideo();
+   //     initVideo();
     });
 
 });
