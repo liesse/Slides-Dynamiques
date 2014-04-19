@@ -211,10 +211,12 @@ io.on('connection', function (client) {
 		client.broadcast.emit('activeSlide', currentSlideId);
 	});
 
+    /*
 	client.on('actionOnVideo', function(data) {
 		client.broadcast.emit('actionOnVideo', data);
 	});
-
+    */
+    
 	client.on('requestMaster', function (identifiant) {
 		console.log("demande annimateur " + identifiant);
 	}); 
@@ -292,13 +294,13 @@ io.on('connection', function (client) {
 });
 
 function alertClients(filePath) {
-	socket.sockets.emit('updateSlide', filePath);
+	io.sockets.emit('updateSlide', filePath);
 }
 
 function sendMessage(socketId, messageType) {
-	socket.sockets.socket(socketId).emit(messageType);
+	io.sockets.socket(socketId).emit(messageType);
 }
 
 function sendData(socketId, data) {
-	socket.sockets.socket(socketId).send(data);
+	io.sockets.socket(socketId).send(data);
 }
