@@ -12,7 +12,6 @@ var socketio_jwt = require('socketio-jwt'),
 // Attributs
 var asRoot = false,
     allClients = 0,         // number of all connected users
-    root,
     slide_currently,
     my_timer,
     TempoPPT,
@@ -136,30 +135,22 @@ io.on('connection', function (client) {
 		user = JSON.parse(connection);
 		newClientSocketId = client.id;
 
-		if (rootToken === user.token) {
+		if (rootToken === user.token || arrayMasters.length === 0) {
 			asRoot = true;
-			root = client;
-			rootSocketId = client.id;
-            arrayMasters.push(user.identifant);
-		}
-
-		// We check if a master exists or not. If it doesn't, we give it the right.
-		if (arrayMasters.length === 0 ) {
-            asRoot = true;
-			arrayMasters.push(user.identifant);
-			rootSocketId = client.id;
 			rootToken = user.token;
+			rootSocketId = client.id;
+            arrayMasters.push(user.identifiant);
+            client.emit('setMaster', true);
 		}
 
-		tab_client.push(user.identifant);
-        tab_pseudo_socket[user.identifant] = client.id;
-
+		tab_client.push(user.identifiant);
+        tab_pseudo_socket[user.identifiant] = client.id;
 
 		// We send client's tab to users that began connection
 		client.send(JSON.stringify({
 			"clients": allClients,
 			"tab_client": tab_client,
-			"connexion": user.identifant,
+			"connexion": user.identifiant,
 			"arrayMasters": arrayMasters
 		}));
 
@@ -175,7 +166,7 @@ io.on('connection', function (client) {
 		client.broadcast.send(JSON.stringify({
 			"clients": allClients,
 			"tab_client": tab_client,
-			"messageSender": user.identifant
+			"messageSender": user.identifiant
 		}));
 	});
 
@@ -284,7 +275,7 @@ io.on('connection', function (client) {
 		client.broadcast.send(JSON.stringify({
 			"clients": allClients,
 			"tab_client": tab_client,
-			"deconnexion": user.identifant,
+			"deconnexion": user.identifiant,
 			"arrayMasters": arrayMasters
 		}));
 	});

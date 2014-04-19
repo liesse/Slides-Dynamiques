@@ -11,7 +11,7 @@ $(document).ready(function () {
     // When the user click on the login button
     $("#identification").click(function (e) {
         e.preventDefault();
-        sessionStorage.setItem('mon_identifiant', $('#identifiant').val());
+        sessionStorage.setItem('identifiant', $('#identifiant').val());
         $.post('/login', {
             identifiant: $('#identifiant').val(),
             password: $('#password').val()
@@ -21,7 +21,6 @@ $(document).ready(function () {
             }else {
                 sessionStorage.setItem('token', result.token);
                 sessionStorage.setItem('isMaster', result.isMaster);
-                sessionStorage.setItem('mon_identifiant', $('#identifiant').val());
                 $.ajax({
                   type: "GET",
                   cache: false,

@@ -1,7 +1,6 @@
 /* Globals variables */
-var TempoMaster = false,
-    master = false,
-    mon_identifiant,
+var master = false,
+    identifiant,
     password,
     socket = io.connect('http://localhost:8333'),
     slideControlContainer,
@@ -15,7 +14,7 @@ var TempoMaster = false,
 $(document).ready(function () {
     "use strict";
     setMaster(sessionStorage.getItem('isMaster'));
-    mon_identifiant = sessionStorage.getItem('mon_identifiant');
+    identifiant = sessionStorage.getItem('identifiant');
 
     /**
      * Open the socket with the token build by login process
@@ -23,7 +22,7 @@ $(document).ready(function () {
     token = sessionStorage.getItem('token');
     socket.emit('ouvertureSession', JSON.stringify({
         token: token,
-        identifiant: mon_identifiant
+        identifiant: identifiant
     }));
     
     /**
@@ -72,7 +71,7 @@ $(document).ready(function () {
         if (newMessage.clients) {
             document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>" + (newMessage.clients-1) + " utilisateur(s) connecté(s):</strong></p>";
             for(var i=0; i < newMessage.tab_client.length; i++) {
-                if(newMessage.tab_client[i] != mon_identifiant) {               
+                if(newMessage.tab_client[i] != identifiant) {               
                     document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
                 }
             } 
@@ -116,7 +115,7 @@ $(document).ready(function () {
             }
             
             if (newMessage.arrayMasters) {
-                if (newMessage.arrayMasters.indexOf(mon_identifiant) === -1) {
+                if (newMessage.arrayMasters.indexOf(identifiant) === -1) {
                     setMaster(false);
                 } else {
                     setMaster(true);
@@ -197,7 +196,11 @@ $(document).ready(function () {
             presentationsList.push(files[i]);
         }
     });
-
+    
+    socket.on('setMaster', function(isMaster) {
+        setMaster(isMaster);
+    });
+    
     /**
      * Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves
      * computer.
@@ -294,7 +297,7 @@ function updateSlide(filePath) {
  */
 function lancerChat(pseudo) {
     var myWindow = window.open("PersonalChat.html", pseudo.innerHTML, "width=400, height=400");
-    myWindow.mon_identifiant = mon_identifiant;
+    myWindow.identifiant = identifiant;
     myWindow.destinataire = pseudo.innerHTML;
     myWindow.socket = socket;
     myWindow.historique = '';
@@ -364,6 +367,7 @@ function activeSlide () {
 // Allow to set a new master if he's not and the contrary delete master privilege if he's not.
 function setMaster(isMaster) {
     "use strict";
+    console.log(isMaster);
     if (isMaster) {
         master = true;
         initVideo();
