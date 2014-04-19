@@ -351,14 +351,6 @@ function setPresentationsList() {
     socket.emit('allPresentationsList_request');
 }
 
-function getPresentationsList() {
-    return presentationsList;
-}
-
-function alert_server(filePath) {
-    socket.emit('updateSlide', filePath);
-}
-
 // returns the active slide in order to reach the current slide directed by the master
 function activeSlide () {
     return $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id");

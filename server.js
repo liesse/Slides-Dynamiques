@@ -78,6 +78,11 @@ app.get('/index.html', function (req, res, next) {
   	}
 });
 
+// TODO : test if auth
+app.get('/upload.html', function (req, res, next) {
+    res.sendfile('./public/views/upload.html');
+});
+
 // Events for uploading new presentations
 app.post('/public/ppt', function(req, res) {
 	console.log("new post");
