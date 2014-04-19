@@ -129,10 +129,11 @@ server.listen(8333, function () {
 // Client's connection
 io.on('connection', function (client) {
 	"use strict";
+    var user;
 
 	// After entering a password, the session begin
 	client.on('ouvertureSession', function (connection) {
-		var user = JSON.parse(connection);
+		user = JSON.parse(connection);
 		newClientSocketId = client.id;
 
 		if (rootToken === user.token) {
@@ -140,7 +141,6 @@ io.on('connection', function (client) {
 			root = client;
 			rootSocketId = client.id;
             arrayMasters.push(user.identifant);
-			console.log("Bonjour Didier !");            
 		}
 
 		// We check if a master exists or not. If it doesn't, we give it the right.
@@ -167,8 +167,8 @@ io.on('connection', function (client) {
 		client.emit('activeSlide', currentSlideId);
 
 		if (newClientSocketId !== rootSocketId) {
-			sendMessage(rootSocketId, 'videoStates_request');
-			console.log('Server request videos states to root');
+            console.log('Server request videos states to root');
+            io.sockets.socket(rootSocketId).emit('videoStates_request');
 		}
 
 		// We send tab's client to all clients connected
@@ -183,8 +183,8 @@ io.on('connection', function (client) {
 	client.on('message', function (message) {
 		var newMessage = JSON.parse(message);
 		if (newMessage.videosStates) {
-			sendData(newClientSocketId, message);
 			console.log('videos states sent to client');
+            io.sockets.socket(newClientSocketId).send(message);
 		}
 		else {		
 			client.broadcast.send(JSON.stringify({
@@ -199,7 +199,7 @@ io.on('connection', function (client) {
 		console.log('server receives and broadcast updateSlide');
 		//client.broadcast.emit('updateSlide');
 		console.log('filePath: ' + filePath);
-		alertClients(filePath);
+        io.sockets.emit('updateSlide', filePath)
 	});
 
 	client.on('SlideChanged', function (activeSlideId) {
@@ -227,7 +227,6 @@ io.on('connection', function (client) {
 
     // Event that both warn recipient of a new message and check recicpient's disponibility
 	client.on('new_message_PersonalChat', function(infos){
-            
        var obj = JSON.parse(infos);
         
        socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('notification_PersonalChat', JSON.stringify({
@@ -245,7 +244,6 @@ io.on('connection', function (client) {
     
     // Event that update the tab that contains all opened recipient windows (to keep at date notification)
     client.on('MAJ_tab_windows_opened', function(infos){
-        
         var obj = JSON.parse(infos);
         
         socket.sockets.socket(tab_pseudo_socket[obj.emetteur]).emit('MAJ_tab_windows_opened', JSON.stringify({
@@ -266,7 +264,7 @@ io.on('connection', function (client) {
 	});
 
 	// Executed when a client disconnects
-	client.on('disconnect', function () {
+	client.on('disconnect', function (){
 		console.log('disconnect ' + user.identifiant);
 
 		if (user.identifiant) {
@@ -279,28 +277,16 @@ io.on('connection', function (client) {
 				}
 			}
 		}
-
+        
 		allClients -= 1;
 
 		// We send the new client table to all clients
 		client.broadcast.send(JSON.stringify({
 			"clients": allClients,
 			"tab_client": tab_client,
-			"deconnexion": TempoPseudo,
+			"deconnexion": user.identifant,
 			"arrayMasters": arrayMasters
 		}));
 	});
 
 });
-
-function alertClients(filePath) {
-	io.sockets.emit('updateSlide', filePath);
-}
-
-function sendMessage(socketId, messageType) {
-	io.sockets.socket(socketId).emit(messageType);
-}
-
-function sendData(socketId, data) {
-	io.sockets.socket(socketId).send(data);
-}
