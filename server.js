@@ -55,13 +55,10 @@ app.post('/login', function (req, res) {
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: true});
         rootToken = token;
-        arrayMasters.push(req.body.identifiant);
-        allClients += 1;
     } else if (user.identifiant !== undefined &&  user.password === 'comete'){
     	// We are sending the profile inside the token
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: false});
-        allClients += 1;
     } else {
        console.log("client rejected");
        res.json({rejected: true});
@@ -134,6 +131,7 @@ io.on('connection', function (client) {
 	client.on('ouvertureSession', function (connection) {
 		user = JSON.parse(connection);
 		newClientSocketId = client.id;
+        allClients += 1;
 
 		if (rootToken === user.token || arrayMasters.length === 0) {
 			asRoot = true;
