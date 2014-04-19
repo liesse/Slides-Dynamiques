@@ -83,6 +83,11 @@ app.get('/upload.html', function (req, res, next) {
     res.sendfile('./public/views/upload.html');
 });
 
+// TODO : test if auth
+app.get('/PersonalChat.html', function (req, res, next) {
+    res.sendfile('./public/views/PersonalChat.html');
+});
+
 // Events for uploading new presentations
 app.post('/public/ppt', function(req, res) {
 	console.log("new post");
@@ -223,13 +228,13 @@ io.on('connection', function (client) {
 	client.on('new_message_PersonalChat', function(infos){
        var obj = JSON.parse(infos);
         
-       socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('notification_PersonalChat', JSON.stringify({
+       io.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('notification_PersonalChat', JSON.stringify({
          emetteur: obj.emetteur,
          destinataire: obj.destinataire,
          contenu: obj.contenu
        }));
         
-      socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('test_presence', JSON.stringify({
+      io.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('test_presence', JSON.stringify({
          emetteur: obj.emetteur,
          contenu: obj.contenu
        }));
@@ -240,7 +245,7 @@ io.on('connection', function (client) {
     client.on('MAJ_tab_windows_opened', function(infos){
         var obj = JSON.parse(infos);
         
-        socket.sockets.socket(tab_pseudo_socket[obj.emetteur]).emit('MAJ_tab_windows_opened', JSON.stringify({
+        io.sockets.socket(tab_pseudo_socket[obj.emetteur]).emit('MAJ_tab_windows_opened', JSON.stringify({
            destinataire: obj.destinataire          
         }));
         
