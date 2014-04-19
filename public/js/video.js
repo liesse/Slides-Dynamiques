@@ -11,7 +11,7 @@ function initVideo() {
     videos.each(function(){
         $(this)[0].controls = false;
 
-        if (master) {
+        if (sessionStorage.getItem('isMaster')) {
             $(this)[0].controls = true;
 
             // When detect "pause" event, we send information to slaves 

@@ -7,10 +7,10 @@
     <!-- Necessary Node.js scripts for building this application -->    
 	<script src="js/jquery-1.9.1.js"></script>
 	<script src="js/jquery-ui-1.10.2.custom.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="socket.io/socket.io.js"></script>
 	
 	<!-- Script used for authentication -->
-	<script type="text/javascript" src="js/login.js"></script>
+	<script type="text/javascript" src="login.js"></script>
 	
 	<!-- We add style files -->
 	<link rel='stylesheet' href="css/style.css" type='text/css' media='screen' />
@@ -24,6 +24,7 @@
             <input type="text" maxlength="12" name="identifiant" id="identifiant" title="13 caracteres max" onKeypress="return special_caract(event);" value="" placeholder="Pseudo" /><br />
             <input type="password" maxlength="12" name="password" id="password" title="13 caracteres max" onKeypress="return special_caract(event);" value="" placeholder="Mot de passe (optionnel)"/><br />	
             <div class="img-connect" id="identification"></div><br />
+            <p id="loginFailed" style="text-align: center; color:red"></p>
         </div>
 	</div>
   </body>

@@ -1,27 +1,29 @@
 /* Globals variables */
-var TempoMaster = false;
-var master = false;
-var mon_identifiant;
-var password;
-var socket;
-var slideControlContainer;
-var containers;
-var currentSlide = 0;
-var tab_windows_opened = [];    // this tab contains all pseudos of all opened windows
-var messages_history = [];      // This tab contains history of all opened windows
-var presentationsList = [];     // This tab contains all presentation already upload on the server
-var token;
+var TempoMaster = false,
+    master = false,
+    mon_identifiant,
+    password,
+    socket = io.connect('http://localhost:8333'),
+    slideControlContainer,
+    containers,
+    currentSlide = 0,
+    tab_windows_opened = [],    // This tab contains all pseudos of all opened windows
+    messages_history = [],      // This tab contains history of all opened windows
+    presentationsList = [],     // This tab contains all presentation already upload on the server
+    token;
 
 $(document).ready(function () {
     "use strict";
+    setMaster(sessionStorage.getItem('isMaster'));
+    mon_identifiant = sessionStorage.getItem('mon_identifiant');
 
     /**
      * Open the socket with the token build by login process
      */
-    socket = io.connect();
-    token = localStorage.getItem('token');
+    token = sessionStorage.getItem('token');
     socket.emit('ouvertureSession', JSON.stringify({
-        token: token
+        token: token,
+        identifiant: mon_identifiant
     }));
     
     /**
@@ -30,10 +32,10 @@ $(document).ready(function () {
      */
     $("#deconnexion").click(function(){
         socket.disconnect();
-        document.location.href="index.html"
+        sessionStorage.setItem('token', '');
+        document.location.href="/login.html"
     });
-    
-    
+        
 	// Event that check if we are really loading an html presentation
     $("#img-select").click(function () {
         $("#hiddenfile").click();
@@ -112,7 +114,7 @@ $(document).ready(function () {
                     $("#overlay").hide();
                 }, timeLoad);
             }
-                        
+            
             if (newMessage.arrayMasters) {
                 if (newMessage.arrayMasters.indexOf(mon_identifiant) === -1) {
                     setMaster(false);
@@ -274,7 +276,7 @@ $(document).ready(function () {
                 socket.emit('click', getSelector($(this)));
             }
         });
-        initVideo();
+   //     initVideo();
     });
 
 });
@@ -282,39 +284,6 @@ $(document).ready(function () {
 //  Load a new presentation selected by the animator
 function updateSlide(filePath) { 
     $('#notre_frame').attr('src', filePath);
-}
-
-//  Allow to forbid special characters for the pseudo
-function special_caract(evt) {
-    "use strict";
-    var keyCode = evt.which ? evt.which : evt.keyCode;
-    if (keyCode === 9) {
-        return true;
-    }
-    var interdit = 'ààâäãçéèêëìîïòôöõµùûüñ &\?!:\.;,\t#~"^¨@%\$£?²¤§%\*()[]{}-_=+<>|\\/`\'';
-    if (interdit.indexOf(String.fromCharCode(keyCode)) >= 0) {
-        return false;
-    }
-}
-
-/**
- * Master rights management
- * if the client is not master , we set it the right
- * On contrary, we delete master privilege if he's not master.
- */
-function setMaster(isMaster) {
-    "use strict";
-    if (isMaster) {
-        master = true;
-        initVideo();
-        $("#menu-control").show();
-        $("#bouton-selectPPT").show();
-    } else {
-        master = false;
-        initVideo();
-        $("#menu-control").hide();
-        $("#bouton-selectPPT").hide();
-    }
 }
 
 /**
@@ -390,4 +359,20 @@ function alert_server(filePath) {
 // returns the active slide in order to reach the current slide directed by the master
 function activeSlide () {
     return $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id");
+}
+
+// Allow to set a new master if he's not and the contrary delete master privilege if he's not.
+function setMaster(isMaster) {
+    "use strict";
+    if (isMaster) {
+        master = true;
+        initVideo();
+        $("#menu-control").show();
+        $("#bouton-selectPPT").show();
+    } else {
+        master = false;
+        initVideo();
+        $("#menu-control").hide();
+        $("#bouton-selectPPT").hide();
+    }
 }
