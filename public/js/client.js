@@ -63,7 +63,7 @@ $(document).ready(function () {
      *    --> if '.messageContent' parameter : messages retrieve from broadcast (we have both sender and content liked to it)
      *    --> if '.arrayMasters' : become an animator (master) if the server send a tab with client's identifier
      *    --> if '.connexion' : warns all users (master and slaves) that a new slave has come around
-     *    --> if '.dexonnexion' : warns all users (master and slaves) that one slaves leave
+     *    --> if '.dexonnexion' : warns all users (master and slaves) that one slave left
      */
     socket.on('message', function (message) {
         var newMessage = jQuery.parseJSON(message);
@@ -78,8 +78,8 @@ $(document).ready(function () {
         }
 
         if (newMessage.messageContent) { 
-            $("#message ul").append("<li>(" + newMessage.messageSender + "): " + newMessage.messageContent + "</li>");
-            $("#message").scrollTop(100000);
+          $("#message ul").append("<li style='font-weight:bold;'>" + newMessage.messageSender + " : " + newMessage.messageContent + "</li>");
+          $("#message").scrollTop(100000);
 
             // Panel notification (blinking red)
             if ($("#cadre-menu").css("margin-Left") === "0px") {

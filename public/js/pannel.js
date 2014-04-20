@@ -1,21 +1,24 @@
-/* This function is executed when the DOM is loaded */
-			
-$(document).ready(function() { 
-    
-    /* Send messages to all clients */
-    $("#img-send").click(function() { 
+    /* Send messages to all clients by simply press enter on text field */
+    function ajouterMessageGlobal(messageEnvoye, event){
+        
+      var texte = messageEnvoye.value;
 
-        if ($("#input_text").val() != "") {
-            $("#message ul").append("<li style='font-weight:bold;'>" + identifiant + " : " + $("#input_text").val() + "</li>");	
-            $("#message").scrollTop(100000);
+      if(event.keyCode == 13) {
+        
+          if (texte != "") {
 
-            socket.send(JSON.stringify({
-                messageContent: $("#input_text").val(),
+              $("#message ul").append("<li style='font-weight:bold;'>" + identifiant + " : " + texte + "</li>");	
+              $("#message").scrollTop(100000);
+              $("#input_text").val('');
+
+             socket.send(JSON.stringify({
+                messageContent: texte,
                 messageSender: identifiant
-            }));
-        }
-
-    });
+             }));
+           }
+       }
+        
+    }
 
     /* Allow to open and close the panel. The goal is to see and broadcast information to all connected users */
     $("#bouton-menu").click(function() { 
@@ -37,5 +40,3 @@ $(document).ready(function() {
         }
 
     });
-    
-}); 
