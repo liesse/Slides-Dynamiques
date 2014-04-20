@@ -209,12 +209,6 @@ io.on('connection', function (client) {
 	client.on('activeSlideIdRequest', function() {
 		client.broadcast.emit('activeSlide', currentSlideId);
 	});
-
-    /*
-	client.on('actionOnVideo', function(data) {
-		client.broadcast.emit('actionOnVideo', data);
-	});
-    */
     
 	client.on('requestMaster', function (identifiant) {
 		console.log("demande annimateur " + identifiant);
@@ -244,7 +238,6 @@ io.on('connection', function (client) {
     // Event that update the tab that contains all opened recipient windows (to keep at date notification)
     client.on('MAJ_tab_windows_opened', function(infos){
         var obj = JSON.parse(infos);
-        
         io.sockets.socket(tab_pseudo_socket[obj.emetteur]).emit('MAJ_tab_windows_opened', JSON.stringify({
            destinataire: obj.destinataire          
         }));
