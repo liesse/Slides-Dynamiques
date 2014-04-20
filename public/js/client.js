@@ -17,7 +17,7 @@ $(document).ready(function () {
     identifiant = sessionStorage.getItem('identifiant');
 
     /**
-     * Open the socket with the token build by login process
+     * Open the socket with the token built by login process
      */
     token = sessionStorage.getItem('token');
     socket.emit('ouvertureSession', JSON.stringify({
