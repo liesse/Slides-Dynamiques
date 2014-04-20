@@ -11,7 +11,9 @@
     "formidable": "~1.0.14",
     "jsonwebtoken": "~0.2.0",
     "socket.io": "~0.9.16",
-    "socketio-jwt": "~2.0.2"
+    "socketio-jwt": "~2.0.2",
+    "https-server": "^0.1.1",
+    "http": "0.0.0"
   },
   "devDependencies": {},
   "scripts": {
