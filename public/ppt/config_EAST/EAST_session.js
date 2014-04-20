@@ -8,7 +8,7 @@ var pauseSession;
 var stopSession;
 var position = 0;
 
-(function(){
+$(document).ready(function(){
 
 // public API
 document.SESSION = {};
@@ -90,6 +90,13 @@ var new_li_click = function(id, e) {
     pushEvent('li', id);
   }
 };
+
+var new_listItem_click = function(id) {
+  if (sessionIsRecording){
+    pushEvent('itemClick', id);
+  }
+};
+
 var new_video_action = function(id, e) {
   if (sessionIsRecording){
     pushEvent('video', id, e);
@@ -183,7 +190,7 @@ playSession = function() {
     switch (sessionEvents[position].type){
       case 'slide':
         slideControlContainer.selectIndex(parseInt(sessionEvents[position].id, 10));
-        parent.socket.emit('SlideChanged', parent.activeSlide());
+        parent.socket.emit('SlideChanged', slideControlContainer.currentIndex); //parent.activeSlide());
         break;
       case 'reset':
         document.getTimeContainersByTarget(document.getElementById(window.location.hash.slice(1)))[0].reset();
@@ -196,6 +203,10 @@ playSession = function() {
         break;
       case 'li':
         document.getElementById(sessionEvents[position].id).click();
+        break;
+      case 'itemClick':
+        $(sessionEvents[position].id).click();
+        parent.socket.emit('click', sessionEvents[position].id);
         break;
       case 'video':
         var video = document.getElementById(sessionEvents[position].id);
@@ -256,13 +267,21 @@ EVENTS.onSMILReady(function() {
     }
   }
 
+
   // intercepts click on list
-  var liTab = document.getElementsByTagName("li");
+ /* var liTab = document.getElementsByTagName("li");
   for (_i=0; _i<liTab.length; _i+=1) {
     if (liTab[_i].hasAttribute("smil")){
       liTab[_i].addEventListener("click", new_li_click.bind(null, checkID(liTab[_i])));
     }
   }
+*/
+
+  $('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
+   console.log('log click event on ' + parent.getSelector($(this)));
+    new_listItem_click(parent.getSelector($(this)));
+  });
+ 
 
   // intercepts action on video
   var videoTab = document.getElementsByTagName("video");
@@ -320,5 +339,5 @@ EVENTS.onSMILReady(function() {
   document.SESSION.record();
 });
 
-})();
+});
 

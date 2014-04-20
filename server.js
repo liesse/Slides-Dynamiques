@@ -28,7 +28,8 @@ var socketio_jwt = require('socketio-jwt'),
     jwt_secret = 'knkninnfsf,;sdf,ozqefsdvsfdbsnoenerkls,d;:',
     app = require('express')(),
     server = require('http').createServer(app),
-    io = require('socket.io').listen(server),
+    io = require('socket.io'),
+    socket = io.listen(server),
     express = require('express');
 
 // Attributs
@@ -44,6 +45,7 @@ var asRoot = false,
     rootSocketId = "",
     newClientSocketId,
     tab_pseudo_socket = [], // contains all pseudo and their socket id (used to contact specific user when necessary)
+    currentPresentation = "",
     currentSlideId,
     videosStates;
 
@@ -148,14 +150,12 @@ app.post('/public/ppt', function(req, res) {
 	return;
 });
 
-
 server.listen(8333, function () {
   console.log('listening on http://localhost:8333');
 });
 
-
 // Client's connection
-io.on('connection', function (client) {
+socket.on('connection', function (client) {
 	"use strict";
     var user;
 
@@ -163,7 +163,7 @@ io.on('connection', function (client) {
 	client.on('ouvertureSession', function (connection) {
 		user = JSON.parse(connection);
 		newClientSocketId = client.id;
-        allClients += 1;
+        //allClients += 1;
 
 		if (rootToken === user.token || arrayMasters.length === 0) {
 			asRoot = true;
@@ -184,12 +184,18 @@ io.on('connection', function (client) {
 			"arrayMasters": arrayMasters
 		}));
 
+        /*
         client.emit('login_success');
 		client.emit('activeSlide', currentSlideId);
+		*/
 
-		if (newClientSocketId !== rootSocketId) {
-            console.log('Server request videos states to root');
-            io.sockets.socket(rootSocketId).emit('videoStates_request');
+		if(currentPresentation != ""){
+			client.emit('updateSlide', currentPresentation, currentSlideId);
+		}
+
+		if (newClientSocketId != rootSocketId) {
+			sendMessage(rootSocketId, 'videoStates_request');
+			console.log('Server requested videos states to root'); 
 		}
 
 		// We send tab's client to all clients connected
@@ -205,7 +211,7 @@ io.on('connection', function (client) {
 		var newMessage = JSON.parse(message);
 		if (newMessage.videosStates) {
 			console.log('videos states sent to client');
-            io.sockets.socket(newClientSocketId).send(message);
+            socket.sockets.socket(newClientSocketId).send(message);
 		}
 		else {		
 			client.broadcast.send(JSON.stringify({
@@ -215,23 +221,27 @@ io.on('connection', function (client) {
 		}
 	});
 
-	// Broadcast the message to warn clients that a new presentation is selected by the animator 
-	client.on('updateSlide', function (filePath) {
+	// Broadcast the message to prevent clients that a new presentation is selected by the animator 
+	client.on('updateSlide', function (filePath, activeSlideIndex) {
 		console.log('server receives and broadcast updateSlide');
-		//client.broadcast.emit('updateSlide');
 		console.log('filePath: ' + filePath);
-        io.sockets.emit('updateSlide', filePath)
+		currentPresentation = filePath;
+		alertClients(currentPresentation, activeSlideIndex);
 	});
 
 	client.on('SlideChanged', function (activeSlideId) {
 		currentSlideId = activeSlideId;
-		client.broadcast.emit('activeSlide', currentSlideId);
+		client.broadcast.emit('activeSlide',currentSlideId);
 	});
 
 	client.on('activeSlideIdRequest', function() {
 		client.broadcast.emit('activeSlide', currentSlideId);
 	});
-    
+
+    client.on('actionOnVideo', function(data) {
+		client.broadcast.emit('actionOnVideo', data);
+	});
+
 	client.on('requestMaster', function (identifiant) {
 		console.log("demande annimateur " + identifiant);
 	}); 
@@ -244,13 +254,13 @@ io.on('connection', function (client) {
 	client.on('new_message_PersonalChat', function(infos){
        var obj = JSON.parse(infos);
         
-       io.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('notification_PersonalChat', JSON.stringify({
+       socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('notification_PersonalChat', JSON.stringify({
          emetteur: obj.emetteur,
          destinataire: obj.destinataire,
          contenu: obj.contenu
        }));
         
-      io.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('test_presence', JSON.stringify({
+      socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('test_presence', JSON.stringify({
          emetteur: obj.emetteur,
          contenu: obj.contenu
        }));
@@ -260,7 +270,8 @@ io.on('connection', function (client) {
     // Event that update the tab that contains all opened recipient windows (to keep at date notification)
     client.on('MAJ_tab_windows_opened', function(infos){
         var obj = JSON.parse(infos);
-        io.sockets.socket(tab_pseudo_socket[obj.emetteur]).emit('MAJ_tab_windows_opened', JSON.stringify({
+       
+        socket.sockets.socket(tab_pseudo_socket[obj.emetteur]).emit('MAJ_tab_windows_opened', JSON.stringify({
            destinataire: obj.destinataire          
         }));
         
@@ -302,5 +313,16 @@ io.on('connection', function (client) {
 			"arrayMasters": arrayMasters
 		}));
 	});
-
 });
+
+function alertClients(filePath, activeSlideIndex) {
+	socket.sockets.emit('updateSlide', filePath, activeSlideIndex);
+}
+
+function sendMessage(socketId, messageType) {
+	socket.sockets.socket(socketId).emit(messageType);
+}
+
+function sendData(socketId, data) {
+	socket.sockets.socket(socketId).send(data);
+}

@@ -1,4 +1,4 @@
-
+var videosStates;
 function initVideo() {
     "use strict";
     // We retrieve video element  
@@ -66,14 +66,16 @@ function initVideo() {
     });
 }
 
-function videosStates(videosStates) {
-    for (var i = 0; i < videosStates.length; i++) {
-        var video = $($('#notre_frame').contents()).find('#' + videosStates[i].videoId);
-        video[0].currentTime = videosStates[i].videoCurrentTime;
-        if (!videosStates[i].videoPaused){
+videosStates = function (videos) {
+    alert('videos states received');
+    for (var i = 0; i < videos.length; i++) {
+        var video = $($('#notre_frame').contents()).find('#' + videos[i].videoId);
+        video[0].currentTime = videos[i].videoCurrentTime;
+        if (!videos[i].videoPaused){
             video[0].play();
         }        
     }
+    alert('videos states updated');
 }
 
 
