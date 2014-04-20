@@ -296,7 +296,7 @@ function updateSlide(filePath) {
  *   -> Check if the frame is opened after notification (then pseudo color is orange) or not and then do some actions to update
  */
 function lancerChat(pseudo) {
-
+    alert(identifiant);
     var myWindow = window.open("PersonalChat.html", pseudo.innerHTML, "width=400, height=400");
     myWindow.identifiant = identifiant;
     myWindow.destinataire = pseudo.innerHTML;
