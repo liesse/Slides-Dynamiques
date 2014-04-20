@@ -1,0 +1,53 @@
+{
+  "name": "Slides-Dynamiques",
+  "version": "0.9.15",
+  "description": "A web application to diffuse some presentation",
+  "main": "server.js",
+  "dependencies": {
+    "bower": "~1.2.8",
+    "connect-multiparty": "~1.0.3",
+    "ejs": "~1.0.0",
+    "express": "~3.4.8",
+    "formidable": "~1.0.14",
+    "jsonwebtoken": "~0.2.0",
+    "socket.io": "~0.9.16",
+    "socketio-jwt": "~2.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OresteVisari/Slides-Dynamiques"
+  },
+  "keywords": [
+    "diffusion",
+    "slide",
+    "chat",
+    "master",
+    "slave",
+    "connection",
+    "deconnection"
+  ],
+  "author": "liesse karim philippe",
+  "contributors": [
+    {
+      "name": "Liesse NADJI",
+      "email": "liesse.nadji@gmail.com"
+    },
+    {
+      "name": "Abdoul Karim CISSE",
+      "email": "cisse.abdoulkarim@gmail.com"
+    },
+    {
+      "name": "Philippe BENOIT",
+      "email": "philippe.benoitt@gmail.com"
+    }
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OresteVisari/Slides-Dynamiques/issues"
+  },
+  "homepage": "https://github.com/OresteVisari/Slides-Dynamiques"
+}
