@@ -19,8 +19,8 @@
 	<link href="css/smoothness/jquery-ui-1.10.2.custom.css" rel="stylesheet">
  </head>
 
-  <!-- Below the connection page -->
   <body class="base">   
+
 	<!-- Menu for slides management -->
     <div id="chgt_slide">
         <div id="titre1"> <img src="images/titre1.png" /> 
@@ -60,13 +60,15 @@
 				<ul></ul>
 			</div>
 			<input id="input_text" type="text" value="Tapez votre message!" onclick="this.value = '';"  onkeydown = "ajouterMessageGlobal(this,event)"  />
+
+			<div id="img-send"></div>
 		</div>
 		<div id="bouton-menu"></div>
 	</div>
       
     <!-- Personal chat panel -->
 	<div id="cadre-menu-droite">Utilisateurs</div>
-	
+
     <!-- iframe that represents the ppt presentation (center of the page) -->
 	<IFRAME name="notre_frame" id="notre_frame"  src="ppt/video.html"></IFRAME> 
 
