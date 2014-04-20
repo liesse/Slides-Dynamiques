@@ -373,3 +373,13 @@ function setMaster(isMaster) {
         $("#bouton-selectPPT").hide();
     }
 }
+
+// Use to choose a new presentation
+function getPresentationsList() {
+    return presentationsList;
+}
+
+// Use for ???
+function alert_server(filePath) {
+    socket.emit('updateSlide', filePath);
+}
