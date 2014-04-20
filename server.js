@@ -163,15 +163,14 @@ socket.on('connection', function (client) {
 	client.on('ouvertureSession', function (connection) {
 		user = JSON.parse(connection);
 		newClientSocketId = client.id;
-        //allClients += 1;
+        allClients += 1;
 
 		if (rootToken === user.token || arrayMasters.length === 0) {
 			asRoot = true;
 			rootToken = user.token;
 			rootSocketId = client.id;
             arrayMasters.push(user.identifiant);
-            client.emit('setMaster', true);
-		}
+        }
 
 		tab_client.push(user.identifiant);
         tab_pseudo_socket[user.identifiant] = client.id;
@@ -183,11 +182,6 @@ socket.on('connection', function (client) {
 			"connexion": user.identifiant,
 			"arrayMasters": arrayMasters
 		}));
-
-        /*
-        client.emit('login_success');
-		client.emit('activeSlide', currentSlideId);
-		*/
 
 		if(currentPresentation != ""){
 			client.emit('updateSlide', currentPresentation, currentSlideId);
@@ -235,7 +229,7 @@ socket.on('connection', function (client) {
 	});
 
 	client.on('activeSlideIdRequest', function() {
-		client.broadcast.emit('activeSlide', currentSlideId);
+		client.emit('activeSlide', currentSlideId);
 	});
 
     client.on('actionOnVideo', function(data) {
@@ -243,7 +237,7 @@ socket.on('connection', function (client) {
 	});
 
 	client.on('requestMaster', function (identifiant) {
-		console.log("demande annimateur " + identifiant);
+		console.log("demande animateur " + identifiant);
 	}); 
 
 	client.on('click', function (eltId) {
@@ -289,7 +283,7 @@ socket.on('connection', function (client) {
 	});
 
 	// Executed when a client disconnects
-	client.on('disconnect', function (){
+	client.on('disconnect', function () {
 		console.log('disconnect ' + user.identifiant);
 
 		if (user.identifiant) {
@@ -299,6 +293,7 @@ socket.on('connection', function (client) {
 				arrayMasters.splice(arrayMasters.indexOf(user.identifiant), 1);
 				if (arrayMasters.length === 0 && tab_client.length > 0) {
 					arrayMasters.push(tab_client[0]);
+					//must update rootToken and rootSocketId
 				}
 			}
 		}

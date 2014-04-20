@@ -13,7 +13,7 @@ var master = false,
 
 $(document).ready(function () {
     "use strict";
-    setMaster(sessionStorage.getItem('isMaster'));
+    //setMaster(sessionStorage.getItem('isMaster'));
     identifiant = sessionStorage.getItem('identifiant');
 
     /**
@@ -137,15 +137,12 @@ $(document).ready(function () {
     * Then we simulate 'click' event on slaves computers.
     */
     socket.on('click', function (eltId) {
-        console.log("**click " + eltId);
+        alert("**click " + eltId);
         $($('#notre_frame').contents()).find(eltId)[0].click();
     });
      
     socket.on('activeSlide', function(activeSlideId) {
         if (activeSlideId !== null) {
-            //var slide = $($('#notre_frame').contents()).find('#' + activeSlideId);
-            //$($('#notre_frame').contents()).find('#slideshow [smil=active]').attr('smil', 'idle');
-            //slide.attr('smil', 'active');
             if (typeof slideControlContainer === 'undefined') {
                 containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
                 slideControlContainer =  containers[containers.length-1];
@@ -249,7 +246,6 @@ $(document).ready(function () {
         if (master) {
             pauseAllVideos();
             $($('#notre_frame').contents()).find("#first").click();
-            //socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
             socket.emit('SlideChanged', slideControlContainer.currentIndex);
         }
     });
@@ -263,7 +259,6 @@ $(document).ready(function () {
         if (master) {
             pauseAllVideos();
             $($('#notre_frame').contents()).find("#last").click();
-            //socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
             socket.emit('SlideChanged', slideControlContainer.currentIndex);
         }
     });
@@ -299,11 +294,11 @@ $(document).ready(function () {
     });
 
     $("#notre_frame").load(function() {
+        alert("nav : " + $($('#notre_frame').contents()).find('#navigation_par'));
         $($('#notre_frame').contents()).find('#navigation_par').hide();
-        //$($('#notre_frame').contents()).find('#slideshow div').click(function(event) {
+        alert('navigation_par hidden');
         containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
         slideControlContainer =  containers[containers.length-1];
-        /*alert('slideControlContainer initialized');*/
         $($('#notre_frame').contents()).find('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
             //event.stopPropagation();
             if (master && (event.target.nodeName !== "VIDEO")) {
@@ -311,17 +306,14 @@ $(document).ready(function () {
                 socket.emit('click', getSelector($(this)));
             }
         });
-   //     initVideo();
+        initVideo("load");
     });
-
 });
 
 // Load a new presentation selected by the animator
 function updateSlide(filePath, activeSlideIndex) { 
     $('#notre_frame').attr('src', filePath);
     console.log('loading ' + filePath);
-    //containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
-   // slideControlContainer =  containers[containers.length-1];
     slideControlContainer.selectIndex(activeSlideIndex);
 }
 
@@ -412,15 +404,14 @@ function setMaster(isMaster) {
     console.log(isMaster);
     if (isMaster) {
         master = true;
-        initVideo();
         $("#menu-control").show();
         $("#bouton-selectPPT").show();
     } else {
         master = false;
-        initVideo();
         $("#menu-control").hide();
         $("#bouton-selectPPT").hide();
     }
+    initVideo("setMaster");
 }
 
 // Use to choose a new presentation

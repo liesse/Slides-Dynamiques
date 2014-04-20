@@ -1,10 +1,11 @@
 var videosStates;
-function initVideo() {
+function initVideo(s) {
+    alert('init video triggered by ' + s);
     "use strict";
     // We retrieve video element  
     var videos = $($('#notre_frame').contents()).find("video");
     
-    if (videos.length === 0){
+    if (videos.length === 0) {
         return;
     }
     
