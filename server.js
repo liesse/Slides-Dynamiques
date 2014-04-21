@@ -19,7 +19,6 @@ var socketio_jwt = require('socketio-jwt'),
     express = require('express');
 */
 
-
 // Include all necessary packages for HTTP
 var socketio_jwt = require('socketio-jwt'),
     fs = require('fs'),

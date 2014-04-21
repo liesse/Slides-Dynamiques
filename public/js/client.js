@@ -13,7 +13,6 @@ var master = false,
 
 $(document).ready(function () {
     "use strict";
-    //setMaster(sessionStorage.getItem('isMaster'));
     identifiant = sessionStorage.getItem('identifiant');
 
     /**
@@ -417,9 +416,4 @@ function setMaster(isMaster) {
 // Use to choose a new presentation
 function getPresentationsList() {
     return presentationsList;
-}
-
-// Use for ???
-function alert_server(filePath) {
-    socket.emit('updateSlide', filePath);
 }
