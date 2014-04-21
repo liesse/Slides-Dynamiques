@@ -1,6 +1,5 @@
 var videosStates;
-function initVideo(s) {
-    alert('init video triggered by ' + s);
+function initVideo() {
     "use strict";
     // We retrieve video element  
     var videos = $($('#notre_frame').contents()).find("video");
@@ -11,8 +10,9 @@ function initVideo(s) {
     
     videos.each(function(){
         $(this)[0].controls = false;
-
-        if (sessionStorage.getItem('isMaster')) {
+        
+        if (sessionStorage.getItem('isMaster') == 'true') {
+            
             $(this)[0].controls = true;
 
             // When detect "pause" event, we send information to slaves 
@@ -68,15 +68,16 @@ function initVideo(s) {
 }
 
 videosStates = function (videos) {
-    alert('videos states received');
+    //alert('videos states received');
     for (var i = 0; i < videos.length; i++) {
-        var video = $($('#notre_frame').contents()).find('#' + videos[i].videoId);
+        var id = "#" + videos[i].videoId;
+        var video = $($('#notre_frame').contents()).find(id);
         video[0].currentTime = videos[i].videoCurrentTime;
         if (!videos[i].videoPaused){
             video[0].play();
         }        
     }
-    alert('videos states updated');
+    //alert('videos states updated');
 }
 
 

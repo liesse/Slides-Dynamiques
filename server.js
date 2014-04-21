@@ -181,13 +181,13 @@ socket.on('connection', function (client) {
 			"arrayMasters": arrayMasters
 		}));
 
-		if(currentPresentation != ""){
-			client.emit('updateSlide', currentPresentation, currentSlideId);
-		}
-
+		
 		if (newClientSocketId != rootSocketId) {
+			if(currentPresentation != "") {
+				client.emit('updateSlide', currentPresentation, currentSlideId);
+			}
 			sendMessage(rootSocketId, 'videoStates_request');
-			console.log('Server requested videos states to root'); 
+			console.log('Server requested videos states to root');
 		}
 
 		// We send tab's client to all clients connected
@@ -200,6 +200,9 @@ socket.on('connection', function (client) {
 
 	// Slides management and messages management
 	client.on('message', function (message) {
+		if (client.id !== rootSocketId) { // ignore message if the sender is not the root
+			return;
+		}
 		var newMessage = JSON.parse(message);
 		if (newMessage.videosStates) {
 			console.log('videos states sent to client');
@@ -217,19 +220,25 @@ socket.on('connection', function (client) {
 		console.log('server receives and broadcast updateSlide');
 		console.log('filePath: ' + filePath);
 		currentPresentation = filePath;
-		alertClients(currentPresentation, activeSlideIndex);
+		currentSlideId = activeSlideIndex;
+		client.broadcast.emit(currentPresentation, activeSlideIndex);
 	});
 
 	client.on('SlideChanged', function (activeSlideId) {
 		currentSlideId = activeSlideId;
 		client.broadcast.emit('activeSlide',currentSlideId);
 	});
-
+	/*
 	client.on('activeSlideIdRequest', function() {
 		client.emit('activeSlide', currentSlideId);
 	});
+	*/
 
     client.on('actionOnVideo', function(data) {
+    	if (client.id !== rootSocketId) { // ignore message if the sender is not the root
+			console.log('message ignored');
+			return;
+		}
 		client.broadcast.emit('actionOnVideo', data);
 	});
 
@@ -308,7 +317,7 @@ socket.on('connection', function (client) {
 });
 
 function alertClients(filePath, activeSlideIndex) {
-	socket.sockets.emit('updateSlide', filePath, activeSlideIndex);
+	socket.broadcast.emit('updateSlide', filePath, activeSlideIndex);
 }
 
 function sendMessage(socketId, messageType) {

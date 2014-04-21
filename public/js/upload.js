@@ -13,7 +13,7 @@ $(document).ready(function() {
     }
 
     $('#uploadedFiles ul li').click(function() {
-        window.opener.alert_server('./ppt/' + $(this).find('.span1')[0].innerHTML, 0);
+        window.opener.updateSlide('./ppt/' + $(this).find('.span1')[0].innerHTML, 0);
         $("#hiddenfile").innerHTML = '';
         self.close();
     });
@@ -32,7 +32,7 @@ $(document).ready(function() {
                 $('#uploadedFiles').find('ul').prepend(createFileNode(fileName));
 
                 $('#uploadedFiles ul li').click(function() {
-                    window.opener.alert_server('./ppt/' + fileName, 0);
+                    window.opener.updateSlide('./ppt/' + fileName, 0);
                     $("#hiddenfile").innerHTML = '';
                     self.close();
                 });

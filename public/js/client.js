@@ -13,6 +13,9 @@ var master = false,
 
 $(document).ready(function () {
     "use strict";
+    //alert('Am I a master ? ' + sessionStorage.getItem('isMaster'));
+    //master = sessionStorage.getItem('isMaster');
+    setMaster(sessionStorage.getItem('isMaster'));
     identifiant = sessionStorage.getItem('identifiant');
 
     /**
@@ -113,6 +116,7 @@ $(document).ready(function () {
                 }, timeLoad);
             }
             
+            /*
             if (newMessage.arrayMasters) {
                 if (newMessage.arrayMasters.indexOf(identifiant) === -1) {
                     setMaster(false);
@@ -120,6 +124,7 @@ $(document).ready(function () {
                     setMaster(true);
                 }
             }
+            */
 
             if (newMessage.messageSender) {
                 $("#message ul").append("<li><font color='green'>(" + newMessage.messageSender + ") s'est connect&#233;</font> </li>");
@@ -152,7 +157,7 @@ $(document).ready(function () {
 
     // Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves computer.
     socket.on('updateSlide', function(filePath, activeSlideIndex) {
-        console.log('***client receives updateSlide');
+        //alert('***client receives updateSlide');
         updateSlide(filePath, activeSlideIndex);
     });
     
@@ -214,7 +219,7 @@ $(document).ready(function () {
             containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
             slideControlContainer =  containers[containers.length-1];
         }
-        if (master) {
+        if (master == 'true') {
             pauseAllVideos(); //Pause playing videos when changing slide
             $($('#notre_frame').contents()).find("#next").click();
             //socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
@@ -228,7 +233,7 @@ $(document).ready(function () {
             containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
             slideControlContainer =  containers[containers.length-1];
         }
-        if (master) {
+        if (master == 'true') {
             pauseAllVideos();
             $($('#notre_frame').contents()).find("#prev").click();
             //socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
@@ -242,7 +247,7 @@ $(document).ready(function () {
             containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
             slideControlContainer =  containers[containers.length-1];
         }
-        if (master) {
+        if (master == 'true') {
             pauseAllVideos();
             $($('#notre_frame').contents()).find("#first").click();
             socket.emit('SlideChanged', slideControlContainer.currentIndex);
@@ -255,7 +260,7 @@ $(document).ready(function () {
             containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
             slideControlContainer =  containers[containers.length-1];
         }
-        if (master) {
+        if (master == 'true') {
             pauseAllVideos();
             $($('#notre_frame').contents()).find("#last").click();
             socket.emit('SlideChanged', slideControlContainer.currentIndex);
@@ -293,27 +298,33 @@ $(document).ready(function () {
     });
 
     $("#notre_frame").load(function() {
-        alert("nav : " + $($('#notre_frame').contents()).find('#navigation_par'));
         $($('#notre_frame').contents()).find('#navigation_par').hide();
-        alert('navigation_par hidden');
         containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
         slideControlContainer =  containers[containers.length-1];
-        $($('#notre_frame').contents()).find('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
+        slideControlContainer.selectIndex(currentSlide);
+        if (master == 'true') {
+            alert_server($(this).attr('src'), 0);
+            $($('#notre_frame').contents()).find('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
             //event.stopPropagation();
-            if (master && (event.target.nodeName !== "VIDEO")) {
-                console.log("click on: " + getSelector($(this)));
-                socket.emit('click', getSelector($(this)));
-            }
-        });
-        initVideo("load");
+                if (event.target.nodeName !== "VIDEO") {
+                    console.log("click on: " + getSelector($(this)));
+                    socket.emit('click', getSelector($(this)));
+                }
+            });
+        }
+        initVideo();
     });
+
+    $("#notre_frame").load();
+
 });
 
 // Load a new presentation selected by the animator
 function updateSlide(filePath, activeSlideIndex) { 
     $('#notre_frame').attr('src', filePath);
     console.log('loading ' + filePath);
-    slideControlContainer.selectIndex(activeSlideIndex);
+    currentSlide = activeSlideIndex;
+    //slideControlContainer.selectIndex(currentSlide);
 }
 
 /**
@@ -400,17 +411,17 @@ function activeSlide () {
 // Allow to set a new master if he's not and the contrary delete master privilege if he's not.
 function setMaster(isMaster) {
     "use strict";
-    console.log(isMaster);
-    if (isMaster) {
-        master = true;
+    if (isMaster == 'true') {
+        sessionStorage.setItem(isMaster, true);
         $("#menu-control").show();
         $("#bouton-selectPPT").show();
     } else {
-        master = false;
+        sessionStorage.setItem(isMaster, false);
         $("#menu-control").hide();
         $("#bouton-selectPPT").hide();
     }
-    initVideo("setMaster");
+    master = isMaster;
+    initVideo();
 }
 
 // Use to choose a new presentation
