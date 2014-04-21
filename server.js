@@ -63,7 +63,6 @@ app.get('/', function (req, res, next) {
 });
 
 app.get('/login.html', function (req, res, next) {
-   console.log('token: ' + sessionStorage.getItem('token'));
     res.redirect('/index.html');
 });
 
@@ -79,7 +78,7 @@ app.post('/login', function (req, res) {
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: true});
         rootToken = token;
-    } else if (user.identifiant !== undefined &&  user.password === 'comete'){
+    } else if (user.identifiant !== undefined &&  user.password === 'comete' && tab_client.indexOf(user.identifiant) === -1){
     	// We are sending the profile inside the token
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: false});
@@ -206,8 +205,7 @@ socket.on('connection', function (client) {
 		if (newMessage.videosStates) {
 			console.log('videos states sent to client');
             socket.sockets.socket(newClientSocketId).send(message);
-		}
-		else {		
+		} else {
 			client.broadcast.send(JSON.stringify({
 				messageContent: newMessage.messageContent,      // Discussion channel
 				messageSender: newMessage.messageSender     	// pseudo
