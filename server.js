@@ -182,12 +182,8 @@ socket.on('connection', function (client) {
 		}));
 
 		
-		if (newClientSocketId != rootSocketId) {
-			if(currentPresentation != "") {
-				client.emit('updateSlide', currentPresentation, currentSlideId);
-			}
-			sendMessage(rootSocketId, 'videoStates_request');
-			console.log('Server requested videos states to root');
+		if (newClientSocketId != rootSocketId && currentPresentation != "") {
+			client.emit('updateSlide', currentPresentation, currentSlideId);
 		}
 
 		// We send tab's client to all clients connected
@@ -200,19 +196,11 @@ socket.on('connection', function (client) {
 
 	// Slides management and messages management
 	client.on('message', function (message) {
-		if (client.id !== rootSocketId) { // ignore message if the sender is not the root
-			return;
-		}
 		var newMessage = JSON.parse(message);
-		if (newMessage.videosStates) {
-			console.log('videos states sent to client');
-            socket.sockets.socket(newClientSocketId).send(message);
-		} else {
-			client.broadcast.send(JSON.stringify({
-				messageContent: newMessage.messageContent,      // Discussion channel
-				messageSender: newMessage.messageSender     	// pseudo
-			}));
-		}
+		client.broadcast.send(JSON.stringify({
+			messageContent: newMessage.messageContent,      // Discussion channel
+			messageSender: newMessage.messageSender     	// pseudo
+		}));
 	});
 
 	// Broadcast the message to prevent clients that a new presentation is selected by the animator 
@@ -228,11 +216,16 @@ socket.on('connection', function (client) {
 		currentSlideId = activeSlideId;
 		client.broadcast.emit('activeSlide',currentSlideId);
 	});
-	/*
-	client.on('activeSlideIdRequest', function() {
-		client.emit('activeSlide', currentSlideId);
+	
+	client.on('videoStates_request', function() {
+		sendMessage(rootSocketId, 'videoStates_request');
+		console.log('Server requested videos states to root');
 	});
-	*/
+	
+	client.on('videoStates', function(data) {
+		console.log('videoStates server: ' + data);
+		socket.sockets.socket(newClientSocketId).emit('videoStates', data);
+	});
 
     client.on('actionOnVideo', function(data) {
     	if (client.id !== rootSocketId) { // ignore message if the sender is not the root

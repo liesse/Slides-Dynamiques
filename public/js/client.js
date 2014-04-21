@@ -13,8 +13,6 @@ var master = false,
 
 $(document).ready(function () {
     "use strict";
-    //alert('Am I a master ? ' + sessionStorage.getItem('isMaster'));
-    //master = sessionStorage.getItem('isMaster');
     setMaster(sessionStorage.getItem('isMaster'));
     identifiant = sessionStorage.getItem('identifiant');
 
@@ -93,8 +91,8 @@ $(document).ready(function () {
                 }
                 $('#bouton-menu').html("(<b>" + nbNewMessage + "</b>)");
             }
-        } else if (newMessage.videosStates) {
-            videosStates(newMessage.videosStates);
+        /*} else if (newMessage.videosStates) {
+            videosStates(newMessage.videosStates);*/
         } else {
             var ma_liste = "";
             var i;
@@ -141,7 +139,7 @@ $(document).ready(function () {
     * Then we simulate 'click' event on slaves computers.
     */
     socket.on('click', function (eltId) {
-        alert("**click " + eltId);
+        //alert("**click " + eltId);
         $($('#notre_frame').contents()).find(eltId)[0].click();
     });
      
@@ -153,6 +151,12 @@ $(document).ready(function () {
             }
             slideControlContainer.selectIndex(activeSlideId);
         }
+    });
+
+    socket.on('videoStates', function(data) {
+        var videos = JSON.parse(data);
+        alert('aaaa ' + videos.videosStates);
+        videosStates(videos.videosStates);
     });
 
     // Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves computer.
@@ -297,7 +301,9 @@ $(document).ready(function () {
         $($('#notre_frame').contents()).find("#session_export").click();
     });
 
+    //var load = 0;
     $("#notre_frame").load(function() {
+        //load++;
         $($('#notre_frame').contents()).find('#navigation_par').hide();
         containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
         slideControlContainer =  containers[containers.length-1];
@@ -312,10 +318,15 @@ $(document).ready(function () {
                 }
             });
         }
-        initVideo();
+        
+        //alert('load ' + load);
     });
 
     $("#notre_frame").load();
+
+    if (master == 'false') {
+        socket.emit('videoStates_request');
+    }
 
 });
 
