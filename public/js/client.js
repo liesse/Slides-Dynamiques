@@ -6,6 +6,7 @@ var master = false,
     slideControlContainer,
     containers,
     currentSlide = 0,
+    videos,
     tab_windows_opened = [],    // This tab contains all pseudos of all opened windows
     messages_history = [],      // This tab contains history of all opened windows
     presentationsList = [],     // This tab contains all presentation already upload on the server
@@ -154,9 +155,8 @@ $(document).ready(function () {
     });
 
     socket.on('videoStates', function(data) {
-        var videos = JSON.parse(data);
-        alert('aaaa ' + videos.videosStates);
-        videosStates(videos.videosStates);
+        videos = JSON.parse(data).videosStates;
+        videosStates(videos);
     });
 
     // Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves computer.

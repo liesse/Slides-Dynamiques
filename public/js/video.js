@@ -60,19 +60,20 @@ function initVideo() {
         }
     });
 
-
     socket.on('videoStates_request', function() {
-        var videosStates = [];
-        var videos = $($('#notre_frame').contents()).find("video");
-        videos.each(function(){
-            var item = {
-                videoId: $(this).attr('id'), 
-                videoPaused: $(this)[0].paused, 
-                videoCurrentTime: $(this)[0].currentTime
-            };
-            videosStates.push(item);              
-        });
-        socket.emit('videoStates', JSON.stringify({videosStates: videosStates}));
+        setTimeout(function(){
+            var videosStates = [];
+            var videos = $($('#notre_frame').contents()).find("video");
+            videos.each(function(){
+                var item = {
+                    videoId: $(this).attr('id'), 
+                    videoPaused: $(this)[0].paused, 
+                    videoCurrentTime: $(this)[0].currentTime
+                };
+                videosStates.push(item);              
+            });
+            socket.emit('videoStates', JSON.stringify({videosStates: videosStates}));
+        }, 2000);
     });
 }
 

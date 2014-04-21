@@ -224,7 +224,7 @@ socket.on('connection', function (client) {
 	
 	client.on('videoStates', function(data) {
 		console.log('videoStates server: ' + data);
-		socket.sockets.socket(newClientSocketId).emit('videoStates', data);
+        socket.sockets.socket(newClientSocketId).emit('videoStates', data);
 	});
 
     client.on('actionOnVideo', function(data) {
