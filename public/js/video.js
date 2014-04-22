@@ -8,11 +8,9 @@ function initVideo() {
         return;
     }
     
-    videos.each(function(){
+    videos.each(function() {
         $(this)[0].controls = false;
-        
         if (master == 'true') {
-            
             $(this)[0].controls = true;
 
             // When detect "pause" event, we send information to slaves 
@@ -61,19 +59,17 @@ function initVideo() {
     });
 
     socket.on('videoStates_request', function() {
-        setTimeout(function(){
-            var videosStates = [];
-            var videos = $($('#notre_frame').contents()).find("video");
-            videos.each(function(){
-                var item = {
-                    videoId: $(this).attr('id'), 
-                    videoPaused: $(this)[0].paused, 
-                    videoCurrentTime: $(this)[0].currentTime
-                };
-                videosStates.push(item);              
-            });
-            socket.emit('videoStates', JSON.stringify({videosStates: videosStates}));
-        }, 2000);
+        var videosStates = [];
+        var videos = $($('#notre_frame').contents()).find("video");
+        videos.each(function() {
+            var item = {
+                videoId: $(this).attr('id'), 
+                videoPaused: $(this)[0].paused, 
+                videoCurrentTime: $(this)[0].currentTime
+            };
+            videosStates.push(item);              
+        });
+        socket.emit('videoStates', JSON.stringify({videosStates: videosStates}));
     });
 }
 

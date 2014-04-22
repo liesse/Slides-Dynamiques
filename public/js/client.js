@@ -161,6 +161,7 @@ $(document).ready(function () {
 
     // Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves computer.
     socket.on('updateSlide', function(filePath, activeSlideIndex) {
+        //alert('update');
         //alert('***client receives updateSlide');
         updateSlide(filePath, activeSlideIndex);
     });
@@ -301,38 +302,17 @@ $(document).ready(function () {
         $($('#notre_frame').contents()).find("#session_export").click();
     });
 
-    //var load = 0;
-    $("#notre_frame").load(function() {
-        //load++;
-        $($('#notre_frame').contents()).find('#navigation_par').hide();
-        containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
-        slideControlContainer =  containers[containers.length-1];
-        slideControlContainer.selectIndex(currentSlide);
-        if (master == 'true') {
-            alert_server($(this).attr('src'), 0);
-            $($('#notre_frame').contents()).find('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
-            //event.stopPropagation();
-                if (event.target.nodeName !== "VIDEO") {
-                    console.log("click on: " + getSelector($(this)));
-                    socket.emit('click', getSelector($(this)));
-                }
-            });
-        }
-        
-        //alert('load ' + load);
-    });
-
-    $("#notre_frame").load();
-
-    if (master == 'false') {
-        socket.emit('videoStates_request');
-    }
-
+    
+    
+   // alert("entree: jusqu'ici tout va bien");
+    iFrameLoaded("notre_frame",'ppt/video.html');
+    //alert("sortie: jusqu'ici tout va bien");
 });
 
 // Load a new presentation selected by the animator
 function updateSlide(filePath, activeSlideIndex) { 
-    $('#notre_frame').attr('src', filePath);
+    //$('#notre_frame').attr('src', filePath);
+    iFrameLoaded("notre_frame", filePath);
     console.log('loading ' + filePath);
     currentSlide = activeSlideIndex;
     //slideControlContainer.selectIndex(currentSlide);
@@ -438,4 +418,45 @@ function setMaster(isMaster) {
 // Use to choose a new presentation
 function getPresentationsList() {
     return presentationsList;
+}
+
+
+function iFrameLoaded(id, src) {
+    
+    var deferred = $.Deferred(),
+        iframe = $("#"+id);
+        
+    iframe.load(deferred.resolve);
+    iframe = iframe.attr("src", src);
+    
+    deferred.done(function() {
+        setIFrameEvents();
+    });
+
+    return deferred.promise();
+}
+
+function setIFrameEvents() {
+    //alert('setting events');
+    $($('#notre_frame').contents()).find('#navigation_par').hide();
+    containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
+    slideControlContainer =  containers[containers.length-1];
+    slideControlContainer.selectIndex(currentSlide);
+    if (master == 'true') {
+        //alert('I am master');
+        $($('#notre_frame').contents()).find('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
+        //event.stopPropagation();
+            if (event.target.nodeName !== "VIDEO") {
+                console.log("click on: " + getSelector($(this)));
+                socket.emit('click', getSelector($(this)));
+            }
+        });
+    }
+    if ($($('#notre_frame').contents()).find('video').length > 0) {
+        initVideo();
+        if (master == 'false') {
+            socket.emit('videoStates_request');
+        }
+    }
+        //alert('tout est ok');
 }

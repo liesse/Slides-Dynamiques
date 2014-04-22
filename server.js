@@ -219,7 +219,8 @@ socket.on('connection', function (client) {
 	
 	client.on('videoStates_request', function() {
 		sendMessage(rootSocketId, 'videoStates_request');
-		console.log('Server requested videos states to root');
+		console.log('root: ' + rootSocketId);
+		console.log('****Server requested videos states to root');
 	});
 	
 	client.on('videoStates', function(data) {
