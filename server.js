@@ -32,21 +32,20 @@ var socketio_jwt = require('socketio-jwt'),
     express = require('express');
 
 // Attributs
-var asRoot = false,
-    allClients = 0,         // number of all connected users
+var nbUsers = 0,
     slide_currently,
     my_timer,
     TempoPPT,
-    tab_client = [],        // contains all connected clients
-    arrayMasters = [],      // contains the master who has all controls on presentation
-    rootToken,
-    clientTokens = [],
-    rootSocketId = "",
     newClientSocketId,
-    tab_pseudo_socket = [], // contains all pseudo and their socket id (used to contact specific user when necessary)
-    currentPresentation = "",
     currentSlideId,
-    videosStates;
+    videosStates,
+    rootSocketId = "",
+    currentPresentation = "",
+    clientTokens = [],
+    users = [],             // contains all connected clients
+    masters = [],           // contains the master who has all controls on presentation
+    tab_pseudo_socket = []; // contains all pseudo and their socket id (used to contact specific user when necessary)
+
 
 // Config for Express, set static folder and add middleware
 app.configure(function () {
@@ -72,13 +71,11 @@ app.post('/login', function (req, res) {
     };
 
     console.log(user.identifiant + ' ' + user.password);
-    if (user.identifiant === 'root' &&  user.password === 'lkp') {
-        // We are sending the profile inside the token
+    if (user.identifiant === 'root' &&  user.password === 'lkp' && users.indexOf(user.identifiant) === -1) {
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: true});
         rootToken = token;
-    } else if (user.identifiant !== undefined &&  user.password === 'comete' && tab_client.indexOf(user.identifiant) === -1){
-    	// We are sending the profile inside the token
+    } else if (user.identifiant !== undefined &&  user.password === 'comete' && users.indexOf(user.identifiant) === -1) {
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: false});
     } else {
@@ -92,7 +89,6 @@ app.get('/index.html', function (req, res, next) {
         // User is authenticated, let him in
     	console.log('request accepted');
     	res.sendfile('./public/views/index.html');
-    	console.log('index.html sent');
     } else {
         // Otherwise we redirect him to login form
     	console.log('not authenticated, request rejected');
@@ -144,7 +140,6 @@ app.post('/public/ppt', function(req, res) {
 	})
 
 	form.parse(req); 
-
 	return;
 });
 
@@ -161,24 +156,23 @@ socket.on('connection', function (client) {
 	client.on('ouvertureSession', function (connection) {
 		user = JSON.parse(connection);
 		newClientSocketId = client.id;
-        allClients += 1;
+        nbUsers += 1;
 
-		if (rootToken === user.token || arrayMasters.length === 0) {
-			asRoot = true;
+		if (rootToken === user.token || masters.length === 0) {
 			rootToken = user.token;
 			rootSocketId = client.id;
-            arrayMasters.push(user.identifiant);
+            masters.push(user.identifiant);
         }
 
-		tab_client.push(user.identifiant);
+		users.push(user.identifiant);
         tab_pseudo_socket[user.identifiant] = client.id;
 
 		// We send client's tab to users that began connection
 		client.send(JSON.stringify({
-			"clients": allClients,
-			"tab_client": tab_client,
+			"clients": nbUsers,
+			"users": users,
 			"connexion": user.identifiant,
-			"arrayMasters": arrayMasters
+			"masters": masters
 		}));
 
 		
@@ -188,8 +182,8 @@ socket.on('connection', function (client) {
 
 		// We send tab's client to all clients connected
 		client.broadcast.send(JSON.stringify({
-			"clients": allClients,
-			"tab_client": tab_client,
+			"clients": nbUsers,
+			"users": users,
 			"messageSender": user.identifiant
 		}));
 	});
@@ -262,7 +256,6 @@ socket.on('connection', function (client) {
          emetteur: obj.emetteur,
          contenu: obj.contenu
        }));
-    
     });
     
     // Event that update the tab that contains all opened recipient windows (to keep at date notification)
@@ -272,7 +265,6 @@ socket.on('connection', function (client) {
         socket.sockets.socket(tab_pseudo_socket[obj.emetteur]).emit('MAJ_tab_windows_opened', JSON.stringify({
            destinataire: obj.destinataire          
         }));
-        
     });
 
 	client.on('allPresentationsList_request', function() {
@@ -288,31 +280,29 @@ socket.on('connection', function (client) {
 
 	// Executed when a client disconnects
 	client.on('disconnect', function () {
-        
-        if (user == undefined ||    user.identifiant == undefined || tab_client.indexOf(user.identifiant) === -1) {
+        if (user === undefined || user.identifiant === undefined || users.indexOf(user.identifiant) === -1) {
             console.log('disconnect of a user of an older server');
             user = {identifiant: ""};
         } else {
             console.log('disconnect ' + user.identifiant);
-            tab_client.splice(tab_client.indexOf(user.identifiant), 1);
-            allClients -= 1;
+            users.splice(users.indexOf(user.identifiant), 1);
+            nbUsers -= 1;
 
-            if (arrayMasters.indexOf(user.identifiant) !== -1) {
-                arrayMasters.splice(arrayMasters.indexOf(user.identifiant), 1);
-                if (arrayMasters.length === 0 && tab_client.length > 0) {
-                    arrayMasters.push(tab_client[0]);
+            if (masters.indexOf(user.identifiant) !== -1) {
+                masters.splice(masters.indexOf(user.identifiant), 1);
+                if (masters.length === 0 && users.length > 0) {
+                    masters.push(users[0]);
                     //must update rootToken and rootSocketId
                 }
             }
-        }
 
-		// We send the new client table to all clients
-		client.broadcast.send(JSON.stringify({
-			"clients": allClients,
-			"tab_client": tab_client,
-			"deconnexion": user.identifiant,
-			"arrayMasters": arrayMasters
-		}));
+            // We send the new client table to all clients
+            client.broadcast.send(JSON.stringify({
+                "clients": nbUsers,
+                "users": users,
+                "masters": masters
+            }));
+        }
 	});
 });
 

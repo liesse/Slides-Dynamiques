@@ -63,7 +63,7 @@ $(document).ready(function () {
      *    --> if '.newMessage' parameter : retrieve some messages from broadcast discussion
      *    --> if '.videoState' parameter : video management in order to adjust videos (move forward, move back, pause, play)
      *    --> if '.messageContent' parameter : messages retrieve from broadcast (we have both sender and content liked to it)
-     *    --> if '.arrayMasters' : become an animator (master) if the server send a tab with client's identifier
+     *    --> if '.masters' : become an animator (master) if the server send a tab with client's identifier
      *    --> if '.connexion' : warns all users (master and slaves) that a new slave has come around
      *    --> if '.dexonnexion' : warns all users (master and slaves) that one slave left
      */
@@ -72,9 +72,9 @@ $(document).ready(function () {
        
         if (newMessage.clients) {
             document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>" + (newMessage.clients-1) + " utilisateur(s) connecté(s):</strong></p>";
-            for(var i=0; i < newMessage.tab_client.length; i++) {
-                if(newMessage.tab_client[i] != identifiant) {               
-                    document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.tab_client[i] + "</p>";
+            for(var i=0; i < newMessage.users.length; i++) {
+                if(newMessage.users[i] != identifiant) {    
+                    document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.users[i] + "</p>";
                 }
             } 
         }
@@ -99,8 +99,8 @@ $(document).ready(function () {
             var ma_liste = "";
             var i;
 
-            for (i = 0; i < newMessage.tab_client.length; i += 1) {
-                ma_liste += "<li>" + newMessage.tab_client[i] + "</li>";
+            for (i = 0; i < newMessage.users.length; i += 1) {
+                ma_liste += "<li>" + newMessage.users[i] + "</li>";
             }
             
             $('#cadre-user ul').html(ma_liste);         // Update pseudos list
@@ -117,8 +117,8 @@ $(document).ready(function () {
             }
             
             /*
-            if (newMessage.arrayMasters) {
-                if (newMessage.arrayMasters.indexOf(identifiant) === -1) {
+            if (newMessage.masters) {
+                if (newMessage.masters.indexOf(identifiant) === -1) {
                     setMaster(false);
                 } else {
                     setMaster(true);
