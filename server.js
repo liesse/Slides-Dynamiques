@@ -209,7 +209,7 @@ socket.on('connection', function (client) {
 		console.log('filePath: ' + filePath);
 		currentPresentation = filePath;
 		currentSlideId = activeSlideIndex;
-		client.broadcast.emit(currentPresentation, activeSlideIndex);
+		client.broadcast.emit("updateSlide",currentPresentation, activeSlideIndex);
 	});
 
 	client.on('SlideChanged', function (activeSlideId) {
@@ -221,6 +221,10 @@ socket.on('connection', function (client) {
 		sendMessage(rootSocketId, 'videoStates_request');
 		console.log('root: ' + rootSocketId);
 		console.log('****Server requested videos states to root');
+	});
+	
+	client.on('activeSlide_request', function() {
+		client.emit('updateSlide', currentPresentation, currentSlideId);
 	});
 	
 	client.on('videoStates', function(data) {

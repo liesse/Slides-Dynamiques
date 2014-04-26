@@ -162,7 +162,7 @@ $(document).ready(function () {
     // Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves computer.
     socket.on('updateSlide', function(filePath, activeSlideIndex) {
         //alert('update');
-        //alert('***client receives updateSlide');
+        //alert('***client receives updateSlide: ' + filePath +' ' + activeSlideIndex);
         updateSlide(filePath, activeSlideIndex);
     });
     
@@ -305,7 +305,7 @@ $(document).ready(function () {
     
     
    // alert("entree: jusqu'ici tout va bien");
-    iFrameLoaded("notre_frame",'ppt/video.html');
+    iFrameLoaded("notre_frame",'');
     //alert("sortie: jusqu'ici tout va bien");
 });
 
@@ -444,8 +444,9 @@ function setIFrameEvents() {
     slideControlContainer.selectIndex(currentSlide);
     if (master == 'true') {
         //alert('I am master');
+
         $($('#notre_frame').contents()).find('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
-        //event.stopPropagation();
+        event.stopPropagation();
             if (event.target.nodeName !== "VIDEO") {
                 console.log("click on: " + getSelector($(this)));
                 socket.emit('click', getSelector($(this)));
