@@ -16,6 +16,7 @@ $(document).ready(function () {
     "use strict";
     setMaster(sessionStorage.getItem('isMaster'));
     identifiant = sessionStorage.getItem('identifiant');
+    $("#menu-pseudo").append(identifiant);
 
     /**
      * Open the socket with the token built by login process
