@@ -1,12 +1,10 @@
 {
   "name": "Slides-Dynamiques",
-  "version": "0.9.15",
+  "version": "0.7.0",
   "description": "A web application to diffuse some presentation",
   "main": "server.js",
   "dependencies": {
-    "bower": "~1.2.8",
     "connect-multiparty": "~1.0.3",
-    "ejs": "~1.0.0",
     "express": "~3.4.8",
     "formidable": "~1.0.14",
     "jsonwebtoken": "~0.2.0",
