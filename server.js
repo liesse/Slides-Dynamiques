@@ -288,21 +288,23 @@ socket.on('connection', function (client) {
 
 	// Executed when a client disconnects
 	client.on('disconnect', function () {
-		console.log('disconnect ' + user.identifiant);
-
-		if (user.identifiant) {
-			tab_client.splice(tab_client.indexOf(user.identifiant), 1);
-
-			if (arrayMasters.indexOf(user.identifiant) !== -1) {
-				arrayMasters.splice(arrayMasters.indexOf(user.identifiant), 1);
-				if (arrayMasters.length === 0 && tab_client.length > 0) {
-					arrayMasters.push(tab_client[0]);
-					//must update rootToken and rootSocketId
-				}
-			}
-		}
         
-		allClients -= 1;
+        if (user == undefined ||    user.identifiant == undefined || tab_client.indexOf(user.identifiant) === -1) {
+            console.log('disconnect of a user of an older server');
+            user = {identifiant: ""};
+        } else {
+            console.log('disconnect ' + user.identifiant);
+            tab_client.splice(tab_client.indexOf(user.identifiant), 1);
+            allClients -= 1;
+
+            if (arrayMasters.indexOf(user.identifiant) !== -1) {
+                arrayMasters.splice(arrayMasters.indexOf(user.identifiant), 1);
+                if (arrayMasters.length === 0 && tab_client.length > 0) {
+                    arrayMasters.push(tab_client[0]);
+                    //must update rootToken and rootSocketId
+                }
+            }
+        }
 
 		// We send the new client table to all clients
 		client.broadcast.send(JSON.stringify({
