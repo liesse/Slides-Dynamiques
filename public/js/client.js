@@ -34,7 +34,7 @@ $(document).ready(function () {
     $("#deconnexion").click(function(){
         socket.disconnect();
         sessionStorage.setItem('token', '');
-        document.location.href="/login.html"
+        document.location.href="/login.html";
     });
         
 	// Event that check if we are really loading an html presentation
@@ -71,7 +71,7 @@ $(document).ready(function () {
         var newMessage = jQuery.parseJSON(message);
        
         if (newMessage.clients) {
-            document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>" + (newMessage.clients-1) + " utilisateur(s) connecté(s):</strong></p>";
+            document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>UTILISATEURS</strong></p>";
             for(var i=0; i < newMessage.users.length; i++) {
                 if(newMessage.users[i] != identifiant) {    
                     document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.users[i] + "</p>";
@@ -303,11 +303,11 @@ $(document).ready(function () {
         $($('#notre_frame').contents()).find("#session_export").click();
     });
 
+    $("#panelUsers").click(function(){
+        affichePanelUsers();
+    });
     
-    
-   // alert("entree: jusqu'ici tout va bien");
     iFrameLoaded("notre_frame",'');
-    //alert("sortie: jusqu'ici tout va bien");
 });
 
 // Load a new presentation selected by the animator
@@ -460,5 +460,8 @@ function setIFrameEvents() {
             socket.emit('videoStates_request');
         }
     }
-        //alert('tout est ok');
+}
+
+function affichePanelUsers() {
+    $('#cadre-menu-droite').slideToggle("slow");       
 }

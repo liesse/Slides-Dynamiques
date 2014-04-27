@@ -17,6 +17,7 @@ var socketio_jwt = require('socketio-jwt'),
     socket = require('socket.io').listen(server),
     express = require('express');
 
+
 // Attributs
 var nbUsers = 0,
     slide_currently,
@@ -130,7 +131,7 @@ app.post('/public/ppt', function(req, res) {
 });
 
 server.listen(8333, function () {
-  console.log('listening on http://localhost:8333');
+  console.log('listening on https://127.0.0.1:8333');
 });
 
 // Client's connection
