@@ -129,6 +129,7 @@ html {
     margin-top: 160px;
     height: 165px;
     background: url('../images/fond-demo-menu-open.jpg')  bottom no-repeat;
+    cursor: pointer;
 }
 
 #notre_frame {
@@ -357,6 +358,7 @@ html {
     background-color: white;
     font-size: 15px;
     height: 20px;
+    cursor: pointer;
 }
 
 #deconnexion {
@@ -364,4 +366,8 @@ html {
     position: absolute;
     right: 6.2%;
     top: -2px;
+}
+
+#panelUsers {
+ cursor: pointer;
 }

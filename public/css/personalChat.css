@@ -1,8 +1,8 @@
- #pseudo {
-    color: #A52A2A;
-    font-size: 24px;
-    margin-left: 100px;
-  }
+#pseudo {
+   color: #A52A2A;
+   font-size: 24px;
+   margin-left: 150px;
+}
 
   .emetteur {
     border: 1px #008000;
@@ -11,41 +11,45 @@
     box-shadow: 5px 5px 5px green;
   }
 
-  .destinataire {
-    border: 2px #FF0000;
+.destinataire {
+    border: 2px none #FF0000;
     border-radius: 8px;
+    box-shadow: 5px 5px 5px #FF0000;
     text-align: right;
-    width: 218px;
-    box-shadow: 5px 5px 5px red;
-  }
+    width: 355px;
+}
 
-  .users {
-    border: 1px solid;
-   }
+.users {
+   border: 1px solid;
+}
 
-  .hidden {
-    display: none;
-  }
+.hidden {
+  display: none;
+}
 
-  .visible {
-    display: block;
-  }
+.visible {
+  display: block;
+}
 
-  #BlocChat1 {
+#BlocChat1 {
+    background-color: #EFEFEF;
     border: 2px solid #808080;
-    width: 260px;
-  }
+    border-radius: 28px;
+    width: 400px;
+}
 
-  #messageChat {
-    border: 2px solid #000000;
-    height: 250px;
-    width: 250px;
-    overflow:scroll;
-    margin-top: 12px;
+#messageChat {
     background-color: #ECECEC;
-  }
+    border: 4px solid #000000;
+    height: 250px;
+    margin-left: 5px;
+    margin-top: 12px;
+    overflow: scroll;
+    width: 380px;
+}
 
-  #zone_texte_Chat {
-    size: 50px;
-  }
+#zone_texte_Chat {
+    margin-left: 5px;
+    width: 384px;
+}
         

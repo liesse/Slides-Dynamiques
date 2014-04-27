@@ -104,7 +104,7 @@ $(document).ready(function () {
             }
             
             $('#cadre-user ul').html(ma_liste);         // Update pseudos list
-            $('#clients').text(newMessage.clients);     // Display the number of connected users
+            $('#clients').text(newMessage.clients-1);     // Display the number of connected users
 
             if (newMessage.connexion) {
                 $("#message ul").append("<li><font color='green'>(" + newMessage.connexion + ") s'est connect&#233;</font> </li>");
@@ -327,7 +327,7 @@ function updateSlide(filePath, activeSlideIndex) {
  */
 function lancerChat(pseudo) {
 
-    var myWindow = window.open("PersonalChat.html", pseudo.innerHTML, "width=400, height=400");
+    var myWindow = window.open("PersonalChat.html", pseudo.innerHTML, "width=430, height=400");
     myWindow.identifiant = identifiant;
     myWindow.destinataire = pseudo.innerHTML;
     myWindow.socket = socket;
