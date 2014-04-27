@@ -2,7 +2,7 @@
 var master = false,
     identifiant,
     password,
-    socket = io.connect('http://localhost:8333'), //socket = io.connect('https://localhost:8333',{secure: true});
+    socket = io.connect('https://127.0.0.1:8333',{secure: true}),
     slideControlContainer,
     containers,
     currentSlide = 0,

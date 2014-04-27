@@ -1,13 +1,12 @@
-/* Include all necessary packages for HTTPS
+// Include all necessary packages for HTTPS
 
 var socketio_jwt = require('socketio-jwt'),
     fs = require('fs'),
     sslOptions = {
-        key: fs.readFileSync('./ssl_layer/server.key'),
-        cert: fs.readFileSync('./ssl_layer/server.crt'),
-        ca: fs.readFileSync('./ssl_layer/ca.crt'),
-        requestCert: true,
-        rejectUnauthorized: false
+        key: fs.readFileSync('ssl_layer/server.key'),
+        cert: fs.readFileSync('ssl_layer/server.crt'),
+        ca: fs.readFileSync('ssl_layer/ca.crt'),
+        requestCert: true
     },
     formidable = require('formidable'),
     jwt = require('jsonwebtoken'),
@@ -15,20 +14,7 @@ var socketio_jwt = require('socketio-jwt'),
     app = require('express')(),
     http = require('http').createServer(app),
     server = require('https').createServer(sslOptions, app),
-    io = require('socket.io').listen(server),
-    express = require('express');
-*/
-
-// Include all necessary packages for HTTP
-var socketio_jwt = require('socketio-jwt'),
-    fs = require('fs'),
-    formidable = require('formidable'),
-    jwt = require('jsonwebtoken'),
-    jwt_secret = 'knkninnfsf,;sdf,ozqefsdvsfdbsnoenerkls,d;:',
-    app = require('express')(),
-    server = require('http').createServer(app),
-    io = require('socket.io'),
-    socket = io.listen(server),
+    socket = require('socket.io').listen(server),
     express = require('express');
 
 // Attributs
