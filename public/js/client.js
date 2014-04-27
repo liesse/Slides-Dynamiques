@@ -93,8 +93,7 @@ $(document).ready(function () {
                 }
                 $('#bouton-menu').html("(<b>" + nbNewMessage + "</b>)");
             }
-        /*} else if (newMessage.videosStates) {
-            videosStates(newMessage.videosStates);*/
+
         } else {
             var ma_liste = "";
             var i;
@@ -116,16 +115,6 @@ $(document).ready(function () {
                 }, timeLoad);
             }
             
-            /*
-            if (newMessage.masters) {
-                if (newMessage.masters.indexOf(identifiant) === -1) {
-                    setMaster(false);
-                } else {
-                    setMaster(true);
-                }
-            }
-            */
-
             if (newMessage.messageSender) {
                 $("#message ul").append("<li><font color='green'>(" + newMessage.messageSender + ") s'est connect&#233;</font> </li>");
             }
@@ -141,7 +130,6 @@ $(document).ready(function () {
     * Then we simulate 'click' event on slaves computers.
     */
     socket.on('click', function (eltId) {
-        //alert("**click " + eltId);
         $($('#notre_frame').contents()).find(eltId)[0].click();
     });
      
@@ -162,8 +150,6 @@ $(document).ready(function () {
 
     // Functions that are presents below allow to retrieve events on master computer and then sends informations to slaves computer.
     socket.on('updateSlide', function(filePath, activeSlideIndex) {
-        //alert('update');
-        //alert('***client receives updateSlide: ' + filePath +' ' + activeSlideIndex);
         updateSlide(filePath, activeSlideIndex);
     });
     
@@ -228,7 +214,6 @@ $(document).ready(function () {
         if (master == 'true') {
             pauseAllVideos(); //Pause playing videos when changing slide
             $($('#notre_frame').contents()).find("#next").click();
-            //socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
             socket.emit('SlideChanged', slideControlContainer.currentIndex);           
         }
     });
@@ -242,7 +227,6 @@ $(document).ready(function () {
         if (master == 'true') {
             pauseAllVideos();
             $($('#notre_frame').contents()).find("#prev").click();
-            //socket.emit('SlideChanged', $($('#notre_frame').contents()).find('#slideshow [smil=active]').attr("id"));
             socket.emit('SlideChanged', slideControlContainer.currentIndex);
         }
     });
@@ -312,11 +296,9 @@ $(document).ready(function () {
 
 // Load a new presentation selected by the animator
 function updateSlide(filePath, activeSlideIndex) { 
-    //$('#notre_frame').attr('src', filePath);
     iFrameLoaded("notre_frame", filePath);
     console.log('loading ' + filePath);
     currentSlide = activeSlideIndex;
-    //slideControlContainer.selectIndex(currentSlide);
 }
 
 /**
@@ -350,7 +332,6 @@ function getCurrentSlideId() {
 }
 
 var getSelector = function (elt) {
-    //alert('in getSelector: ' + elt.attr('id') + ' classname: ' + elt.attr('class'));
     if (elt.attr('id')) {
         return '#' + elt.attr('id');
     }
@@ -447,13 +428,8 @@ function setIFrameEvents() {
             slideControlContainer.selectIndex(currentSlide);
         }
     }
-    //alert("okok");
     if (master == 'true') {
-        //alert('I am master');
-
-        //$($('#notre_frame').contents()).find('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
         $($('#notre_frame').contents()).find('#slideshow div, a.linkitem, li.elsommaire, li.elsommaire2, span.spanli, #liste_sections').click( function(event) {
-        //alert('click on ' + getSelector($(this)));
         event.stopPropagation();
             if (event.target.nodeName !== "VIDEO") {
                 console.log("click on: " + getSelector($(this)));

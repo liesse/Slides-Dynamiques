@@ -15,36 +15,27 @@ function initVideo() {
 
             // When detect "pause" event, we send information to slaves 
             $(this).bind("pause", function (event) {
-              //  event.stopPropagation();
-              //  alert("pause " + event.target.nodeName);
                 socket.emit('actionOnVideo', {id: $(this).attr("id"), action: "pause"});
             });
             
             // When detect "lecture" event, we send information to slaves
             $(this).bind("playing", function (event) {
-               // event.stopPropagation();
-               // alert("playing " + event.target.nodeName);
                 socket.emit('actionOnVideo', {id: $(this).attr("id"), action: "playing"});
             });
 
             // When video position change, we give new positions to slaves computers
             $(this).bind("seeked", function (event) {
-               // event.stopPropagation();
-               // alert("seeked " + event.target.nodeName);
                 socket.emit('actionOnVideo', {id: $(this).attr("id"), action: "seeked", value: $(this)[0].currentTime});
             });
 
             // When video volume change, we give new volume value to slaves computers
             $(this).bind("volumechange", function (event) {
-               // event.stopPropagation();
-               // alert("volumechange " + event.target.nodeName);
                 socket.emit('actionOnVideo', {id: $(this).attr("id"), action: "volumechange", value: $(this)[0].volume});
             });            
         }
     });
 
     socket.on('actionOnVideo', function(data){
-        //alert('new action on video received');
         var action = data.action;
         var video = $($('#notre_frame').contents()).find("#"+data.id)[0];
         switch(action){
@@ -74,7 +65,6 @@ function initVideo() {
 }
 
 videosStates = function (videos) {
-    //alert('video states received');
     for (var i = 0; i < videos.length; i++) {
         var id = "#" + videos[i].videoId;
         var video = $($('#notre_frame').contents()).find(id);
