@@ -28,7 +28,6 @@ var nbUsers = 0,
     videosStates,
     rootSocketId = "",
     currentPresentation = "",
-    rootToken = "",
     clientTokens = [],
     users = [],             // contains all connected clients
     masters = [],           // contains the master who has all controls on presentation
@@ -62,7 +61,6 @@ app.post('/login', function (req, res) {
     if (user.identifiant === 'root' &&  user.password === 'lkp' && users.indexOf(user.identifiant) === -1) {
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: true});
-        rootToken = token;
     } else if (user.identifiant !== undefined && user.identifiant.length > 0 && user.identifiant !== 'root'
                && user.password === 'comete' && users.indexOf(user.identifiant) === -1) {
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
@@ -148,7 +146,6 @@ socket.on('connection', function (client) {
         nbUsers += 1;
 
 		if (user.identifiant === 'root') {
-			rootToken = user.token;
 			rootSocketId = client.id;
             masters.push(user.identifiant);
         }
@@ -223,10 +220,6 @@ socket.on('connection', function (client) {
 		client.broadcast.emit('actionOnVideo', data);
 	});
 
-	client.on('requestMaster', function (identifiant) {
-		console.log("demande animateur " + identifiant);
-	}); 
-
 	client.on('click', function (eltId) {
 		client.broadcast.emit('click', eltId);
 	});
@@ -288,7 +281,7 @@ socket.on('connection', function (client) {
                 masters.splice(masters.indexOf(user.identifiant), 1);
                 if (masters.length === 0 && users.length > 0) {
                     masters.push(users[0]);
-                    //must update rootToken and rootSocketId
+                    socket.sockets.socket(tab_pseudo_socket[users[0]]).emit('setMaster', 'true');
                 }
             }
 

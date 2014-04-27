@@ -63,7 +63,6 @@ $(document).ready(function () {
      *    --> if '.newMessage' parameter : retrieve some messages from broadcast discussion
      *    --> if '.videoState' parameter : video management in order to adjust videos (move forward, move back, pause, play)
      *    --> if '.messageContent' parameter : messages retrieve from broadcast (we have both sender and content liked to it)
-     *    --> if '.masters' : become an animator (master) if the server send a tab with client's identifier
      *    --> if '.connexion' : warns all users (master and slaves) that a new slave has come around
      *    --> if '.dexonnexion' : warns all users (master and slaves) that one slave left
      */
