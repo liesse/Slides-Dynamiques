@@ -28,6 +28,7 @@ var nbUsers = 0,
     videosStates,
     rootSocketId = "",
     currentPresentation = "",
+    rootToken = "",
     clientTokens = [],
     users = [],             // contains all connected clients
     masters = [],           // contains the master who has all controls on presentation
@@ -130,7 +131,7 @@ app.post('/public/ppt', function(req, res) {
 	return;
 });
 
-server.listen(8333, function () {
+server.listen(8333,function () {
   console.log('listening on https://127.0.0.1:8333');
 });
 
