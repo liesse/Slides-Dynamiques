@@ -176,6 +176,7 @@ pauseSession = function(){
 stopSession = function(){
   pauseSession();
   position = 0;
+  window.parent.$('#session_status').text('Stopped');
 }
 
 playSession = function() {

@@ -35,7 +35,7 @@ html {
     list-style-type: none;
     position: absolute;
     top: 8px;
-    width: 200px;
+    width: 250px;
 }
 
 #liste_session li {
@@ -64,6 +64,16 @@ html {
 #liste_session li img#import_session {
     width: 31px;
     height: 29px;
+    margin-top: -5px;
+}
+
+#liste_session li span#session_status {
+    font-size: 10px;
+}
+
+#liste_session li span#session_status:hover {
+    font-size: 10px;
+    cursor: default;
     margin-top: -5px;
 }
 

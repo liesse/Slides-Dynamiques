@@ -259,26 +259,31 @@ $(document).ready(function () {
     // import session 
     $("#import_session").click(function () {
         $($('#notre_frame').contents()).find("#session_import").click();
+        $('#session_status').text('Loaded');
     });
 
     // play session
     $("#play_session").click(function () {
         window["notre_frame"].playSession();
+        $('#session_status').text('Playing');
     });
 
     // pause session
     $("#pause_session").click(function () {
         window["notre_frame"].pauseSession();
+        $('#session_status').text('Paused');
     });
 
     // stop session
     $("#stop_session").click(function () {
         window["notre_frame"].stopSession();
+        $('#session_status').text('Stopped');
     });
 
     // record session
     $("#record_session").click(function () {
         $($('#notre_frame').contents()).find("#session_rec").click();
+        $('#session_status').text('Recording');
     });
 
     // export session
