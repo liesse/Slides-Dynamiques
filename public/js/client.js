@@ -440,13 +440,20 @@ function iFrameLoaded(id, src) {
 function setIFrameEvents() {
     //alert('setting events');
     $($('#notre_frame').contents()).find('#navigation_par').hide();
-    containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
-    slideControlContainer =  containers[containers.length-1];
-    slideControlContainer.selectIndex(currentSlide);
+    if ($.isFunction($($('#notre_frame').contents())[0].getTimeContainersByTagName)) {
+        containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
+        slideControlContainer =  containers[containers.length-1];
+        if (typeof slideControlContainer !== 'undefined') {
+            slideControlContainer.selectIndex(currentSlide);
+        }
+    }
+    //alert("okok");
     if (master == 'true') {
         //alert('I am master');
 
-        $($('#notre_frame').contents()).find('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
+        //$($('#notre_frame').contents()).find('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
+        $($('#notre_frame').contents()).find('#slideshow div, a.linkitem, li.elsommaire, li.elsommaire2, span.spanli, #liste_sections').click( function(event) {
+        //alert('click on ' + getSelector($(this)));
         event.stopPropagation();
             if (event.target.nodeName !== "VIDEO") {
                 console.log("click on: " + getSelector($(this)));

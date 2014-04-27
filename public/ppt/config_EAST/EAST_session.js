@@ -278,7 +278,7 @@ EVENTS.onSMILReady(function() {
 */
 
   $('*[class^="elsommaire"], .linkitem, .plus, #slideshow div, li[smil], span.spanli[id^="s"]').click(function(event) {
-   console.log('log click event on ' + parent.getSelector($(this)));
+    console.log('log click event on ' + parent.getSelector($(this)));
     new_listItem_click(parent.getSelector($(this)));
   });
  

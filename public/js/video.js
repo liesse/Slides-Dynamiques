@@ -74,6 +74,7 @@ function initVideo() {
 }
 
 videosStates = function (videos) {
+    //alert('video states received');
     for (var i = 0; i < videos.length; i++) {
         var id = "#" + videos[i].videoId;
         var video = $($('#notre_frame').contents()).find(id);
