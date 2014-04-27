@@ -2,7 +2,7 @@
 var master = false,
     identifiant,
     password,
-    socket = io.connect(),
+    socket = io.connect(getURLConnectionForHTTPS(), { secure:true } ),
     slideControlContainer,
     containers,
     currentSlide = 0,
@@ -445,6 +445,19 @@ function setIFrameEvents() {
     }
 }
 
+
+// This function is used to slide up and slide down connected users for personal chat
 function affichePanelUsers() {
     $('#cadre-menu-droite').slideToggle("slow");       
+}
+
+
+// This function is used to connect with a remote server using https
+function getURLConnectionForHTTPS() {
+
+   var url = '' + window.location;
+   var ipAddress = url.split('/l');
+   var nouvelleURL = ipAddress[0];
+
+    return nouvelleURL;
 }
