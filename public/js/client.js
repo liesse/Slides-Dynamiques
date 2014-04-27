@@ -385,15 +385,14 @@ function activeSlide () {
 function setMaster(isMaster) {
     "use strict";
     if (isMaster == 'true') {
-        sessionStorage.setItem(isMaster, true);
         $("#menu-control").show();
         $("#bouton-selectPPT").show();
     } else {
-        sessionStorage.setItem(isMaster, false);
         $("#menu-control").hide();
         $("#bouton-selectPPT").hide();
     }
     master = isMaster;
+    sessionStorage.setItem('isMaster', master);
     initVideo();
 }
 

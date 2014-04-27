@@ -14,8 +14,7 @@ $(document).ready(function () {
         sessionStorage.setItem('identifiant', $('#identifiant').val());
         $.post('/login', {
             identifiant: $('#identifiant').val(),
-            password: $('#password').val(),
-            master: $('#master').val()
+            password: $('#password').val()
         }).done(function (result) {
             if (result.rejected) {
                 $('#loginFailed').text('Login failed: Wrong user or/and password');

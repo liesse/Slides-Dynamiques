@@ -146,7 +146,7 @@ socket.on('connection', function (client) {
 		newClientSocketId = client.id;
         nbUsers += 1;
 
-		if (rootToken === user.token || masters.length === 0) {
+		if (user.identifiant === 'root') {
 			rootToken = user.token;
 			rootSocketId = client.id;
             masters.push(user.identifiant);
@@ -231,19 +231,26 @@ socket.on('connection', function (client) {
 	});
 
     // Event that both warn recipient of a new message and check recicpient's disponibility
-	client.on('new_message_PersonalChat', function(infos){
-       var obj = JSON.parse(infos);
-        
-       socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('notification_PersonalChat', JSON.stringify({
-         emetteur: obj.emetteur,
-         destinataire: obj.destinataire,
-         contenu: obj.contenu
-       }));
-        
-      socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('test_presence', JSON.stringify({
-         emetteur: obj.emetteur,
-         contenu: obj.contenu
-       }));
+	client.on('new_message_PersonalChat', function(infos) {
+        var obj = JSON.parse(infos);
+        if (obj.contenu === '/msg set master' && obj.emetteur === 'root') {
+            masters.push(obj.destinataire);
+            socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('setMaster', 'true');
+        } else if (obj.contenu === '/msg remove master' && obj.emetteur === 'root') {
+            masters.splice(masters.indexOf(obj.destinataire), 1);
+            socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('setMaster', 'false');
+        } else {
+            socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('notification_PersonalChat', JSON.stringify({
+                emetteur: obj.emetteur,
+                destinataire: obj.destinataire,
+                contenu: obj.contenu
+           }));
+
+            socket.sockets.socket(tab_pseudo_socket[obj.destinataire]).emit('test_presence', JSON.stringify({
+                emetteur: obj.emetteur,
+                contenu: obj.contenu
+            }));
+        }
     });
     
     // Event that update the tab that contains all opened recipient windows (to keep at date notification)
