@@ -63,7 +63,8 @@ app.post('/login', function (req, res) {
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: true});
         rootToken = token;
-    } else if (user.identifiant !== undefined &&  user.password === 'comete' && users.indexOf(user.identifiant) === -1) {
+    } else if (user.identifiant !== undefined && user.identifiant.length > 0 && user.identifiant !== 'root'
+               && user.password === 'comete' && users.indexOf(user.identifiant) === -1) {
         var token = jwt.sign(user, jwt_secret, { expiresInMinutes: 60*5 });
         res.json({token: token, isMaster: false});
     } else {
