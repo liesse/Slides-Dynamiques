@@ -102,7 +102,7 @@ $(document).ready(function () {
             }
             
             $('#cadre-user ul').html(ma_liste);         // Update pseudos list
-            $('#clients').text(newMessage.clients);     // Display the number of connected users
+            $('#clients').text(newMessage.clients-1);     // Display the number of connected users
 
             if (newMessage.connexion) {
                 $("#message ul").append("<li><font color='green'>(" + newMessage.connexion + ") s'est connect&#233;</font> </li>");
