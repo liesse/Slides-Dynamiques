@@ -1,0 +1,24 @@
+<!--SMIL session file-->
+<!--Open your presentation, click "Load session" button and select this file.-->
+<xml>
+<event type="slide" id="-1" time="0"/>
+<event type="slide" id="1" time="5730"/>
+<event type="slide" id="2" time="1082"/>
+<event type="slide" id="3" time="1107"/>
+<event type="video" id="video1" time="1834" action="playing"/>
+<event type="video" id="video1" time="7263" action="volumechange" volume="0.42"/>
+<event type="video" id="video1" time="6376" action="volumechange" volume="0.67"/>
+<event type="video" id="video1" time="3759" action="volumechange" volume="0.07"/>
+<event type="video" id="video1" time="3745" action="volumechange" volume="0.51"/>
+<event type="video" id="video1" time="3746" action="volumechange" volume="0.76"/>
+<event type="video" id="video1" time="17751" action="volumechange" volume="0.89"/>
+<event type="video" id="video1" time="7037" action="volumechange" volume="0.11"/>
+<event type="video" id="video1" time="5453" action="volumechange" volume="0.79"/>
+<event type="video" id="video1" time="3710" action="volumechange" volume="0.29"/>
+<event type="video" id="video1" time="3680" action="volumechange" volume="0.86"/>
+<event type="video" id="video1" time="6761" action="pause"/>
+<event type="video" id="video1" time="368" action="seeked" currentTime="65.101"/>
+<event type="video" id="video1" time="63" action="playing"/>
+<event type="slide" id="0" time="7235"/>
+<event type="video" id="video1" time="100" action="pause"/>
+</xml>

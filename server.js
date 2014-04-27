@@ -258,7 +258,6 @@ socket.on('connection', function (client) {
 		var files = fs.readdirSync(__dirname + '/public/ppt/');
 		var htmlFiles = [];
 		for (var i = 0; i < files.length; i++) {
-			console.log("file " + files[i]);
 			if (files[i].split('.').reverse()[0] === "html") {
 				htmlFiles.push(files[i]);
 			}
