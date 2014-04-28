@@ -2,15 +2,15 @@
 var master = false,
     identifiant,
     password,
-    socket = io.connect(getURLConnectionForHTTPS(), { secure:true } ),
+    socket = io.connect(getURLConnectionForHTTPS(), { secure: true }),
     slideControlContainer,
     containers,
     currentSlide = 0,
     videos,
+    token,
     tab_windows_opened = [],    // This tab contains all pseudos of all opened windows
     messages_history = [],      // This tab contains history of all opened windows
-    presentationsList = [],     // This tab contains all presentation already upload on the server
-    token;
+    presentationsList = [];     // This tab contains all presentation already upload on the server
 
 $(document).ready(function () {
     "use strict";
@@ -31,10 +31,10 @@ $(document).ready(function () {
      * This event allow users (master or salves) to properly disconnect from the server.
      * After that, the user is redirected on log in page.
      */
-    $("#deconnexion").click(function(){
+    $("#deconnexion").click(function() {
         socket.disconnect();
         sessionStorage.setItem('token', '');
-        document.location.href="/login.html";
+        document.location.href = "/login.html";
     });
         
 	// Event that check if we are really loading an html presentation
@@ -71,14 +71,14 @@ $(document).ready(function () {
        
         if (newMessage.clients) {
             document.getElementById("cadre-menu-droite").innerHTML = "<p><strong>UTILISATEURS</strong></p>";
-            for(var i=0; i < newMessage.users.length; i++) {
+            for (var i=0; i < newMessage.users.length; i++) {
                 if(newMessage.users[i] != identifiant) {    
                     document.getElementById("cadre-menu-droite").innerHTML += "<p class='users' onclick='lancerChat(this);'>" + newMessage.users[i] + "</p>";
                 }
             } 
         }
 
-        if (newMessage.messageContent) { 
+        if (newMessage.messageContent) {
           $("#message ul").append("<li style='font-weight:bold;'>" + newMessage.messageSender + " : " + newMessage.messageContent + "</li>");
           $("#message").scrollTop(100000);
 
@@ -102,7 +102,7 @@ $(document).ready(function () {
             }
             
             $('#cadre-user ul').html(ma_liste);         // Update pseudos list
-            $('#clients').text(newMessage.clients-1);     // Display the number of connected users
+            $('#clients').text(newMessage.clients-1);   // Display the number of other connected users
 
             if (newMessage.connexion) {
                 $("#message ul").append("<li><font color='green'>(" + newMessage.connexion + ") s'est connect&#233;</font> </li>");
@@ -312,7 +312,6 @@ function updateSlide(filePath, activeSlideIndex) {
  *   -> Check if the frame is opened after notification (then pseudo color is orange) or not and then do some actions to update
  */
 function lancerChat(pseudo) {
-
     var myWindow = window.open("PersonalChat.html", pseudo.innerHTML, "width=430, height=400");
     myWindow.identifiant = identifiant;
     myWindow.destinataire = pseudo.innerHTML;
@@ -349,7 +348,7 @@ var getSelector = function (elt) {
     }
 
     var id = elt.attr("id");
-    if (id) { 
+    if (id) {
       selector += "#" + id;
     }
 
@@ -407,7 +406,6 @@ function getPresentationsList() {
 
 
 function iFrameLoaded(id, src) {
-    
     var deferred = $.Deferred(),
         iframe = $("#"+id);
         
@@ -422,7 +420,6 @@ function iFrameLoaded(id, src) {
 }
 
 function setIFrameEvents() {
-    //alert('setting events');
     $($('#notre_frame').contents()).find('#navigation_par').hide();
     if ($.isFunction($($('#notre_frame').contents())[0].getTimeContainersByTagName)) {
         containers = $($('#notre_frame').contents())[0].getTimeContainersByTagName("*");
@@ -457,10 +454,8 @@ function affichePanelUsers() {
 
 // This function is used to connect with a remote server using https
 function getURLConnectionForHTTPS() {
-
-   var url = '' + window.location;
-   var ipAddress = url.split('/l');
-   var nouvelleURL = ipAddress[0];
-
+    var url = '' + window.location;
+    var ipAddress = url.split('/l');
+    var nouvelleURL = ipAddress[0];
     return nouvelleURL;
 }
