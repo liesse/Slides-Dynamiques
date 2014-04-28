@@ -4,7 +4,6 @@
   "description": "A web application to diffuse some presentation",
   "main": "server.js",
   "dependencies": {
-    "connect-multiparty": "~1.0.3",
     "express": "~3.4.8",
     "formidable": "~1.0.14",
     "jsonwebtoken": "~0.2.0",
