@@ -1,4 +1,7 @@
-/* Globals variables */
+/* Globals variables 
+ * Each user uses https for all communication with the server, and vice-versa
+ * Therefore, we have authentication, confidentiality and integrity on all messages
+*/
 var master = false,
     identifiant,
     password,
@@ -452,10 +455,11 @@ function affichePanelUsers() {
 }
 
 
-// This function is used to connect with a remote server using https
+// This function is used to retrieve url information in order to connect with a remote server using https
 function getURLConnectionForHTTPS() {
     var url = '' + window.location;
     var ipAddress = url.split('/l');
     var nouvelleURL = ipAddress[0];
+    
     return nouvelleURL;
 }

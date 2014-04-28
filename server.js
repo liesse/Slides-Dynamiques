@@ -224,7 +224,11 @@ socket.on('connection', function (client) {
 		client.broadcast.emit('click', eltId);
 	});
 
-    // Event that both warn recipient of a new message and check recicpient's disponibility
+    /* Event that both warn :
+       -> recipient that a new message come around
+       -> check recicpient's disponibility
+       -> check specific message like '/msg set master' to allow one user to become animator
+     */
 	client.on('new_message_PersonalChat', function(infos) {
         var obj = JSON.parse(infos);
         if (obj.contenu === '/msg set master' && obj.emetteur === 'root') {
@@ -247,7 +251,7 @@ socket.on('connection', function (client) {
         }
     });
     
-    // Event that update the tab that contains all opened recipient windows (to keep at date notification)
+    // Event which updates tab that contains all opened recipient windows (to keep at date notification messages)
     client.on('MAJ_tab_windows_opened', function(infos){
         var obj = JSON.parse(infos);
        
@@ -299,10 +303,14 @@ function alertClients(filePath, activeSlideIndex) {
 	socket.broadcast.emit('updateSlide', filePath, activeSlideIndex);
 }
 
+// send a specific message to a specific recipient using his single socket 
 function sendMessage(socketId, messageType) {
 	socket.sockets.socket(socketId).emit(messageType);
 }
 
+// Send a message to a specific recipient using his single socket
 function sendData(socketId, data) {
 	socket.sockets.socket(socketId).send(data);
 }
+
+
